@@ -1,0 +1,27 @@
+{% extends 'parts.html.twig' %}
+
+{% block stylesheets %}
+    <link href="{{ asset('bootstrap-table.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('bootstrap-table.min.js') }}"></script>
+{% endblock %}
+
+{% block title %}Locations: Edit{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Edit Location</h1>
+                {{ form_start(formLocation) }}
+{{ form_widget(formLocation) }}
+{{ form_end(formLocation) }}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <h3>Notes</h3>
+        </div>
+    </div>
+{% endblock %}

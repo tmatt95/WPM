@@ -18,7 +18,7 @@
                         field: 'name',
                         title: 'Name',
                         formatter: function (value, row, index) {
-                            return '<a href="#">' + value + '</a>';
+                            return '<a href="/locations/edit/'+row.id+'">' + value + '</a>';
                         }
                     }, {
                         field: 'description',
@@ -32,7 +32,7 @@
                 ],
                 url: '{{ path('locations_get')}}',
                 pagination: true,
-                search: true,
+                search: true
             });
         });
     </script>

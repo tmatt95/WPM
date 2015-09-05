@@ -37,6 +37,10 @@ locations_manage:
     path:     /locations/manage
     defaults: { _controller: AppBundle:Locations:manage }
     methods:  [GET]
+locations_edit:
+    path:     /locations/edit/{id}
+    defaults: { _controller: AppBundle:Locations:edit }
+    methods:  [GET|POST]
 locations_parts_in:
     path:     /locations/partsin
     defaults: { _controller: AppBundle:Locations:partsin }
