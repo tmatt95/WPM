@@ -129,4 +129,13 @@ class PartsController extends Controller
     );
     return new Response($html);
   }
+  
+  public function viewAction()
+  {
+    $html = $this->container->get('templating')->render(
+      'parts/view.html.twig',
+      array()
+    );
+    return new Response($html);
+  }
 }
