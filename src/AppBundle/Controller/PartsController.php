@@ -23,8 +23,7 @@ class PartsController extends Controller {
       u.name_first,
       u.name_last
     FROM AppBundle:Part p
-    JOIN p.addeduser u'
-        );
+    JOIN p.addeduser u');
         $query->setMaxResults(10);
         $partsAdded = $query->getResult();
 

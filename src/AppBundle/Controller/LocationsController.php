@@ -14,7 +14,6 @@ use AppBundle\Form\Locations\Location as FLocation;
 class LocationsController extends Controller {
 
     public function addAction(Request $request) {
-
         // Generates the form
         $location = new Location();
         $form = $this->createForm(new FLocation(), $location);
@@ -40,27 +39,25 @@ class LocationsController extends Controller {
         return new Response($html);
     }
 
-    public function getAction() {
-        // Gets locations
-        $repository = $this->getDoctrine()
-                ->getRepository('AppBundle:Location');
-        $query = $repository->createQueryBuilder('l')
-                ->getQuery();
-        $locations = $query->getResult();
-
-        //Outputs to browser
-        $output = [];
-        foreach ($locations as $l) {
-            $output[] = [
-                'id' => $l->getId(),
-                'name' => $l->getName(),
-                'description' => $l->getDescription()
-            ];
-        }
-        $response = new JsonResponse();
-        $response->setData(
-                $output
+    /**
+     * Get location list
+     * Finds a list of locations in the database which are not marked as 
+     * deleted.
+     * @return JsonResponse
+     */
+    public function getAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $query = $em->createQuery(
+            'SELECT l.id,
+                l.name,
+                CONCAT(SUBSTRING(l.description,1,50),\'...\') as description
+            FROM AppBundle:Location l'
         );
+        $query->setMaxResults($request->query->get('limit'));
+        $query->setFirstResult($request->query->get('offset'));
+        $locations = $query->getResult();
+        $response = new JsonResponse();
+        $response->setData($locations);
         return $response;
     }
 
