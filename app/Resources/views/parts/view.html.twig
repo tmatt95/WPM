@@ -4,5 +4,13 @@
 {% block title %}Parts: View{% endblock %}
 
 {% block body %}
-<h1>View Part</h1>
+<h1>View Part - {{part.getName()}}</h1>
+
+<h3>Description</h3>
+{{part.getDescription()}}
+
+<h3>Quatity</h3>
+{{part.getQty()}}
+
+<h3>Auditing</h3>
 {% endblock %}
