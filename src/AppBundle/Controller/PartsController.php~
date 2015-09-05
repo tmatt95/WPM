@@ -1,0 +1,23 @@
+<?php
+
+// src/AppBundle/Controller/LuckyController.php
+namespace AppBundle\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\Response;
+
+class PartsController extends Controller
+{
+    /**
+     * @Route("/parts/index")
+     */
+    public function indexAction()
+    {
+        $html = $this->container->get('templating')->render(
+            'lucky/number.html.twig',
+            array()
+        );
+        return new Response($html);
+    }
+}

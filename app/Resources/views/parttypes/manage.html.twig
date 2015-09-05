@@ -1,0 +1,66 @@
+{# app/Resources/views/lucky/number.html.twig #}
+{% extends 'parts.html.twig' %}
+
+{% block title %}Part Types: Manage{% endblock %}
+
+{% block stylesheets %}
+<link href="{{ asset('bootstrap-table.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('bootstrap-table.min.js') }}"></script>
+<script type="text/javascript">
+
+$( document ).ready(function() {
+$('#table').bootstrapTable({
+    columns: [{
+        field: 'id',
+        title: 'ID',
+        sortable: true
+    }, {
+        field: 'name',
+        title: 'Name',
+        sortable: true,
+        formatter: function(value,row,index){
+       return '<a href="#">'+value+'</a>';
+      }
+    }, {
+        field: 'description',
+        title: 'Description'
+    }],
+    url: '{{ path('parts_types_get')}}',
+    pagination: true,
+    search: true,
+});
+});
+</script>
+{% endblock %}
+
+{% block body %}
+<div class="row">
+<div class="col-sm-8">
+<h1>Manage Part Types</h1>
+</div>
+<div class="col-sm-4 hidden-xs text-right" style="padding-top:20px;">
+<a href="{{ path('part_types_add') }}" class="btn btn-xl btn-primary"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Part Type</a>
+</div>
+</div>
+
+<div class="row">
+<div class="col-xs-12">
+<p>Parts are grouped into generic categories. Each part can belong to one type.</p>
+</div>
+</div>
+
+<div class="row visible-xs" style="margin-bottom:20px;">
+<div class="col-xs-12">
+<a href="{{ path('part_types_add') }}" class="btn btn-xl btn-block btn-primary"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Part Type</a>
+</div>
+</div>
+
+<div class="row">
+<div class="col-xs-12">
+<table id="table"></table>
+</div>
+</div>
+{% endblock %}

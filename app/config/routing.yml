@@ -1,0 +1,77 @@
+# Parts
+parts_get:
+    path:     /parts/get
+    defaults: { _controller: AppBundle:Parts:get }
+    methods:  [GET]
+parts_dashboard:
+    path:     /
+    defaults: { _controller: AppBundle:Parts:index }
+    methods:  [GET]
+parts_add:
+    path:     /parts/add
+    defaults: { _controller: AppBundle:Parts:add }
+    methods:  [GET|POST]
+parts_find:
+    path:     /parts/find
+    defaults: { _controller: AppBundle:Parts:find }
+    methods:  [GET]
+parts_manage:
+    path:     /parts/manage
+    defaults: { _controller: AppBundle:Parts:manage }
+    methods:  [GET]
+
+# Locations
+locations_get:
+    path:     /locations/get
+    defaults: { _controller: AppBundle:Locations:get }
+    methods:  [GET]
+locations_add:
+    path:     /locations/add
+    defaults: { _controller: AppBundle:Locations:add }
+    methods:  [GET|POST]
+locations_manage:
+    path:     /locations/manage
+    defaults: { _controller: AppBundle:Locations:manage }
+    methods:  [GET]
+locations_parts_in:
+    path:     /locations/partsin
+    defaults: { _controller: AppBundle:Locations:partsin }
+    methods:  [GET]
+
+# Part Types
+parts_types_get:
+    path:     /parttypes/get
+    defaults: { _controller: AppBundle:PartTypes:get }
+    methods:  [GET]
+part_types_add:
+    path:     /parttypes/add
+    defaults: { _controller: AppBundle:PartTypes:add }
+    methods:  [GET|POST]
+part_types_manage:
+    path:     /parttypes/manage
+    defaults: { _controller: AppBundle:PartTypes:manage }
+    methods:  [GET]
+
+# Help
+article:
+    path:     /help/{_article}
+    defaults: { _controller: AppBundle:PartTypes:add,_article:"parts"}
+    methods:  [GET]
+
+# Users
+login:
+    path:     /login
+    defaults: { _controller: AppBundle:Site:login }
+    methods:  [GET|POST]
+users_login_check:
+    path:     /login_check
+users_add:
+    path:     /users/add
+    defaults: { _controller: AppBundle:User:add }
+    methods:  [GET|POST]
+users_manage:
+    path:     /users/manage
+    defaults: { _controller: AppBundle:User:manage }
+    methods:  [GET]
+logout:
+    path: /logout

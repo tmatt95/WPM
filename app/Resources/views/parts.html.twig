@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8" />
+        <title>{% block title %}{% endblock %}</title>
+        <link href="{{ asset('bootstrap-3.3.5/css/bootstrap.min.css') }}" rel="stylesheet" />
+        <link href="{{ asset('bootstrap-3.3.5/css/bootstrap-theme.min.css') }}" rel="stylesheet" />
+    {% block stylesheets %}{% endblock %}
+    <link rel="icon" type="image/x-icon" href="{{ asset('favicon.ico') }}" />
+</head>
+<body style="padding-top: 70px;">
+    <div class="container">
+        <nav class="navbar navbar-default navbar-fixed-top" id="mainnav" data-currentpage="{{app.request.getPathInfo}}">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <p class="navbar-text">{{site_name}}</p>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav" >
+                        <li><a href="{{ path('parts_dashboard') }}"><span class="glyphicon glyphicon-dashboard" aria-hidden="true"></span></a></li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Parts <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ path('parts_add') }}">Add Part</a></li>
+                                <li><a href="{{ path('parts_find') }}">Find Part</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ path('part_types_add') }}">Add Type</a></li>
+                                <li><a href="{{ path('part_types_manage') }}">Manage Types</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Locations <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="{{ path('locations_add') }}">Add</a></li>
+                                <li><a href="{{ path('locations_manage') }}">Manage</a></li>
+                                <li role="separator" class="divider"></li>
+                                <li><a href="{{ path('locations_parts_in') }}">Parts in Location</a></li>
+                            </ul>
+                        </li>
+                        <li class="dropdown">
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help <span class="caret"></span></a>
+                            <ul class="dropdown-menu">
+                                <li><a href="#">Parts</a></li>
+                                <li><a href="#">Locations</a></li>
+                                <li><a href="#">User Management</a></li>
+                            </ul>
+                        </li>
+                        {% if app.user and app.user.isAdmin() %}
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li><a href="{{ path('users_add') }}">Add User</a></li>
+                                    <li><a href="{{ path('users_manage') }}">Manage Users</a></li>
+                                    <li role="separator" class="divider"></li>
+                                    <li><a href="#">System Settings</a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="text-danger"><a href="{{ path('logout') }}">Logout</a></li>
+                    </ul>
+                </div><!-- /.navbar-collapse -->
+            </div><!-- /.container-fluid -->
+        </nav>
+        <div class="row">
+            <div class="col-xs-12">
+            {% block body %}{% endblock %}
+        </div>
+    </div>
+    <script src="/jquery-1.11.3.min.js"></script>
+    <script src="/Chart.min.js"></script>
+    <script src="/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+{% block javascripts %}{% endblock %}
+<script type="text/javascript">
+    // Sets the active menu item
+    var currentpage = $('#mainnav').data('currentpage');
+    $(".navbar a").each(function (index) {
+        if (currentpage === $(this).attr('href')) {
+            $(this).parent().addClass('active');
+        }
+    });
+</script>
+</body> 
+</html>

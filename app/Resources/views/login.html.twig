@@ -1,0 +1,25 @@
+{# app/Resources/views/lucky/number.html.twig #}
+{% extends 'partsloggedout.html.twig' %}
+
+{% block title %}Login{% endblock %}
+
+{% block body %}
+    <div class="row">
+        <div class="col-xs-12">
+            {#<img class="img-responsive img-rounded" src="/lineup.jpg"/>#}
+        </div>
+    </div>
+    <h1>Login</h1>
+    {% if error %}
+        <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+    {% endif %}
+    <form action="{{ path('users_login_check') }}" method="post">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="_username" value="{{ last_username }}" />
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="_password" />
+        <input type="hidden" name="_target_path" value="/" />
+        <button class="btn btn-primary" type="submit">login</button>
+    </form>
+    <p>This application allows us to record information on the parts which are stored with the group.</p>
+{% endblock %}

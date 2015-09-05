@@ -1,0 +1,49 @@
+{% extends 'parts.html.twig' %}
+
+{% block title %}Users: Manage{% endblock %}
+
+{% block body %}
+    <h1>Manage Users</h1>
+    <table id="users"></table>
+{% endblock %}
+
+{% block stylesheets %}
+    <link href="{{ asset('bootstrap-table.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+    <script src="{{ asset('bootstrap-table.min.js') }}"></script>
+    <script type="text/javascript">
+
+        $(document).ready(function () {
+            $('#users').bootstrapTable({
+                columns: [{
+                        field: 'name',
+                        title: 'Name',
+                        formatter: function (value, row, index) {
+                            return '<a href="#">' + value + '</a>';
+                        }
+                    }, {
+                        field: 'description',
+                        title: 'Description'
+                    }, {
+                        title: 'Use Parts',
+                        formatter: function (value, row, index) {
+                            return '<div class="col-xs-6"><select class="form-control"> \
+      <option value="">Select qty</option> \
+      <option>2</option> \
+      <option>3</option> \
+      <option>4</option> \
+      <option>5</option> \
+    </select> </div>\
+    <div class="col-xs-4"> \
+      <button type="submit" class="btn btn-default" type="submit">Use Part</button></div></div>';
+                        }
+                    }],
+                url: '{{ path('parts_types_get')}}',
+                pagination: true,
+                search: true
+            });
+        });
+    </script>
+{% endblock %}

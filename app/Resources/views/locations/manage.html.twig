@@ -1,0 +1,61 @@
+{# app/Resources/views/lucky/number.html.twig #}
+{% extends 'parts.html.twig' %}
+
+{% block stylesheets %}
+<link href="{{ asset('bootstrap-table.css') }}" rel="stylesheet" />
+{% endblock %}
+
+{% block javascripts %}
+<script src="{{ asset('bootstrap-table.min.js') }}"></script>
+<script type="text/javascript">
+
+$( document ).ready(function() {
+$('#table').bootstrapTable({
+    columns: [{
+        field: 'id',
+        title: 'ID'
+    }, {
+        field: 'name',
+        title: 'Name',
+        formatter: function(value,row,index){
+         return '<a href="#">'+value+'</a>';
+        }
+    }, {
+        field: 'description',
+        title: 'Description'
+    }, {
+    formatter: function(value,row,index){
+         return '<a href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span></a>';
+        },
+        title: 'Actions'
+        }
+    ],
+    url: '{{ path('locations_get')}}',
+    pagination: true,
+    search: true,
+});
+});
+</script>
+{% endblock %}
+
+{% block title %}Locations: Manage{% endblock %}
+
+{% block body %}
+<div class="row">
+<div class="col-sm-8">
+<h1>Manage Locations</h1>
+</div>
+<div class="col-sm-4 hidden-xs text-right" style="padding-top:20px;">
+<a href="{{ path('locations_add') }}" class="btn btn-xl btn-primary"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Location</a>
+</div>
+</div>
+
+<div class="row">
+<div class="col-xs-12">
+<p>Locations where the parts can be found.</p>
+</div>
+</div>
+
+
+<table id="table"></table>
+{% endblock %}
