@@ -31,16 +31,6 @@ class LocationsController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($location);
             $em->flush();
-//            // Add location note
-//            $emln = $this->getDoctrine()->getManager();
-//            $locationNote = new LocationNote();
-//            $locationNote->setAddedBy($this->getUser()->getId());
-//            $createdDate = new DateTime('Europe/London');
-//            $locationNote->setAdded($createdDate);
-//            $locationNote->setNotes($updateNote);
-//            $locationNote->setLocationId($location->getId());
-//            $emln->persist($locationNote);
-//            $emln->flush();
         }
         return $form;
     }
@@ -71,15 +61,6 @@ class LocationsController extends Controller {
 //        
 //        // If delete form is valid then do the delete / adding notes etc
 //        if ($locDeleteForm->isValid()) {
-//            $emln = $this->getDoctrine()->getManager();
-//            $locationNote = new LocationNote();
-//            $locationNote->setAddedBy($this->getUser()->getId());
-//            $createdDate = new DateTime('Europe/London');
-//            $locationNote->setAdded($createdDate);
-//            $locationNote->setNotes('Location Deleted');
-//            $locationNote->setLocationId($location->getIdDelete());
-//            $emln->persist($locationNote);
-//            $emln->flush();
 //        }
 //        
 //        $response = new JsonResponse();
@@ -90,24 +71,36 @@ class LocationsController extends Controller {
     /**
      * Get location list
      * Finds a list of locations in the database which are not marked as 
-     * deleted.
+     * deleted. The items found are returned based on the supplied limit and
+     * offset. This funcation may not return all the items from the table if
+     * there are more than the total number. The total number of items is also
+     * returned from the system.
      * @return JsonResponse containing up to 10 locations requested from the
      * system
      */
     public function getAction(Request $request) {
+        $searchTerm = $request->query->get('search');
         $em = $this->getDoctrine()->getManager();
-        $query = $em->createQuery(
-            'SELECT l.id,
+        $qs = 'SELECT l.id,
                 l.name,
                 CONCAT(SUBSTRING(l.description,1,50),\'...\') as description
-            FROM AppBundle:Location l'
-        );
+            FROM AppBundle:Location l';
+        if($searchTerm){
+            $qs .=' WHERE l.name LIKE :search OR l.description LIKE :search';
+        }
+        $query = $em->createQuery($qs);
         $query->setMaxResults($request->query->get('limit'));
         $query->setFirstResult($request->query->get('offset'));
+        if($searchTerm){
+            $query->setParameter(
+                ':search',
+                '%'.$searchTerm.'%'
+            );
+        }
         $response = new JsonResponse();
         $response->setData(
             array(
-                'total'=>Location::getNoLocations($em),
+                'total'=>Location::getTotalNumber($em, $searchTerm),
                 'rows'=>$query->getResult()
             )
         );
@@ -115,7 +108,8 @@ class LocationsController extends Controller {
     }
 
     /**
-     * Get edit location screen
+     * Edit location screen
+     * 
      * @param int $id
      * @param Request $request
      * @return Response
