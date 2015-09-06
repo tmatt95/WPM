@@ -1,7 +1,8 @@
 <?php
 
-  // src/AppBundle/Entity/Part.php
-  namespace AppBundle\Entity;
+// src/AppBundle/Entity/Part.php
+
+namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
@@ -9,50 +10,32 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="location_note")
  */
-class LocationNote
-{
-  /**
-       * @ORM\Column(type="integer")
-       * @ORM\Id
-       * @ORM\GeneratedValue(strategy="AUTO")
-       */
-  protected $id;
-
-  /**
-     * @ORM\Column(type="string", length=300)
-     */
-  protected $name;
+class LocationNote {
 
     /**
-     * Get id
-     *
-     * @return integer
+     * @ORM\Column(type="integer")
+     * @ORM\Id
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
-    public function getId()
-    {
-        return $this->id;
-    }
+    protected $id;
 
     /**
-     * Set name
-     *
-     * @param string $name
-     * @return LocationNote
+     * @ORM\Column(type="text")
      */
-    public function setName($name)
-    {
-        $this->name = $name;
-
-        return $this;
-    }
+    protected $notes;
 
     /**
-     * Get name
-     *
-     * @return string
+     * @ORM\Column(type="integer")
      */
-    public function getName()
-    {
-        return $this->name;
-    }
+    protected $location_id;
+    
+    /**
+     * @ORM\Column(type="integer")
+     */
+    protected $added_by;
+    
+    /**
+     * @ORM\Column(type="datetime")
+     */
+    protected $added;
 }

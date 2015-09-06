@@ -1,4 +1,3 @@
-{# app/Resources/views/lucky/number.html.twig #}
 {% extends 'parts.html.twig' %}
 
 {% block stylesheets %}
@@ -9,13 +8,28 @@
     <script src="{{ asset('bootstrap-table.min.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            // Toggles the appearance of the add form
             $("#lAddNew").click(function () {
                 $(this).addClass('hidden');
                 $('#lAddEditForm').removeClass('hidden');
                 return false;
             });
 
+            // Fills / submits the delete location form
+            $("#locations").on("click", ".deleteLocation", function () {
+                $('#location_delete_idDelete').val($(this).data('locid'));
+                $.ajax({
+                    method: "POST",
+                    url: "/locations/delete",
+                    data: $('#formLocDel form').serialize()
+                }).done(function (msg) {
+                    alert("Item Deleted");
+                });
+            });
+
+            // Creates the location table
             $('#locations').bootstrapTable({
+                sidePagination:'server',
                 columns: [{
                         field: 'id',
                         title: 'ID'
@@ -30,7 +44,7 @@
                         title: 'Description'
                     }, {
                         formatter: function (value, row, index) {
-                            return '<button type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</button>';
+                            return '<button type="button" data-locid="' + row.id + '" class="btn btn-xs btn-danger deleteLocation"><span class="glyphicon glyphicon-trash"></span> Delete</button>';
                         },
                         title: 'Actions'
                     }
@@ -48,7 +62,7 @@
 {% block body %}    
     <div class="row">
         <div class="col-sm-8">
-            <h1>Manage Locations</h1>
+            <h1>Locations</h1>
         </div>
         <div class="col-sm-4 hidden-xs text-right" style="padding-top:20px;">
             <a id="lAddNew" href="#" class="btn btn-xl btn-primary"> New Location</a>
@@ -68,7 +82,12 @@
                     </div>
                 </div>
             </div>
-                        <table id="locations"></table>
+            <table id="locations"></table>
+            <div id="formLocDel">
+                {{ form_start(locDeleteForm) }}   
+                {{ form_widget(form) }}
+                {{ form_end(locDeleteForm) }}
+            </div>
         </div>
     </div>
 {% endblock %}

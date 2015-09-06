@@ -87,10 +87,8 @@ class PartsController extends Controller {
             $part->setAdded($createdDate);
             $user = $this->getUser();
             $part->setAddedBy($user->getId());
-            
-            // Adds audit log entry
-            
 
+            // Adds audit log entry
             // Saves the new part to the system
             $em = $this->getDoctrine()->getManager();
             $em->persist($part);
@@ -99,7 +97,7 @@ class PartsController extends Controller {
 
         // Renders the add part screen
         $html = $this->container->get('templating')->render(
-                'parts/add.html.twig', array('form' => $form->createView(),'locations'=>$llist,'types'=>$list)
+                'parts/add.html.twig', array('form' => $form->createView(), 'locations' => $llist, 'types' => $list)
         );
         return new Response($html);
     }
@@ -121,11 +119,11 @@ class PartsController extends Controller {
     public function viewAction($partId) {
         // Loads part information
         $part = $this->getDoctrine()
-        ->getRepository('AppBundle:Part')
-        ->find($partId);
-        
+                ->getRepository('AppBundle:Part')
+                ->find($partId);
+
         $html = $this->container->get('templating')->render(
-                'parts/view.html.twig', array('part'=>$part)
+                'parts/view.html.twig', array('part' => $part)
         );
         return new Response($html);
     }
