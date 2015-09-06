@@ -79,30 +79,17 @@ class LocationsController extends Controller {
      * system
      */
     public function getAction(Request $request) {
+        $limit = 10;
+        $offset = 0;
+        if($request->query->get('limit') && $request->query->get('offset')){
+            $limit = $request->query->get('limit');
+            $offset = $request->query->get('offset');
+        }
         $searchTerm = $request->query->get('search');
         $em = $this->getDoctrine()->getManager();
-        $qs = 'SELECT l.id,
-                l.name,
-                CONCAT(SUBSTRING(l.description,1,50),\'...\') as description
-            FROM AppBundle:Location l';
-        if($searchTerm){
-            $qs .=' WHERE l.name LIKE :search OR l.description LIKE :search';
-        }
-        $query = $em->createQuery($qs);
-        $query->setMaxResults($request->query->get('limit'));
-        $query->setFirstResult($request->query->get('offset'));
-        if($searchTerm){
-            $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
-            );
-        }
         $response = new JsonResponse();
         $response->setData(
-            array(
-                'total'=>Location::getTotalNumber($em, $searchTerm),
-                'rows'=>$query->getResult()
-            )
+            Location::searchLocations($em,$searchTerm,$limit,$offset)
         );
         return $response;
     }
