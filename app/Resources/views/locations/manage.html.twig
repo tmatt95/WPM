@@ -8,9 +8,14 @@
 {% block javascripts %}
     <script src="{{ asset('bootstrap-table.min.js') }}"></script>
     <script type="text/javascript">
-
         $(document).ready(function () {
-            $('#table').bootstrapTable({
+            $("#lAddNew").click(function () {
+                $(this).addClass('hidden');
+                $('#lAddEditForm').removeClass('hidden');
+                return false;
+            });
+
+            $('#locations').bootstrapTable({
                 columns: [{
                         field: 'id',
                         title: 'ID'
@@ -18,14 +23,14 @@
                         field: 'name',
                         title: 'Name',
                         formatter: function (value, row, index) {
-                            return '<a href="/locations/edit/'+row.id+'">' + value + '</a>';
+                            return '<a href="/locations/edit/' + row.id + '">' + value + '</a>';
                         }
                     }, {
                         field: 'description',
                         title: 'Description'
                     }, {
                         formatter: function (value, row, index) {
-                            return '<a href="#" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash"></span></a>';
+                            return '<button type="button" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-trash"></span> Delete</button>';
                         },
                         title: 'Actions'
                     }
@@ -40,19 +45,30 @@
 
 {% block title %}Locations: Manage{% endblock %}
 
-{% block body %}
+{% block body %}    
     <div class="row">
         <div class="col-sm-8">
             <h1>Manage Locations</h1>
         </div>
         <div class="col-sm-4 hidden-xs text-right" style="padding-top:20px;">
-            <a href="{{ path('locations_add') }}" class="btn btn-xl btn-primary"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Location</a>
+            <a id="lAddNew" href="#" class="btn btn-xl btn-primary"> New Location</a>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <p>Locations where the parts can be found.</p>
+            <div id="lAddEditForm" class="hidden">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">New</h3>
+                    </div>
+                    <div class="panel-body">
+                        {{ form_start(form) }}
+                        {{ form_widget(form) }}
+                        {{ form_end(form) }}
+                    </div>
+                </div>
+            </div>
+                        <table id="locations"></table>
         </div>
     </div>
-    <table id="table"></table>
 {% endblock %}

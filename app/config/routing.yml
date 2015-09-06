@@ -30,9 +30,9 @@ locations_get:
     defaults: { _controller: AppBundle:Locations:get }
     methods:  [GET]
 locations_add:
-    path:     /locations/add
+    path:     /locations/manage
     defaults: { _controller: AppBundle:Locations:add }
-    methods:  [GET|POST]
+    methods:  [POST]
 locations_manage:
     path:     /locations/manage
     defaults: { _controller: AppBundle:Locations:manage }

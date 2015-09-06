@@ -27,14 +27,18 @@ class LocationsController extends Controller {
         }
 
         $html = $this->container->get('templating')->render(
-                'locations/add.html.twig', array('form' => $form->createView())
+            'locations/manage.html.twig',
+            array('form' => $form->createView())
         );
         return new Response($html);
     }
 
     public function manageAction() {
+        $location = new Location();
+        $form = $this->createForm(new FLocation(), $location);
         $html = $this->container->get('templating')->render(
-                'locations/manage.html.twig', array()
+            'locations/manage.html.twig',
+            array('form' => $form->createView())
         );
         return new Response($html);
     }
@@ -55,21 +59,20 @@ class LocationsController extends Controller {
         );
         $query->setMaxResults($request->query->get('limit'));
         $query->setFirstResult($request->query->get('offset'));
-        $locations = $query->getResult();
         $response = new JsonResponse();
-        $response->setData($locations);
+        $response->setData($query->getResult());
         return $response;
     }
 
     public function partsinAction() {
         $html = $this->container->get('templating')->render(
-                'locations/partsin.html.twig', array()
+            'locations/partsin.html.twig',
+            array()
         );
         return new Response($html);
     }
 
     public function editAction($id, Request $request) {
-        
         // Generates the form
         $location = $this->getDoctrine()
         ->getRepository('AppBundle:Location')
