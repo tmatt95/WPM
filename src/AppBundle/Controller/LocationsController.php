@@ -109,7 +109,6 @@ class LocationsController extends Controller {
 
     /**
      * Edit location screen
-     * 
      * @param int $id
      * @param Request $request
      * @return Response
