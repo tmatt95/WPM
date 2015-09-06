@@ -64,6 +64,17 @@ class Location {
     public function setDescription($description) {
         $this->description = $description;
     }
+    
+    static function getList($em){
+        $qs = 'SELECT l.id, l.name FROM AppBundle:Location l ORDER BY l.name ASC';
+        $query = $em->createQuery($qs);
+        $pt = $query->getResult();
+        $list = [];
+        foreach ($pt as $p) {
+            $list[$p['id']] = $p['name'];
+        }
+        return $list;
+    }
 
     static function getTotalNumber($em,$searchTerm) {
         $qs = 'SELECT COUNT(l.id) as number FROM AppBundle:Location l';

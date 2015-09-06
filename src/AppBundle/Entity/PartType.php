@@ -84,4 +84,15 @@ class PartType
     {
         return $this->description;
     }
+    
+    static function getList($em){
+        $qs = 'SELECT p.id, p.name FROM AppBundle:PartType p ORDER BY p.name ASC';
+        $query = $em->createQuery($qs);
+        $pt = $query->getResult();
+        $list = [];
+        foreach ($pt as $p) {
+            $list[$p['id']] = $p['name'];
+        }
+        return $list;
+    }
 }

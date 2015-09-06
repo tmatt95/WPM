@@ -9,6 +9,8 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Part;
 use DateTime;
+use AppBundle\Entity\Location;
+use AppBundle\Entity\PartType;
 
 class PartsController extends Controller {
 
@@ -16,48 +18,27 @@ class PartsController extends Controller {
         // Information for the latest added parts widget
         $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
-                'SELECT p.name,
-      p.qty,
-      p.added,
-      u.id,
-      u.name_first,
-      u.name_last
-    FROM AppBundle:Part p
-    JOIN p.addeduser u');
+            'SELECT p.name,
+            p.qty,
+            p.added,
+            u.id,
+            u.name_first,
+            u.name_last
+            FROM AppBundle:Part p
+            JOIN p.addeduser u');
         $query->setMaxResults(10);
         $partsAdded = $query->getResult();
-
         $html = $this->container->get('templating')->render(
-                'parts/index.html.twig', array('partsAdded' => $partsAdded, 'partsUsed' => array())
+            'parts/index.html.twig',
+            array('partsAdded' => $partsAdded, 'partsUsed' => array())
         );
         return new Response($html);
     }
 
     public function addAction(Request $request) {
-        // Gets types
-        $repository = $this->getDoctrine()
-                ->getRepository('AppBundle:PartType');
-        $query = $repository->createQueryBuilder('pt')
-                ->getQuery();
-        $pt = $query->getResult();
-
-        $list = [];
-        foreach ($pt as $p) {
-            $list[$p->getId()] = $p->getName();
-        }
-
-        // Gets locations
-        $repository = $this->getDoctrine()
-                ->getRepository('AppBundle:Location');
-        $query = $repository->createQueryBuilder('l')
-                ->getQuery();
-        $ll = $query->getResult();
-
-        $llist = [];
-        foreach ($ll as $l) {
-            $llist[$l->getId()] = $l->getName();
-        }
-
+        $em = $this->getDoctrine()->getManager();
+        $partTypeList = PartType::getList($em);
+        $locationList = Location::getList($em);
 
         // Generates the form
         $part = new Part();
@@ -65,11 +46,11 @@ class PartsController extends Controller {
                 ->add('name', 'text')
                 ->add('description', 'textarea')
                 ->add('type', 'choice', array(
-                    'choices' => $list,
+                    'choices' => $partTypeList,
                     'required' => false,
                 ))
                 ->add('location', 'choice', array(
-                    'choices' => $llist,
+                    'choices' => $locationList,
                     'required' => false,
                 ))
                 ->add('qty', 'integer')
@@ -97,7 +78,11 @@ class PartsController extends Controller {
 
         // Renders the add part screen
         $html = $this->container->get('templating')->render(
-                'parts/add.html.twig', array('form' => $form->createView(), 'locations' => $llist, 'types' => $list)
+                'parts/add.html.twig', array(
+            'form' => $form->createView(),
+            'locations' => $locationList,
+            'types' => $partTypeList
+                )
         );
         return new Response($html);
     }

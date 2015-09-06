@@ -18,13 +18,13 @@
             // Fills / submits the delete location form
             $("#locations").on("click", ".deleteLocation", function () {
                 $('#location_delete_idDelete').val($(this).data('locid'));
-                $.ajax({
+                {#$.ajax({
                     method: "POST",
                     url: "/locations/delete",
                     data: $('#formLocDel form').serialize()
                 }).done(function (msg) {
                     alert("Item Deleted");
-                });
+                });#}
             });
 
             // Creates the location table
@@ -44,7 +44,7 @@
                         title: 'Description'
                     }, {
                         formatter: function (value, row, index) {
-                            return '<button type="button" data-locid="' + row.id + '" class="btn btn-xs btn-danger deleteLocation"><span class="glyphicon glyphicon-trash"></span> Delete</button>';
+                            return '<button type="button" data-locid="' + row.id + '" class="btn btn-xs btn-danger deleteLocation"><span class="glyphicon glyphicon-trash"></span> Disable</button>';
                         },
                         title: 'Actions'
                     }
