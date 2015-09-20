@@ -89,7 +89,7 @@ class LocationsController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-            Location::searchLocations($em,$searchTerm,$limit,$offset)
+            Location::search($em,$searchTerm,$limit,$offset)
         );
         return $response;
     }

@@ -18,30 +18,25 @@
         $(document).ready(function () {
             $('#users').bootstrapTable({
                 columns: [{
-                        field: 'name',
-                        title: 'Name',
+                        field: 'username',
+                        title: 'Username',
                         formatter: function (value, row, index) {
                             return '<a href="#">' + value + '</a>';
                         }
-                    }, {
-                        field: 'description',
-                        title: 'Description'
-                    }, {
-                        title: 'Use Parts',
+                    },{
+                        title: 'Name',
                         formatter: function (value, row, index) {
-                            return '<div class="col-xs-6"><select class="form-control"> \
-      <option value="">Select qty</option> \
-      <option>2</option> \
-      <option>3</option> \
-      <option>4</option> \
-      <option>5</option> \
-    </select> </div>\
-    <div class="col-xs-4"> \
-      <button type="submit" class="btn btn-default" type="submit">Use Part</button></div></div>';
+                            return row.name_first + ' ' + row.name_last;
+                        }
+                    }, {
+                        title: 'Actions',
+                        formatter: function (value, row, index) {
+                            return ' ';
                         }
                     }],
-                url: '{{ path('parts_types_get')}}',
+                url: '/users/get',
                 pagination: true,
+                sidePagination:'server',
                 search: true
             });
         });

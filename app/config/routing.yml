@@ -75,5 +75,9 @@ users_manage:
     path:     /users/manage
     defaults: { _controller: AppBundle:User:manage }
     methods:  [GET]
+users_get:
+    path:     /users/get
+    defaults: { _controller: AppBundle:User:get }
+    methods:  [GET]
 logout:
     path: /logout

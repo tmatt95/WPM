@@ -91,14 +91,15 @@ class Location {
         return $query->getResult()[0]['number'];
     }
     
-    static function searchLocations($em,$searchTerm,$limit,$offset) {
+    static function search($em,$searchTerm,$limit,$offset) {
         $qs = 'SELECT l.id,
                 l.name,
                 CONCAT(SUBSTRING(l.description,1,50),\'...\') as description
             FROM AppBundle:Location l';
         if($searchTerm){
-            $qs .=' WHERE l.name LIKE :search OR l.description LIKE :search';
+            $qs .=' WHERE l.name LIKE :search';
         }
+        $qs .=' ORDER BY l.name ASC';
         $query = $em->createQuery($qs);
         $query->setMaxResults($limit);
         $query->setFirstResult($offset);
