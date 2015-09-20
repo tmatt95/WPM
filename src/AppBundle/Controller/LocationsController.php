@@ -55,17 +55,6 @@ class LocationsController extends Controller {
     }
     
     public function deleteAction(Request $request) {
-//        $location = new Location();
-//        $locDeleteForm = $this->createForm(new FLocationDelete(),$location);
-//        $locDeleteForm->handleRequest($request);
-//        
-//        // If delete form is valid then do the delete / adding notes etc
-//        if ($locDeleteForm->isValid()) {
-//        }
-//        
-//        $response = new JsonResponse();
-//        $response->setData();
-//        return $response;
     }
 
     /**
@@ -96,8 +85,8 @@ class LocationsController extends Controller {
 
     /**
      * Edit location screen
-     * @param int $id
-     * @param Request $request
+     * @param int $id id of the location to edit
+     * @param Request $request containing the updated location information
      * @return Response
      */
     public function editAction($id, Request $request) {

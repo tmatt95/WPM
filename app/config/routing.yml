@@ -14,7 +14,6 @@ parts_dashboard:
 parts_add:
     path:     /parts/add
     defaults: { _controller: AppBundle:Parts:add }
-    methods:  [GET|POST]
 parts_find:
     path:     /parts/find
     defaults: { _controller: AppBundle:Parts:find }
@@ -48,11 +47,9 @@ parts_types_get:
 part_types_add:
     path:     /parttypes/add
     defaults: { _controller: AppBundle:PartTypes:add }
-    methods:  [GET|POST]
 part_types_manage:
     path:     /parttypes/manage
     defaults: { _controller: AppBundle:PartTypes:manage }
-    methods:  [GET]
 
 # Help
 article:
@@ -64,13 +61,11 @@ article:
 login:
     path:     /login
     defaults: { _controller: AppBundle:Site:login }
-    methods:  [GET|POST]
 users_login_check:
     path:     /login_check
 users_add:
     path:     /users/add
     defaults: { _controller: AppBundle:User:add }
-    methods:  [GET|POST]
 users_manage:
     path:     /users/manage
     defaults: { _controller: AppBundle:User:manage }
