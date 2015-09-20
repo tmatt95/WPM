@@ -69,6 +69,11 @@ class PartTypesController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($partType);
             $em->flush();
+            
+            // Reset the form fields after the save
+            $partType->setName("");
+            $partType->setDescription("");
+            $form = $this->createForm(new FPartType(), $partType);
         }
 
         $html = $this->container->get('templating')->render(

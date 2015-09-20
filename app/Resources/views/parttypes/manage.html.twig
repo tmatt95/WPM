@@ -10,21 +10,25 @@
 {% block javascripts %}
     <script src="{{ asset('bootstrap-table.min.js') }}"></script>
     <script type="text/javascript">
-
         $(document).ready(function () {
-            // Toggles the appearance of the add form
+            // Display the add new part type form
             $("#lAddNew").click(function () {
                 $(this).addClass('hidden');
-                $('#lAddEditForm').removeClass('hidden');
+                $('#lAddEditForm,#lAddNewCancel').removeClass('hidden');
                 return false;
             });
-            
+
+            // Cancel the adding of a new part type
+            $("#lAddNewCancel").click(function () {
+                $("#lAddEditForm form")[0].reset();
+                $("#lAddNew").removeClass('hidden');
+                $('#lAddEditForm,#lAddNewCancel').addClass('hidden');
+                return false;
+            });
+
+            // Populates the part type table
             $('#table').bootstrapTable({
                 columns: [{
-                        field: 'id',
-                        title: 'ID',
-                        sortable: true
-                    }, {
                         field: 'name',
                         title: 'Name',
                         sortable: true,
@@ -50,16 +54,12 @@
         </div>
         <div class="col-sm-4 hidden-xs text-right" style="padding-top:20px;">
             <a id="lAddNew" href="{{ path('part_types_add') }}" class="btn btn-xl btn-primary"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Part Type</a>
+            <a id="lAddNewCancel" href="#" class="btn btn-xl hidden btn-danger"> Cancel Add Part</a>
         </div>
     </div>
     <div class="row">
         <div class="col-xs-12">
             <p>Parts are grouped into generic categories. Each part can belong to one type.</p>
-        </div>
-    </div>
-    <div class="row visible-xs" style="margin-bottom:20px;">
-        <div class="col-xs-12">
-            <a href="{{ path('part_types_add') }}" class="btn btn-xl btn-block btn-primary"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Part Type</a>
         </div>
     </div>
     <div class="row">
