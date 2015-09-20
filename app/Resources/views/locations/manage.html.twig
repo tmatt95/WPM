@@ -11,7 +11,15 @@
             // Toggles the appearance of the add form
             $("#lAddNew").click(function () {
                 $(this).addClass('hidden');
-                $('#lAddEditForm').removeClass('hidden');
+                $('#lAddEditForm,#lAddNewCancel').removeClass('hidden');
+                return false;
+            });
+            
+            // Cancel the adding of a new part type
+            $("#lAddNewCancel").click(function () {
+                $("#lAddEditForm form")[0].reset();
+                $("#lAddNew").removeClass('hidden');
+                $('#lAddEditForm,#lAddNewCancel').addClass('hidden');
                 return false;
             });
 
@@ -66,6 +74,7 @@
         </div>
         <div class="col-sm-4 hidden-xs text-right" style="padding-top:20px;">
             <a id="lAddNew" href="#" class="btn btn-xl btn-primary"> <span class="glyphicon glyphicon-plus"></span> Location</a>
+            <a id="lAddNewCancel" href="#" class="btn btn-xl hidden btn-danger"> Cancel Add Location</a>
         </div>
     </div>
     <div class="row">
