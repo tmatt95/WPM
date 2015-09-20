@@ -44,9 +44,6 @@ parts_types_get:
     path:     /parttypes/get
     defaults: { _controller: AppBundle:PartTypes:get }
     methods:  [GET]
-part_types_add:
-    path:     /parttypes/add
-    defaults: { _controller: AppBundle:PartTypes:add }
 part_types_manage:
     path:     /parttypes/manage
     defaults: { _controller: AppBundle:PartTypes:manage }
