@@ -1,7 +1,5 @@
 <?php
 
-// src/AppBundle/Controller/PartsController.php
-
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -106,7 +104,7 @@ class PartsController extends Controller {
         $part = $this->getDoctrine()
                 ->getRepository('AppBundle:Part')
                 ->find($partId);
-
+        
         $html = $this->container->get('templating')->render(
                 'parts/view.html.twig', array('part' => $part)
         );
