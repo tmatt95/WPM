@@ -3,7 +3,10 @@
 {% block title %}Users: Manage{% endblock %}
 
 {% block body %}
-    <h1>Manage Users</h1>
+    <h1>Users</h1>
+    <ol class="breadcrumb">
+        <li class="active">Users</li>
+    </ol>
     <table id="users"></table>
 {% endblock %}
 
@@ -23,7 +26,7 @@
                         formatter: function (value, row, index) {
                             return '<a href="#">' + value + '</a>';
                         }
-                    },{
+                    }, {
                         title: 'Name',
                         formatter: function (value, row, index) {
                             return row.name_first + ' ' + row.name_last;
@@ -36,7 +39,7 @@
                     }],
                 url: '/users/get',
                 pagination: true,
-                sidePagination:'server',
+                sidePagination: 'server',
                 search: true
             });
         });

@@ -5,6 +5,10 @@
 
 {% block body %}
 <h1>Add Parts To Stores</h1>
+<ol class="breadcrumb">
+  <li><a href="{{ path('parts_find') }}">Parts</a></li>
+  <li class="active">Add Parts To Stores</li>
+</ol>
 {{ form_start(form) }}
 {{ form_widget(form) }}
 {{ form_end(form) }}
