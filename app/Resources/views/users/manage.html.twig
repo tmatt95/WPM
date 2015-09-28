@@ -3,11 +3,26 @@
 {% block title %}Users: Manage{% endblock %}
 
 {% block body %}
-    <h1>Users</h1>
-    <ol class="breadcrumb">
-        <li class="active">Users</li>
-    </ol>
-    <table id="users"></table>
+    <div class="row">
+        <div class="col-sm-8">
+            <h1>Users</h1>
+        </div>
+        <div class="col-sm-4 hidden-xs text-right" style="padding-top:20px;">
+            <a id="lAddNew" href="{{ path('users_add') }}" class="btn btn-xl btn-primary"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> User</a>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <ol class="breadcrumb">
+                <li class="active">Users</li>
+            </ol>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-xs-12">
+            <table id="users"></table>
+        </div>
+    </div>
 {% endblock %}
 
 {% block stylesheets %}
