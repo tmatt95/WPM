@@ -140,11 +140,11 @@ class Part
   // Added By
   public function getAddedBy()
   {
-    return $this->added_by;
+    return $this->addeduser;
   }
   public function setAddedBy($addedBy)
   {
-    $this->added_by = $addedBy;
+    $this->addeduser = $addedBy;
   }
 
   // Deleted
@@ -166,4 +166,40 @@ class Part
   {
     $this->deleted_by = $addedBy;
   }
+  
+  static function getTotalNumberLocation($em,$searchTerm) {
+        $qs = 'SELECT COUNT(l.id) as number FROM AppBundle:Location l';
+        if($searchTerm){
+            $qs .=' WHERE l.name LIKE :search';
+        }
+        $query = $em->createQuery($qs);
+        if($searchTerm){
+            $query->setParameter(
+                ':search',
+                '%'.$searchTerm.'%'
+            );
+        }
+        return $query->getResult()[0]['number'];
+    }
+    
+    static function searchLocation($em,$searchTerm,$limit,$offset) {
+        $qs = '';
+        if($searchTerm){
+            $qs .=' WHERE l.name LIKE :search';
+        }
+        $qs .=' ORDER BY l.name ASC';
+        $query = $em->createQuery($qs);
+        $query->setMaxResults($limit);
+        $query->setFirstResult($offset);
+        if($searchTerm){
+            $query->setParameter(
+                ':search',
+                '%'.$searchTerm.'%'
+            );
+        }
+        return array(
+            'total'=>self::getTotalNumber($em, $searchTerm),
+            'rows'=>$query->getResult()
+        );
+    }
 }

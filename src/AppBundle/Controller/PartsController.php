@@ -64,8 +64,7 @@ class PartsController extends Controller {
             // Adds missing information to form
             $createdDate = new DateTime('Europe/London');
             $part->setAdded($createdDate);
-            $user = $this->getUser();
-            $part->setAddedBy($user->getId());
+            $part->setAddedBy($this->getUser());
 
             // Adds audit log entry
             // Saves the new part to the system

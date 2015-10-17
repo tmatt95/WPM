@@ -25,6 +25,23 @@
                 pagination: true,
                 search: true
             });
+            
+            $('#lparts').bootstrapTable({
+                sidePagination: 'server',
+                columns: [{
+                        title: 'Added / By',
+                        formatter: function (value, row, index) {
+                            return row.added.date + ' - ' + row.name_first + ' ' + row.name_last;
+                        }
+                    }, {
+                        field: 'notes',
+                        title: 'Notes'
+                    }
+                ],
+                url: '/locations/getnotes/{{ formLocation.vars.value.id }}',
+                pagination: true,
+                search: true
+            });
         });
     </script>
 {% endblock %}
@@ -99,6 +116,7 @@
                         <div class="row">
                             <div class="col-xs-12">
                                 <h3>Parts</h3>
+                                <table id="lparts"></table>
                             </div>
                         </div>
                     </div>
