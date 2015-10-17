@@ -6,14 +6,63 @@
 
 {% block javascripts %}
     <script src="{{ asset('bootstrap-table.min.js') }}"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Creates the location table
+            $('#lnotes').bootstrapTable({
+                sidePagination: 'server',
+                columns: [{
+                        title: 'Added / By',
+                        formatter: function (value, row, index) {
+                            return row.added.date + ' - ' + row.name_first + ' ' + row.name_last;
+                        }
+                    }, {
+                        field: 'notes',
+                        title: 'Notes'
+                    }
+                ],
+                url: '/locations/getnotes/{{ formLocation.vars.value.id }}',
+                pagination: true,
+                search: true
+            });
+        });
+    </script>
 {% endblock %}
 
-{% block title %}Locations: Edit{% endblock %}
+{% block title %}Locations: {{ formLocation.vars.value.name }}{% endblock %}
 
 {% block body %}
     <div class="row">
+        <div class="col-sm-8">
+            <h1>{{ formLocation.vars.value.name }}</h1>
+        </div>
+        <div style="padding-top:20px;" class="col-sm-4 hidden-xs text-right">
+            <a class="btn btn-xl btn-danger disabled" href="/parts/add"> <span aria-hidden="true" class="glyphicon glyphicon-minus"></span> Delete Location</a>
+        </div>
+    </div>
+        <div class="row">
         <div class="col-xs-12">
-            <h1>Edit Location</h1>
+            <ol class="breadcrumb">
+                <li><a href="{{ path('locations_manage') }}">Locations</a></li>
+                <li class="active">{{ formLocation.vars.value.name }}</li>
+            </ol>
+        </div>
+    </div>
+    {% if displayMessage.value != '' %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert {{displayMessage.class}}" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{displayMessage.value}}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <div class="col-xs-12">
             {{ form_start(formLocation) }}
             {{ form_widget(formLocation) }}
             {{ form_end(formLocation) }}
@@ -21,7 +70,40 @@
     </div>
     <div class="row">
         <div class="col-xs-12">
-            <h3>Notes</h3>
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">Notes</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#parts" aria-controls="parts" role="tab" data-toggle="tab">Parts In Location</a>
+                    </li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="notes">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h3>Notes</h3>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-xs-12">
+                                {{ form_start(formLocationNote) }}
+                                {{ form_widget(formLocationNote) }}
+                                {{ form_end(formLocationNote) }}
+                            </div>
+                        </div>
+                        <table id="lnotes"></table>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="parts">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <h3>Parts</h3>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 {% endblock %}

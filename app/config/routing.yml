@@ -28,10 +28,18 @@ locations_get:
     path:     /locations/get
     defaults: { _controller: AppBundle:Locations:get }
     methods:  [GET]
+locations_notes_get:
+    path:     /locations/getnotes/{locationId}/
+    defaults: { _controller: AppBundle:Locations:getNotes }
+    methods:  [GET]
 locations_delete:
     path:     /locations/delete
     defaults: { _controller: AppBundle:Locations:delete }
     methods:  [POST]
+locations_add:
+    path:     /locations/add
+    defaults: { _controller: AppBundle:Locations:add }
+    methods:  [ADD]
 locations_manage:
     path:     /locations/manage
     defaults: { _controller: AppBundle:Locations:manage }

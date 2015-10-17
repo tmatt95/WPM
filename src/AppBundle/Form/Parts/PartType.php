@@ -22,7 +22,7 @@ class PartType extends AbstractType
     $builder
       ->add('name', 'text')
       ->add('description', 'textarea')
-      ->add('save', 'submit', array('label' => 'Save Part Type'));
+      ->add('save', 'submit', array('label' => 'Add Part Type'));
   }
 
   public function getName()

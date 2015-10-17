@@ -17,6 +17,11 @@ class User implements UserInterface, \Serializable {
      * @ORM\OneToMany(targetEntity="Part", mappedBy="addeduser")
      */
     protected $parts;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="LocationNote", mappedBy="addeduser")
+     */
+    protected $partsnotes;
 
     /**
      * @ORM\Column(type="integer")

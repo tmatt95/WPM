@@ -23,45 +23,28 @@
                 return false;
             });
 
-            // Fills / submits the delete location form
-            $("#locations").on("click", ".deleteLocation", function () {
-                $('#location_delete_idDelete').val($(this).data('locid'));
-        {#$.ajax({
-            method: "POST",
-            url: "/locations/delete",
-            data: $('#formLocDel form').serialize()
-        }).done(function (msg) {
-            alert("Item Deleted");
-        });#}
-                        });
-
-                        // Creates the location table
-                        $('#locations').bootstrapTable({
-                            sidePagination: 'server',
-                            columns: [{
-                                    field: 'id',
-                                    title: 'ID'
-                                }, {
-                                    field: 'name',
-                                    title: 'Name',
-                                    formatter: function (value, row, index) {
-                                        return '<a href="/locations/edit/' + row.id + '">' + value + '</a>';
-                                    }
-                                }, {
-                                    field: 'description',
-                                    title: 'Description'
-                                }, {
-                                    formatter: function (value, row, index) {
-                                        return '<button type="button" data-locid="' + row.id + '" class="btn btn-xs btn-danger deleteLocation"><span class="glyphicon glyphicon-trash"></span> Disable</button>';
-                                    },
-                                    title: 'Actions'
-                                }
-                            ],
-                            url: '{{ path('locations_get')}}',
-                            pagination: true,
-                            search: true
-                        });
-                    });
+            // Creates the location table
+            $('#locations').bootstrapTable({
+                sidePagination: 'server',
+                columns: [{
+                        field: 'id',
+                        title: 'ID'
+                    }, {
+                        field: 'name',
+                        title: 'Name',
+                        formatter: function (value, row, index) {
+                            return '<a href="/locations/edit/' + row.id + '">' + value + '</a>';
+                        }
+                    }, {
+                        field: 'description',
+                        title: 'Description'
+                    }
+                ],
+                url: '{{ path('locations_get')}}',
+                pagination: true,
+                search: true
+            });
+        });
     </script>
 {% endblock %}
 
@@ -84,6 +67,18 @@
             </ol>
         </div>
     </div>
+    {% if displayMessage.value != '' %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert {{displayMessage.class}}" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{displayMessage.value}}
+                </div>
+            </div>
+        </div>
+    {% endif %}
     <div class="row">
         <div class="col-xs-12">
             <div id="lAddEditForm" class="hidden">
@@ -99,11 +94,6 @@
                 </div>
             </div>
             <table id="locations"></table>
-            <div id="formLocDel">
-                {{ form_start(locDeleteForm) }}   
-                {{ form_widget(form) }}
-                {{ form_end(locDeleteForm) }}
-            </div>
         </div>
     </div>
 {% endblock %}

@@ -15,6 +15,12 @@ class LocationNote {
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="partsnotes")
+     * @ORM\JoinColumn(name="added_by", referencedColumnName="id")
+    */
+    protected $addeduser;
 
     /**
      * @ORM\Column(type="text")
@@ -100,7 +106,7 @@ class LocationNote {
      */
     public function setAddedBy($addedBy)
     {
-        $this->added_by = $addedBy;
+        $this->addeduser = $addedBy;
 
         return $this;
     }
@@ -112,7 +118,7 @@ class LocationNote {
      */
     public function getAddedBy()
     {
-        return $this->added_by;
+        return $this->addeduser;
     }
 
     /**
@@ -136,5 +142,53 @@ class LocationNote {
     public function getAdded()
     {
         return $this->added;
+    }
+    
+    static function getTotalNumber($em,$searchTerm) {
+        $qs = 'SELECT COUNT(ln.id) as number FROM AppBundle:LocationNote ln';
+        if($searchTerm){
+            $qs .=' WHERE ln.notes LIKE :search';
+        }
+        $query = $em->createQuery($qs);
+        if($searchTerm){
+            $query->setParameter(
+                ':search',
+                '%'.$searchTerm.'%'
+            );
+        }
+        return $query->getResult()[0]['number'];
+    }
+    
+    static function search($em,$locationId,$searchTerm,$limit,$offset) {
+        $qs = 'SELECT ln.id,
+                ln.notes,
+                ln.added,
+                ln.added_by,
+                u.name_first,
+                u.name_last
+        FROM AppBundle:LocationNote ln
+        JOIN ln.addeduser u
+        WHERE ln.location_id = :locationid';
+        if($searchTerm){
+            $qs .=' AND ln.notes LIKE :search';
+        }
+        $qs .=' ORDER BY ln.added DESC';
+        $query = $em->createQuery($qs);
+        $query->setMaxResults($limit);
+        $query->setFirstResult($offset);
+        if($searchTerm){
+            $query->setParameter(
+                ':search',
+                '%'.$searchTerm.'%'
+            );
+        }
+        $query->setParameter(
+            ':locationid',
+            $locationId
+        );
+        return array(
+            'total'=>1,
+            'rows'=>$query->getResult()
+        );
     }
 }

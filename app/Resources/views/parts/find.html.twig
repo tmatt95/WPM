@@ -25,19 +25,6 @@
                     }, {
                         field: 'description',
                         title: 'Description'
-                    }, {
-                        title: 'Use Parts',
-                        formatter: function (value, row, index) {
-                            return '<div class="col-xs-6"><select class="form-control"> \
-      <option value="">Select qty</option> \
-      <option>2</option> \
-      <option>3</option> \
-      <option>4</option> \
-      <option>5</option> \
-    </select> </div>\
-    <div class="col-xs-4"> \
-      <button type="submit" class="btn btn-default" type="submit">Use Part</button></div></div>';
-                        }
                     }],
                 url: '{{ path('parts_types_get')}}',
                 pagination: true,
