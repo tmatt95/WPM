@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\PartType;
 use AppBundle\Form\Parts\PartType as FPartType;
+use AppBundle\Form\Parts\PartTypeUpdate as FPartTypeUpdate;
 
 class PartTypesController extends Controller {
     
@@ -72,18 +73,15 @@ class PartTypesController extends Controller {
         $partType = $this->getDoctrine()
                 ->getRepository('AppBundle:PartType')
                 ->find($id);
-        $form = $this->createForm(new FPartType(), $partType);
+        $form = $this->createForm(new FPartTypeUpdate(), $partType);
         $form->handleRequest($request);
         
         // If form is posted and valid, then saves
         if ($form->isValid()) {
-            
-            //var_dump($form->get('save')->isClicked());
             $em = $this->getDoctrine()->getManager();
             $em->persist($partType);
             $em->flush();
             $this->displayMessage['value'] = 'Successfuly updated part type';
-            $form = $this->createForm(new FPartType(), $partType);
         }
 
         $html = $this->container->get('templating')->render(
