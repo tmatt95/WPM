@@ -1,0 +1,14 @@
+{% extends 'parts.html.twig' %}
+
+{% block title %}Users: {{ form.vars.value.namefirst }} {{ form.vars.value.namelast }}{% endblock %}
+
+{% block body %}
+<h1>{{ form.vars.value.namefirst }} {{ form.vars.value.namelast }}</h1>
+<ol class="breadcrumb">
+  <li><a href="{{ path('users_manage') }}">Users</a></li>
+  <li class="active">{{ form.vars.value.namefirst }} {{ form.vars.value.namelast }}</li>
+</ol>
+{{ form_start(form) }}
+{{ form_widget(form) }}
+{{ form_end(form) }}
+{% endblock %}

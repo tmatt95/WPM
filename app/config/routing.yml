@@ -71,6 +71,9 @@ users_login_check:
 users_add:
     path:     /users/add
     defaults: { _controller: AppBundle:User:add }
+users_edit:
+    path:     /users/edit/{userId}
+    defaults: { _controller: AppBundle:User:edit }
 users_manage:
     path:     /users/manage
     defaults: { _controller: AppBundle:User:manage }

@@ -39,17 +39,12 @@
                         field: 'username',
                         title: 'Username',
                         formatter: function (value, row, index) {
-                            return '<a href="#">' + value + '</a>';
+                            return '<a href="/users/edit/'+row.id +'">' + value + '</a>';
                         }
                     }, {
                         title: 'Name',
                         formatter: function (value, row, index) {
                             return row.name_first + ' ' + row.name_last;
-                        }
-                    }, {
-                        title: 'Actions',
-                        formatter: function (value, row, index) {
-                            return ' ';
                         }
                     }],
                 url: '/users/get',

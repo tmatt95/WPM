@@ -58,6 +58,40 @@ class UserController extends Controller {
         );
         return new Response($html);
     }
+    
+        public function editAction($userId, Request $request) {
+        // Generates the form
+        $user = $this->getDoctrine()
+                ->getRepository('AppBundle:User')
+                ->find($userId);
+        $form = $this->createForm(new FUser(), $user);
+        $form->handleRequest($request);
+
+        // If form is posted and valid, then saves
+        if ($form->isValid()) {
+
+            $encoder = $this->container->get('security.password_encoder');
+            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
+
+            // Adds created date of now
+            $createdDate = new DateTime('Europe/London');
+            $user->setAdded($createdDate);
+
+            // The users who added the new user to the system
+            $luser = $this->getUser();
+            $user->setAddedBy($luser->getId());
+
+            // Saves the new record
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+        }
+
+        $html = $this->container->get('templating')->render(
+                'users/edit.html.twig', array('form' => $form->createView())
+        );
+        return new Response($html);
+    }
 
     /**
      * Manage user page
