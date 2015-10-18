@@ -55,12 +55,9 @@ parts_types_get:
 part_types_manage:
     path:     /parttypes/manage
     defaults: { _controller: AppBundle:PartTypes:manage }
-
-# Help
-article:
-    path:     /help/{_article}
-    defaults: { _controller: AppBundle:PartTypes:add,_article:"parts"}
-    methods:  [GET]
+part_types_edit:
+    path:     /parttypes/edit/{id}
+    defaults: { _controller: AppBundle:PartTypes:edit }
 
 # Users
 login:

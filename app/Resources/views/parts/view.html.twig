@@ -1,16 +1,19 @@
-{# app/Resources/views/lucky/number.html.twig #}
 {% extends 'parts.html.twig' %}
 
 {% block title %}Parts: View{% endblock %}
 
 {% block body %}
-<h1>View Part - {{part.getName()}}</h1>
+    <h1>View Part - </h1>
+    <ol class="breadcrumb">
+        <li><a href="{{ path('parts_find') }}">Parts</a></li>
+        <li class="active">View Part</li>
+    </ol>
 
-<h3>Description</h3>
-{{part.getDescription()}}
+    <h3>Description</h3>
 
-<h3>Quatity</h3>
-{{part.getQty()}}
 
-<h3>Auditing</h3>
+    <h3>Quatity</h3>
+
+
+    <h3>Auditing</h3>
 {% endblock %}

@@ -79,7 +79,7 @@ class LocationsController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($location);
             $em->flush();
-            $this->displayMessage['value'] =  'Successfuly added location.';
+            $this->displayMessage['value'] =  'Successfuly added location';
             $this->displayMessage['showButton'] = true;
             $this->displayMessage['locationId'] = $location->getId();
             return $this->createForm(new FLocation(), new Location());

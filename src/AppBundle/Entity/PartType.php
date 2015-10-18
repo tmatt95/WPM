@@ -85,6 +85,45 @@ class PartType
         return $this->description;
     }
     
+    static function getTotalNumber($em,$searchTerm) {
+        $qs = 'SELECT COUNT(p.id) as number FROM AppBundle:PartType p';
+        if($searchTerm){
+            $qs .=' WHERE p.name LIKE :search';
+        }
+        $query = $em->createQuery($qs);
+        if($searchTerm){
+            $query->setParameter(
+                ':search',
+                '%'.$searchTerm.'%'
+            );
+        }
+        return $query->getResult()[0]['number'];
+    }
+    
+    static function search($em,$searchTerm,$limit,$offset) {
+        $qs = 'SELECT p.id,
+                p.name,
+                CONCAT(SUBSTRING(p.description,1,50),\'...\') as description
+            FROM AppBundle:PartType p';
+        if($searchTerm){
+            $qs .=' WHERE p.name LIKE :search';
+        }
+        $qs .=' ORDER BY p.name ASC';
+        $query = $em->createQuery($qs);
+        $query->setMaxResults($limit);
+        $query->setFirstResult($offset);
+        if($searchTerm){
+            $query->setParameter(
+                ':search',
+                '%'.$searchTerm.'%'
+            );
+        }
+        return array(
+            'total'=>self::getTotalNumber($em, $searchTerm),
+            'rows'=>$query->getResult()
+        );
+    }
+    
     static function getList($em){
         $qs = 'SELECT p.id, p.name FROM AppBundle:PartType p ORDER BY p.name ASC';
         $query = $em->createQuery($qs);

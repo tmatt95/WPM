@@ -8,6 +8,21 @@
         <li><a href="{{ path('users_manage') }}">Users</a></li>
         <li class="active">Add User</li>
     </ol>
+    {% if displayMessage.value != '' %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert {{displayMessage.class}}" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{displayMessage.value}} 
+                    {% if displayMessage.showButton == true %}
+                        - <a href="/users/edit/{{ displayMessage.userId }}" class="btn btn-default btn-sm">{{displayMessage.buttonText}}</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
     {{ form_start(form) }}
     {{ form_errors(form) }}
     <div class="form-group">

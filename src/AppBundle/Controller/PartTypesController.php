@@ -1,7 +1,4 @@
 <?php
-
-// src/AppBundle/Controller/PartTypesController.php
-
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -22,27 +19,18 @@ class PartTypesController extends Controller {
         'value'=>''
     );
 
-    public function getAction() {
-
-        // Gets types
-        $repository = $this->getDoctrine()
-                ->getRepository('AppBundle:PartType');
-        $query = $repository->createQueryBuilder('pt')
-                ->getQuery();
-        $locations = $query->getResult();
-
-        //Outputs to browser
-        $output = [];
-        foreach ($locations as $l) {
-            $output[] = [
-                'id' => $l->getId(),
-                'name' => $l->getName(),
-                'description' => $l->getDescription()
-            ];
+    public function getAction(Request $request) {
+        $limit = 10;
+        $offset = 0;
+        if ($request->query->get('limit') && $request->query->get('offset')) {
+            $limit = $request->query->get('limit');
+            $offset = $request->query->get('offset');
         }
+        $searchTerm = $request->query->get('search');
+        $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-                $output
+            PartType::search($em, $searchTerm, $limit, $offset)
         );
         return $response;
     }
@@ -63,6 +51,32 @@ class PartTypesController extends Controller {
 
         $html = $this->container->get('templating')->render(
             'parttypes/manage.html.twig',
+            array(
+                'form'=>$form->createView(),
+                'displayMessage'=>$this->displayMessage
+            )
+        );
+        return new Response($html);
+    }
+    
+    public function editAction($id,Request $request) {
+        $partType = $this->getDoctrine()
+                ->getRepository('AppBundle:PartType')
+                ->find($id);
+        $form = $this->createForm(new FPartType(), $partType);
+        $form->handleRequest($request);
+        
+        // If form is posted and valid, then saves
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($partType);
+            $em->flush();
+            $this->displayMessage['value'] = 'Successfuly updated part type';
+            $form = $this->createForm(new FPartType(), $partType);
+        }
+
+        $html = $this->container->get('templating')->render(
+            'parttypes/edit.html.twig',
             array(
                 'form'=>$form->createView(),
                 'displayMessage'=>$this->displayMessage

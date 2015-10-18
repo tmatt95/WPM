@@ -33,7 +33,7 @@
                         title: 'Name',
                         sortable: true,
                         formatter: function (value, row, index) {
-                            return '<a href="#">' + value + '</a>';
+                            return '<a href="/parttypes/edit/'+row.id+'">' + value + '</a>';
                         }
                     }, {
                         field: 'description',
@@ -41,6 +41,7 @@
                     }],
                 url: '{{ path('parts_types_get')}}',
                 pagination: true,
+                sidePagination: 'server',
                 search: true,
             });
         });

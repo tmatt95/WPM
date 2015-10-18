@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\User;
 use AppBundle\Form\User\User as FUser;
 use AppBundle\Form\User\UserUpdate as FUserUpdate;
+use AppBundle\Form\User\UserPassword as FUserPassword;
 use DateTime;
 
 /**
@@ -21,6 +22,99 @@ use DateTime;
 class UserController extends Controller {
 
     /**
+     * Used to store notice messages to be displayed at the top of the 
+     * manage/edit windows after an ection has been carried out.
+     * 
+     * `class`:
+     * Class to be displayed on the alert box. Defaults to 'alert-success'.
+     * 
+     * `showButton`:
+     * Whether to show the button linking to the location the message relates to.
+     * Defaults to false.
+     * 
+     */
+    private $displayMessage = array(
+        'class' => 'alert-success',
+        'showButton' => false,
+        'buttonText' => 'Edit User',
+        'userId' => null,
+        'value' => ''
+    );
+    
+    /**
+     * User Add
+     * Will try and add a new user to the system if there is one to add.
+     * @param Request $request containing the POST data if sent
+     * @param Location $user record to be added
+     * @return FLocation Either a blank new for on success orone with errors
+     */
+    private function formAdd(Request $request, User $user) {
+        // Adds created date of now
+        $createdDate = new DateTime('Europe/London');
+        $user->setAdded($createdDate);
+        
+        // The users who added the new user to the system
+        $luser = $this->getUser();
+        $user->setAddedBy($luser->getId());
+        
+        $form = $this->createForm(new FUser(), $user);
+        $form->handleRequest($request);
+
+        // If form is posted and valid, then saves
+        if ($form->isValid()) {
+            $encoder = $this->container->get('security.password_encoder');
+            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
+
+            // Saves the new record
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+            $this->displayMessage['value'] = 'Successfuly added user';
+            $this->displayMessage['showButton'] = true;
+            $this->displayMessage['userId'] = $user->getId();
+            $form = $this->createForm(new FUser(), new User());
+        } 
+        return $form;
+    }
+    
+    /**
+     * Location Add
+     * Will try and add a new location to the system if there is one to add.
+     * @param Request $request containing the POST data if sent
+     * @param Location $user record to be added
+     * @return FLocation Either a blank new for on success orone with errors
+     */
+    private function formEdit(Request $request, User $user) {
+        $form = $this->createForm(new FUserUpdate(), $user);
+        $form->handleRequest($request);
+
+        // If form is posted and valid, then saves
+        if ($form->isValid()) {
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+            $this->displayMessage['value'] = 'Successfuly updated user';
+        } 
+        return $form;
+    }
+    
+    private function formEditPassword(Request $request, User $user) {
+        $form = $this->createForm(new FUserPassword(), $user);
+        $form->handleRequest($request);
+
+        // If form is posted and valid, then saves
+        if ($form->isValid()) {
+            $encoder = $this->container->get('security.password_encoder');
+            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+            $this->displayMessage['value'] = 'Successfuly updated user';
+        } 
+        return $form;
+    }
+
+    /**
      * Add new user
      * Will display the add new user form. If a new user has been posted to this
      * action then it will try and add it, returning a blank new user form or a
@@ -29,67 +123,27 @@ class UserController extends Controller {
      * @return Response HTML for new user form
      */
     public function addAction(Request $request) {
-        // Generates the form
-        $user = new User();
-        $form = $this->createForm(new FUser(), $user);
-        $form->handleRequest($request);
-
-        // If form is posted and valid, then saves
-        if ($form->isValid()) {
-
-            $encoder = $this->container->get('security.password_encoder');
-            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
-
-            // Adds created date of now
-            $createdDate = new DateTime('Europe/London');
-            $user->setAdded($createdDate);
-
-            // The users who added the new user to the system
-            $luser = $this->getUser();
-            $user->setAddedBy($luser->getId());
-
-            // Saves the new record
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-        }
-
+        $form = $this->formAdd($request, new User());
         $html = $this->container->get('templating')->render(
-                'users/add.html.twig', array('form' => $form->createView())
+            'users/add.html.twig', array('form' => $form->createView(), 'displayMessage' => $this->displayMessage)
         );
         return new Response($html);
     }
-    
-        public function editAction($userId, Request $request) {
-        // Generates the form
+
+    public function editAction($userId, Request $request) {
         $user = $this->getDoctrine()
-                ->getRepository('AppBundle:User')
-                ->find($userId);
-        $form = $this->createForm(new FUserUpdate(), $user);
-        $form->handleRequest($request);
-
-        // If form is posted and valid, then saves
-        if ($form->isValid()) {
-
-            $encoder = $this->container->get('security.password_encoder');
-            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
-
-            // Adds created date of now
-            $createdDate = new DateTime('Europe/London');
-            $user->setAdded($createdDate);
-
-            // The users who added the new user to the system
-            $luser = $this->getUser();
-            $user->setAddedBy($luser->getId());
-
-            // Saves the new record
-            $em = $this->getDoctrine()->getManager();
-            $em->persist($user);
-            $em->flush();
-        }
+            ->getRepository('AppBundle:User')
+            ->find($userId);  
+        $formPassword = $this->formEditPassword($request, $user);
+        $formUser = $this->formEdit($request, $user);
 
         $html = $this->container->get('templating')->render(
-                'users/edit.html.twig', array('form' => $form->createView())
+            'users/edit.html.twig',
+            array(
+                'form' => $formUser->createView(),
+                'formPassword'=>$formPassword->createView(),
+                'displayMessage'=>$this->displayMessage
+            )
         );
         return new Response($html);
     }
@@ -105,7 +159,7 @@ class UserController extends Controller {
         );
         return new Response($html);
     }
-    
+
     /**
      * Get user list
      * Finds a list of users in the database which are not marked as 
@@ -117,7 +171,7 @@ class UserController extends Controller {
     public function getAction(Request $request) {
         $limit = 10;
         $offset = 0;
-        if($request->query->get('limit') && $request->query->get('offset')){
+        if ($request->query->get('limit') && $request->query->get('offset')) {
             $limit = $request->query->get('limit');
             $offset = $request->query->get('offset');
         }
@@ -125,7 +179,7 @@ class UserController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-            User::search($em,$searchTerm,$limit,$offset)
+                User::search($em, $searchTerm, $limit, $offset)
         );
         return $response;
     }
