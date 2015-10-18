@@ -12,6 +12,11 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class PartType
 {
+    /**
+     * @ORM\OneToMany(targetEntity="Part", mappedBy="parttype")
+     */
+    protected $parts;
+    
   /**
    * @ORM\Column(type="integer")
    * @ORM\Id
@@ -122,6 +127,25 @@ class PartType
             'total'=>self::getTotalNumber($em, $searchTerm),
             'rows'=>$query->getResult()
         );
+    }
+    
+    static function getStats($em){
+        $qs = 'SELECT pt.name,
+        SUM(p.qty) as qty
+        FROM AppBundle:PartType pt
+        JOIN pt.parts p';
+        $qs .='  GROUP BY pt.name ORDER BY pt.name DESC';
+        $query = $em->createQuery($qs);
+        
+        $output = array();
+        foreach( $query->getResult() as $index => $stat){
+            $output[$index] = ['color' => "#46BFBD",
+            'highlight' => "#5AD3D1",
+            'label' => $stat['name'],
+            'value'=> $stat['qty']];
+                    
+        }
+        return $output;
     }
     
     static function getList($em){

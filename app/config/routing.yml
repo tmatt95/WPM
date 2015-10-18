@@ -48,6 +48,10 @@ locations_edit:
     defaults: { _controller: AppBundle:Locations:edit }
 
 # Part Types
+parts_types_get_stats:
+    path:     /parttypes/getstats
+    defaults: { _controller: AppBundle:PartTypes:getStats }
+    methods:  [GET]
 parts_types_get:
     path:     /parttypes/get
     defaults: { _controller: AppBundle:PartTypes:get }

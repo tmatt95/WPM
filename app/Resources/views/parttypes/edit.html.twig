@@ -3,12 +3,12 @@
 {% block title %}Part Types: {{ form.vars.value.name }}{% endblock %}
 
 {% block body %}
-<h1>{{ form.vars.value.name }}</h1>
-<ol class="breadcrumb">
-  <li><a href="{{ path('part_types_manage') }}">Part Types</a></li>
-  <li class="active">{{ form.vars.value.name }}</li>
-</ol>
-  {% if displayMessage.value != '' %}
+    <h1>{{ form.vars.value.name }}</h1>
+    <ol class="breadcrumb">
+        <li><a href="{{ path('part_types_manage') }}">Part Types</a></li>
+        <li class="active">{{ form.vars.value.name }}</li>
+    </ol>
+    {% if displayMessage.value != '' %}
         <div class="row">
             <div class="col-xs-12">
                 <div class="alert {{displayMessage.class}}" role="alert">
@@ -20,7 +20,7 @@
             </div>
         </div>
     {% endif %}
-{{ form_start(form) }}
-{{ form_widget(form) }}
-{{ form_end(form) }}
+    {{ form_start(form) }}
+    {{ form_widget(form) }}
+    {{ form_end(form) }}
 {% endblock %}

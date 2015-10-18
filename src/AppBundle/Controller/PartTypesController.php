@@ -18,6 +18,15 @@ class PartTypesController extends Controller {
         'class'=>'alert-success',
         'value'=>''
     );
+    
+    public function getStatsAction(Request $request) {
+        $em = $this->getDoctrine()->getManager();
+        $response = new JsonResponse();
+        $response->setData(
+            PartType::getStats($em)
+        );
+        return $response;
+    }
 
     public function getAction(Request $request) {
         $limit = 10;

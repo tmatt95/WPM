@@ -12,11 +12,32 @@ use AppBundle\Entity\PartType;
 
 class PartsController extends Controller {
 
+    /**
+     * Used to store notice messages to be displayed at the top of the 
+     * manage/edit windows after an ection has been carried out.
+     * 
+     * `class`:
+     * Class to be displayed on the alert box. Defaults to 'alert-success'.
+     * 
+     * `showButton`:
+     * Whether to show the button linking to the location the message relates to.
+     * Defaults to false.
+     * 
+     *  
+     */
+    private $displayMessage = array(
+        'class' => 'alert-success',
+        'showButton' => false,
+        'buttonText' => 'Edit Part',
+        'partId' => null,
+        'value' => ''
+    );
+
     public function indexAction() {
         // Information for the latest added parts widget
         $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
-            'SELECT p.name,
+                'SELECT p.name,
             p.qty,
             p.added,
             u.id,
@@ -27,16 +48,13 @@ class PartsController extends Controller {
         $query->setMaxResults(10);
         $partsAdded = $query->getResult();
         $html = $this->container->get('templating')->render(
-            'parts/index.html.twig',
-            array('partsAdded' => $partsAdded, 'partsUsed' => array())
+                'parts/index.html.twig', array('partsAdded' => $partsAdded, 'partsUsed' => array())
         );
         return new Response($html);
     }
 
     public function addAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
-        $partTypeList = PartType::getList($em);
-        $locationList = Location::getList($em);
 
         // Generates the form
         $part = new Part();
@@ -44,16 +62,17 @@ class PartsController extends Controller {
                 ->add('name', 'text')
                 ->add('description', 'textarea')
                 ->add('type', 'choice', array(
-                    'choices' => $partTypeList,
+                    'choices' => PartType::getList($em),
                     'required' => false,
                 ))
                 ->add('location', 'choice', array(
-                    'choices' => $locationList,
+                    'choices' => Location::getList($em),
                     'required' => false,
                 ))
                 ->add('qty', 'integer')
                 ->add('save', 'submit', array('label' => 'Add Part'))
                 ->getForm();
+        $blankForm = clone($form);
 
         // Populates the form with submitted data if any present
         $form->handleRequest($request);
@@ -61,24 +80,32 @@ class PartsController extends Controller {
         // If form is posted and valid, then saves
         if ($form->isValid()) {
 
-            // Adds missing information to form
+            // Adds created date to form
             $createdDate = new DateTime('Europe/London');
             $part->setAdded($createdDate);
             $part->setAddedBy($this->getUser());
 
-            // Adds audit log entry
+            // Loads the part type to link to the part
+            $partType = $this->getDoctrine()
+                    ->getRepository('AppBundle:PartType')
+                    ->find($part->getType());
+            $part->setType($partType);
+
             // Saves the new part to the system
             $em = $this->getDoctrine()->getManager();
             $em->persist($part);
             $em->flush();
+            $this->displayMessage['value'] = 'Successfuly added part';
+            $this->displayMessage['showButton'] = true;
+            $this->displayMessage['partId'] = $part->getId();
+            $form = $blankForm;
         }
 
         // Renders the add part screen
         $html = $this->container->get('templating')->render(
                 'parts/add.html.twig', array(
             'form' => $form->createView(),
-            'locations' => $locationList,
-            'types' => $partTypeList
+            'displayMessage' => $this->displayMessage
                 )
         );
         return new Response($html);
@@ -103,7 +130,7 @@ class PartsController extends Controller {
         $part = $this->getDoctrine()
                 ->getRepository('AppBundle:Part')
                 ->find($partId);
-        
+
         $html = $this->container->get('templating')->render(
                 'parts/view.html.twig', array('part' => $part)
         );
