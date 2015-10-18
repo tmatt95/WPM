@@ -10,6 +10,7 @@ use AppBundle\Entity\Location;
 use AppBundle\Entity\LocationNote;
 use AppBundle\Form\Locations\Location as FLocation;
 use AppBundle\Form\Locations\LocationNote as FLocationNote;
+use AppBundle\Form\Locations\LocationDelete as FLocationDelete;
 use DateTime;
 
 /**
@@ -34,7 +35,7 @@ class LocationsController extends Controller {
      */
     private $displayMessage = array(
         'class' => 'alert-success',
-        'showButton' =>false,
+        'showButton' => false,
         'buttonText' => 'Edit Location',
         'locationId' => null,
         'value' => ''
@@ -61,6 +62,16 @@ class LocationsController extends Controller {
         }
         return $form;
     }
+    
+    private function formDelete(Request $request, Location $location) {
+        $form = $this->createForm(new FLocationDelete(), $location);
+        $form->handleRequest($request);
+
+        if ($form->isValid()) {
+            echo 'delete location';
+        }
+        return $form;
+    }
 
     /**
      * Location Add
@@ -79,7 +90,7 @@ class LocationsController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($location);
             $em->flush();
-            $this->displayMessage['value'] =  'Successfuly added location';
+            $this->displayMessage['value'] = 'Successfuly added location';
             $this->displayMessage['showButton'] = true;
             $this->displayMessage['locationId'] = $location->getId();
             return $this->createForm(new FLocation(), new Location());
@@ -190,12 +201,16 @@ class LocationsController extends Controller {
                 ->find($id);
         $form = $this->formUpdate($request, $location);
         $lNForm = $this->formLNAdd($id, $request, new LocationNote());
-        $html = $this->container->get('templating')->render(
-                'locations/edit.html.twig', array(
-            'formLocation' => $form->createView(),
-            'formLocationNote' => $lNForm->createView(),
-            'displayMessage' => $this->displayMessage
-                )
+        $formDelete = $this->formDelete($request, $location);
+        $html = $this->container->get('templating')->render
+        (
+            'locations/edit.html.twig',
+            array(
+                'formLocation' => $form->createView(),
+                'formLocationNote' => $lNForm->createView(),
+                'displayMessage' => $this->displayMessage,
+                'formDelete' => $formDelete->createView()
+            )
         );
         return new Response($html);
     }

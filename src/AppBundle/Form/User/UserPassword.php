@@ -13,7 +13,8 @@ class UserPassword extends AbstractType
   public function configureOptions(OptionsResolver $resolver)
   {
     $resolver->setDefaults(array(
-      'data_class' => 'AppBundle\Entity\User'
+      'data_class' => 'AppBundle\Entity\User',
+        'csrf_field_name' => '_token_user_password'
     ));
   }
 

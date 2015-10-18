@@ -5,14 +5,14 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\UserRepository")
  */
-class User implements UserInterface, \Serializable {
+class User implements AdvancedUserInterface, \Serializable {
 
     /**
      * @ORM\OneToMany(targetEntity="Part", mappedBy="addeduser")
@@ -72,17 +72,42 @@ class User implements UserInterface, \Serializable {
      * @ORM\Column(type="integer")
      */
     private $addedBy;
+    
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $deleted;
 
     /**
-     * @Assert\NotBlank()
-     * @ORM\Column(name="is_active", type="boolean")
+     * @ORM\Column(type="integer")
      */
-    private $isActive;
+    private $deletedBy;
+
+    public function isAccountNonExpired()
+    {
+        return true;
+    }
+
+    public function isAccountNonLocked()
+    {
+        return true;
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    public function isEnabled()
+    {
+        if($this->getDeleted()=== 1){
+            return false;
+        } else{
+            return true;
+        }
+    }
 
     public function __construct() {
-        $this->isActive = true;
-        // may not be needed, see section on salt below
-        // $this->salt = md5(uniqid(null, true));
     }
 
     public function getUsername() {
@@ -94,7 +119,7 @@ class User implements UserInterface, \Serializable {
         // see section on salt below
         return null;
     }
-
+    
     public function getPassword() {
         return $this->password;
     }
@@ -145,6 +170,11 @@ class User implements UserInterface, \Serializable {
     public function getId() {
         return $this->id;
     }
+    
+    public function setId($id) {
+        $this->id = $id;
+        return $this;
+    }
 
     /**
      * Set username
@@ -168,6 +198,38 @@ class User implements UserInterface, \Serializable {
         $this->password = $password;
 
         return $this;
+    }
+    
+    /**
+     * @param string $email
+     * @return User
+     */
+    public function setDeleted($deleted) {
+        $this->deleted = $deleted;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeleted() {
+        return $this->deleted;
+    }
+    
+    /**
+     * @param string $email
+     * @return User
+     */
+    public function setDeletedBy($deletedBy) {
+        $this->deletedBy = $deletedBy;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeletedBy() {
+        return $this->deletedBy;
     }
 
     /**
@@ -299,7 +361,9 @@ class User implements UserInterface, \Serializable {
     static function getTotalNumber($em, $searchTerm) {
         $qs = 'SELECT COUNT(u.id) as number FROM AppBundle:User u';
         if ($searchTerm) {
-            $qs .=' WHERE u.username LIKE :search';
+            $qs .=' WHERE u.username LIKE :search  AND u.deleted IS NULL';
+        } else{
+            $qs .=' WHERE u.deleted IS NULL';
         }
         $query = $em->createQuery($qs);
         if ($searchTerm) {
@@ -317,7 +381,9 @@ class User implements UserInterface, \Serializable {
                 u.name_last
             FROM AppBundle:User u';
         if ($searchTerm) {
-            $qs .=' WHERE u.username LIKE :search';
+            $qs .=' WHERE u.username LIKE :search AND u.deleted IS NULL';
+        } else{
+            $qs .=' WHERE u.deleted IS NULL';
         }
         $qs .=' ORDER BY u.username ASC';
         $query = $em->createQuery($qs);

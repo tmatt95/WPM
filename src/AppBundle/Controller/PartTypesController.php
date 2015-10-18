@@ -77,6 +77,8 @@ class PartTypesController extends Controller {
         
         // If form is posted and valid, then saves
         if ($form->isValid()) {
+            
+            //var_dump($form->get('save')->isClicked());
             $em = $this->getDoctrine()->getManager();
             $em->persist($partType);
             $em->flush();

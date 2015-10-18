@@ -10,6 +10,7 @@ use AppBundle\Entity\User;
 use AppBundle\Form\User\User as FUser;
 use AppBundle\Form\User\UserUpdate as FUserUpdate;
 use AppBundle\Form\User\UserPassword as FUserPassword;
+use AppBundle\Form\User\UserDelete as FUserDelete;
 use DateTime;
 
 /**
@@ -98,6 +99,22 @@ class UserController extends Controller {
         return $form;
     }
     
+    private function formDelete(Request $request, User $user) {
+        $form = $this->createForm(new FUserDelete(), $user);
+        $form->handleRequest($request);
+
+        // If form is posted and valid, then delete user
+        if ($form->isValid()) {
+            $user->setDeleted(1);
+            $luser = $this->getUser();
+            $user->setDeletedBy($luser->getId());
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($user);
+            $em->flush();
+        } 
+        return $form;
+    }
+    
     private function formEditPassword(Request $request, User $user) {
         $form = $this->createForm(new FUserPassword(), $user);
         $form->handleRequest($request);
@@ -136,13 +153,15 @@ class UserController extends Controller {
             ->find($userId);  
         $formPassword = $this->formEditPassword($request, $user);
         $formUser = $this->formEdit($request, $user);
+        $formDelete = $this->formDelete($request, $user);
 
         $html = $this->container->get('templating')->render(
             'users/edit.html.twig',
             array(
                 'form' => $formUser->createView(),
                 'formPassword'=>$formPassword->createView(),
-                'displayMessage'=>$this->displayMessage
+                'displayMessage'=>$this->displayMessage,
+                'formDelete'=>$formDelete->createView()
             )
         );
         return new Response($html);

@@ -4,11 +4,6 @@
 {% block title %}Login{% endblock %}
 
 {% block body %}
-    <div class="row">
-        <div class="col-xs-12">
-            <img class="img-responsive img-rounded" src="/lineup.jpg"/>
-        </div>
-    </div>
     {% if error %}
         <div class="alert alert-danger" style="margin-top:10px;margin-bottom:0px;">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
@@ -24,4 +19,11 @@
             </div>
         </div>
     </nav>
+
+    <div class="row">
+        <div class="col-xs-12">
+            <h1>Welcome</h1>
+            <p>Welcome to the CTPG parts system. To gain entry to this, please speak to a member of the team.</p>
+        </div>
+    </div>
 {% endblock %}
