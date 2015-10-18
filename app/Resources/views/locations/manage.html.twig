@@ -27,9 +27,6 @@
             $('#locations').bootstrapTable({
                 sidePagination: 'server',
                 columns: [{
-                        field: 'id',
-                        title: 'ID'
-                    }, {
                         field: 'name',
                         title: 'Name',
                         formatter: function (value, row, index) {
@@ -56,8 +53,8 @@
             <h1>Locations</h1>
         </div>
         <div class="col-sm-4 hidden-xs text-right" style="padding-top:20px;">
-            <a id="lAddNew" href="#" class="btn btn-xl btn-primary"> <span class="glyphicon glyphicon-plus"></span> Location</a>
-            <a id="lAddNewCancel" href="#" class="btn btn-xl hidden btn-danger"> Cancel Add Location</a>
+            <a id="lAddNew" href="#" class="btn btn-xl btn-primary"> <span class="glyphicon glyphicon-plus"></span>Add Location</a>
+            <a id="lAddNewCancel" href="#" class="btn btn-xl hidden btn-danger"> Cancel</a>
         </div>
     </div>
     <div class="row">
@@ -74,7 +71,10 @@
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
-                    {{displayMessage.value}}
+                    {{displayMessage.value}} 
+                    {% if displayMessage.showButton == true %}
+                    - <a href="/locations/edit/{{ displayMessage.locationId }}" class="btn btn-default btn-sm">{{displayMessage.buttonText}}</a>
+                    {% endif %}
                 </div>
             </div>
         </div>

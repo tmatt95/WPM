@@ -64,11 +64,18 @@
             </ol>
         </div>
     </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <p>Parts are grouped into generic categories. Each part can belong to one type.</p>
+    {% if displayMessage.value != '' %}
+        <div class="row">
+            <div class="col-xs-12">
+                <div class="alert {{displayMessage.class}}" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    {{displayMessage.value}}
+                </div>
+            </div>
         </div>
-    </div>
+    {% endif %}
     <div class="row">
         <div class="col-xs-12">
             <div id="lAddEditForm" class="hidden">

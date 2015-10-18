@@ -18,71 +18,103 @@ use DateTime;
  * in the system.
  */
 class LocationsController extends Controller {
-    
+
     /**
      * Used to store notice messages to be displayed at the top of the 
      * manage/edit windows after an ection has been carried out.
+     * 
+     * `class`:
+     * Class to be displayed on the alert box. Defaults to 'alert-success'.
+     * 
+     * `showButton`:
+     * Whether to show the button linking to the location the message relates to.
+     * Defaults to false.
+     * 
+     *  
      */
-    private $displayMessage= array(
-        'class'=>'alert-success',
-        'value'=>''
+    private $displayMessage = array(
+        'class' => 'alert-success',
+        'showButton' =>false,
+        'buttonText' => 'Edit Location',
+        'locationId' => null,
+        'value' => ''
     );
-    
+
     /**
-     * Form Add/Update
-     * @param Request $request
-     * @param Location $location 
-     * @return type
+     * Location Update
+     * This will take the location form an try and update the database with it
+     * if one is sent to it.
+     * @param Request $request containing the POST data if sent
+     * @param Location $location record to be updated
+     * @return FLocation Either updated or with errors
      */
-    private function formUpdate(Request $request, Location $location){
+    private function formUpdate(Request $request, Location $location) {
         $form = $this->createForm(new FLocation(), $location);
         $form->handleRequest($request);
-        
+
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($location);
             $em->flush();
-            $this->displayMessage['value'] = 'Successfuly updated location.';
+            $this->displayMessage['value'] = 'Successfuly updated location';
             $this->displayMessage['class'] = 'alert-info';
         }
         return $form;
     }
-    
-    private function formAdd(Request $request, Location $location){
+
+    /**
+     * Location Add
+     * Will try and add a new location to the system if there is one to add.
+     * @param Request $request containing the POST data if sent
+     * @param Location $location record to be updated
+     * @return FLocation Either a blank new for on success orone with errors
+     */
+    private function formAdd(Request $request, Location $location) {
         $form = $this->createForm(new FLocation(), $location);
         $form->handleRequest($request);
-        
+
         // If the form is valid then save it and return a blank form otherwise
         // return the form with any errors in.
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($location);
             $em->flush();
-            $this->displayMessage['value'] = 'Successfuly added location.';
+            $this->displayMessage['value'] =  'Successfuly added location.';
+            $this->displayMessage['showButton'] = true;
+            $this->displayMessage['locationId'] = $location->getId();
             return $this->createForm(new FLocation(), new Location());
-        } else{
+        } else {
             return $form;
         }
     }
-    
-    private function formLNAdd($locationId,Request $request, LocationNote $record){
+
+    /**
+     * 
+     * @param type $locationId
+     * @param Request $request
+     * @param LocationNote $record
+     * @return type
+     */
+    private function formLNAdd($locationId, Request $request, LocationNote $record) {
         $form = $this->createForm(new FLocationNote(), $record);
         $form->handleRequest($request);
-        
+
+        // Adds server side data
+        $createdDate = new DateTime('Europe/London');
+        $record->setAdded($createdDate);
+        $record->setAddedBy($this->getUser());
+        $record->setLocationId($locationId);
+
         // If the form is valid then save it and return a blank form otherwise
         // return the form with any errors in.
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
-            $createdDate = new DateTime('Europe/London');
-            $record->setAdded($createdDate);
-            $record->setAddedBy($this->getUser());
-            $record->setLocationId($locationId);
             $em->persist($record);
             $em->flush();
             $this->displayMessage['value'] = 'Successfuly added location note.';
             $this->displayMessage['class'] = 'alert-info';
             return $this->createForm(new FLocationNote(), new LocationNote());
-        } else{
+        } else {
             return $form;
         }
     }
@@ -90,22 +122,20 @@ class LocationsController extends Controller {
     /**
      * Get Manage Screen
      * This will return the manage locations screen.
-     * @param Request $request
-     * @return Response The manage locations screen
+     * @param Request $request Could contain a new location
+     * @return HTML The manage locations screen
      */
-    public function manageAction(Request $request) {      
+    public function manageAction(Request $request) {
         $form = $this->formAdd($request, new Location());
         $html = $this->container->get('templating')->render(
-            'locations/manage.html.twig',
-            array(
-                'form' => $form->createView(),
-                'displayMessage' => $this->displayMessage
-            )
+                'locations/manage.html.twig', array(
+            'form' => $form->createView(),
+            'displayMessage' => $this->displayMessage
+                )
         );
         return new Response($html);
     }
 
-    
     /**
      * Get location list
      * Finds a list of locations in the database which are not marked as 
@@ -119,7 +149,7 @@ class LocationsController extends Controller {
     public function getAction(Request $request) {
         $limit = 10;
         $offset = 0;
-        if($request->query->get('limit') && $request->query->get('offset')){
+        if ($request->query->get('limit') && $request->query->get('offset')) {
             $limit = $request->query->get('limit');
             $offset = $request->query->get('offset');
         }
@@ -127,15 +157,15 @@ class LocationsController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-            Location::search($em,$searchTerm,$limit,$offset)
+                Location::search($em, $searchTerm, $limit, $offset)
         );
         return $response;
     }
-    
-    public function getNotesAction($locationId,Request $request) {
+
+    public function getNotesAction($locationId, Request $request) {
         $limit = 10;
         $offset = 0;
-        if($request->query->get('limit') && $request->query->get('offset')){
+        if ($request->query->get('limit') && $request->query->get('offset')) {
             $limit = $request->query->get('limit');
             $offset = $request->query->get('offset');
         }
@@ -143,7 +173,7 @@ class LocationsController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-            LocationNote::search($em,$locationId,$searchTerm,$limit,$offset)
+                LocationNote::search($em, $locationId, $searchTerm, $limit, $offset)
         );
         return $response;
     }
@@ -156,17 +186,16 @@ class LocationsController extends Controller {
      */
     public function editAction($id, Request $request) {
         $location = $this->getDoctrine()
-        ->getRepository('AppBundle:Location')
-        ->find($id);
+                ->getRepository('AppBundle:Location')
+                ->find($id);
         $form = $this->formUpdate($request, $location);
-        $lNForm = $this->formLNAdd($id,$request, new LocationNote());
+        $lNForm = $this->formLNAdd($id, $request, new LocationNote());
         $html = $this->container->get('templating')->render(
-            'locations/edit.html.twig',
-            array(
-                'formLocation' => $form->createView(),
-                'formLocationNote' => $lNForm->createView(),
-                'displayMessage' => $this->displayMessage
-            )
+                'locations/edit.html.twig', array(
+            'formLocation' => $form->createView(),
+            'formLocationNote' => $lNForm->createView(),
+            'displayMessage' => $this->displayMessage
+                )
         );
         return new Response($html);
     }

@@ -10,8 +10,8 @@
                 <p class="text-muted">You are not storing any parts yet :O</p>
             {% endif %}
             {% if partsAdded|length > 0 %}
-            <canvas id="chartPartsAdded"></canvas>
-            {% endif %}
+                <canvas id="chartPartType"></canvas>
+                {% endif %}
         </div>
         <div class="col-md-6">
             <h3>No Parts In Store</h3>
@@ -19,8 +19,8 @@
                 <p class="text-muted">You are not storing any parts yet :O</p>
             {% endif %}
             {% if partsAdded|length > 0 %}
-            <canvas id="chartPartsAdded"></canvas>
-            {% endif %}
+                <canvas id="chartPartsAdded"></canvas>
+                {% endif %}
         </div>
     </div>
     <div class="row">
@@ -32,19 +32,19 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                            <th>Added</th>
                             <th>Part</th>
                             <th>Qty</th>
-                            <th>Added</th>
                             <th>Added By</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for lap in partsAdded %}
                             <tr>
-                                <td>{{ lap.name }}</td>
-                                <td>{{ lap.qty }}</td>
                                 <td>{{ lap.added|date("d/m/Y") }}</td>
-                                <td>{{ lap.name_first }} {{ lap.name_last }}</td>
+                                <td><a href="#">{{ lap.name }}</a></td>
+                                <td>{{ lap.qty }}</td>
+                                <td><a href="#">{{ lap.name_first }} {{ lap.name_last }}</a></td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -102,8 +102,11 @@
                     }
                 ]
             };
-            var ctx = document.getElementById("chartPartType").getContext("2d");
-            var myLineChart = new Chart(ctx).Line(data, {responsive: true});
+
+            if ($('#chartPartsAdded').length > 0) {
+                var ctx = document.getElementById("chartPartsAdded").getContext("2d");
+                var myLineChart = new Chart(ctx).Line(data, {responsive: true});
+            }
 
 
             var dataPartType = [
@@ -126,8 +129,11 @@
                     label: "Yellow"
                 }
             ];
-            var chartPartsAdded = document.getElementById("chartPartsAdded").getContext("2d");
-            var myLineChart = new Chart(chartPartsAdded).Pie(dataPartType, {responsive: true});
+
+            if ($('#chartPartType').length > 0) {
+                var chartPartsAdded = document.getElementById("chartPartType").getContext("2d");
+                var myLineChart = new Chart(chartPartsAdded).Pie(dataPartType, {responsive: true});
+            }
 
         });
     </script>

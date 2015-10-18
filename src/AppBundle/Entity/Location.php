@@ -3,6 +3,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity
@@ -20,6 +21,7 @@ class Location {
 
     /**
      * @ORM\Column(type="string", length=300)
+     * @Assert\NotBlank()
      */
     protected $name;
 
