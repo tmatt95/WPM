@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\User;
 use AppBundle\Form\User\User as FUser;
+use AppBundle\Form\User\UserUpdate as FUserUpdate;
 use DateTime;
 
 /**
@@ -64,7 +65,7 @@ class UserController extends Controller {
         $user = $this->getDoctrine()
                 ->getRepository('AppBundle:User')
                 ->find($userId);
-        $form = $this->createForm(new FUser(), $user);
+        $form = $this->createForm(new FUserUpdate(), $user);
         $form->handleRequest($request);
 
         // If form is posted and valid, then saves

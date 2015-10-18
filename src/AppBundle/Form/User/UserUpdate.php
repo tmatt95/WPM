@@ -7,7 +7,7 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class User extends AbstractType
+class UserUpdate extends AbstractType
 {
 
   public function configureOptions(OptionsResolver $resolver)
@@ -20,12 +20,11 @@ class User extends AbstractType
   public function buildForm(FormBuilderInterface $builder, array $options)
   {
     $builder
-      ->add('username', 'text', array('attr'=>array('placeholder'=>'Username')))
+      ->add('username', 'text')
       ->add('name_first', 'text' , array('label' => 'First Name', 'attr'=>array('placeholder'=>'First Name')))
       ->add('name_last', 'text' , array('label' => 'Last Name', 'attr'=>array('placeholder'=>'Last Name')))
-      ->add('email', 'email', array('attr'=>array('placeholder'=>'Email')))
-      ->add('password', 'password', array('attr'=>array('placeholder'=>'Password')))
-      ->add('save', 'submit', array('label' => 'Add User'));
+      ->add('email', 'email')
+      ->add('update', 'submit', array('label' => 'Update Info'));
   }
 
   public function getName()

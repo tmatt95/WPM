@@ -6,6 +6,7 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="user")
@@ -31,41 +32,49 @@ class User implements UserInterface, \Serializable {
     private $id;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=25, unique=true)
      */
     private $username;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=64)
      */
     private $password;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=64)
      */
     private $name_first;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=64)
      */
     private $name_last;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=60, unique=true)
      */
     private $email;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="datetime")
      */
     private $added;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="integer")
      */
     private $addedBy;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(name="is_active", type="boolean")
      */
     private $isActive;
