@@ -19,9 +19,18 @@
                         formatter: function (value, row, index) {
                             return '<a href="/parts/view/' + row.id + '">' + value + '</a>';
                         }
-                    }, {
-                        field: 'description',
-                        title: 'Description'
+                    },
+                    {
+                        field: 'part_type',
+                        title: 'Type'
+                    },  
+                {
+                        field: 'qty',
+                        title: 'Qty'
+                    },  
+                    {
+                        field: 'location_name',
+                        title: 'Location'
                     }],
                 url: '/parts/search',
                 pagination: true,
