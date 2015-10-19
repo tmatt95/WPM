@@ -400,4 +400,70 @@ class User implements AdvancedUserInterface, \Serializable {
         );
     }
 
+
+    /**
+     * Add parts
+     *
+     * @param \AppBundle\Entity\Part $parts
+     * @return User
+     */
+    public function addPart(\AppBundle\Entity\Part $parts)
+    {
+        $this->parts[] = $parts;
+
+        return $this;
+    }
+
+    /**
+     * Remove parts
+     *
+     * @param \AppBundle\Entity\Part $parts
+     */
+    public function removePart(\AppBundle\Entity\Part $parts)
+    {
+        $this->parts->removeElement($parts);
+    }
+
+    /**
+     * Get parts
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getParts()
+    {
+        return $this->parts;
+    }
+
+    /**
+     * Add partsnotes
+     *
+     * @param \AppBundle\Entity\LocationNote $partsnotes
+     * @return User
+     */
+    public function addPartsnote(\AppBundle\Entity\LocationNote $partsnotes)
+    {
+        $this->partsnotes[] = $partsnotes;
+
+        return $this;
+    }
+
+    /**
+     * Remove partsnotes
+     *
+     * @param \AppBundle\Entity\LocationNote $partsnotes
+     */
+    public function removePartsnote(\AppBundle\Entity\LocationNote $partsnotes)
+    {
+        $this->partsnotes->removeElement($partsnotes);
+    }
+
+    /**
+     * Get partsnotes
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPartsnotes()
+    {
+        return $this->partsnotes;
+    }
 }

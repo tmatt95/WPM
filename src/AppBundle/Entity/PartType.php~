@@ -158,4 +158,44 @@ class PartType
         }
         return $list;
     }
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->parts = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add parts
+     *
+     * @param \AppBundle\Entity\Part $parts
+     * @return PartType
+     */
+    public function addPart(\AppBundle\Entity\Part $parts)
+    {
+        $this->parts[] = $parts;
+
+        return $this;
+    }
+
+    /**
+     * Remove parts
+     *
+     * @param \AppBundle\Entity\Part $parts
+     */
+    public function removePart(\AppBundle\Entity\Part $parts)
+    {
+        $this->parts->removeElement($parts);
+    }
+
+    /**
+     * Get parts
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getParts()
+    {
+        return $this->parts;
+    }
 }

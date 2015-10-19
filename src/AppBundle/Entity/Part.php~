@@ -24,6 +24,12 @@ class Part {
      * @ORM\JoinColumn(name="added_by", referencedColumnName="id")
      */
     protected $addeduser;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Location", inversedBy="parts")
+     * @ORM\JoinColumn(name="location", referencedColumnName="id")
+     */
+    protected $locationinfo;
 
     /**
      * @ORM\Column(type="integer")
@@ -198,4 +204,50 @@ class Part {
         );
     }
 
+
+    /**
+     * Set parttype
+     *
+     * @param \AppBundle\Entity\PartType $parttype
+     * @return Part
+     */
+    public function setParttype(\AppBundle\Entity\PartType $parttype = null)
+    {
+        $this->parttype = $parttype;
+
+        return $this;
+    }
+
+    /**
+     * Get parttype
+     *
+     * @return \AppBundle\Entity\PartType 
+     */
+    public function getParttype()
+    {
+        return $this->parttype;
+    }
+
+    /**
+     * Set addeduser
+     *
+     * @param \AppBundle\Entity\User $addeduser
+     * @return Part
+     */
+    public function setAddeduser(\AppBundle\Entity\User $addeduser = null)
+    {
+        $this->addeduser = $addeduser;
+
+        return $this;
+    }
+
+    /**
+     * Get addeduser
+     *
+     * @return \AppBundle\Entity\User 
+     */
+    public function getAddeduser()
+    {
+        return $this->addeduser;
+    }
 }

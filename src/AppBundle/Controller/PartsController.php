@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use AppBundle\Entity\Part;
 use DateTime;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Location;
 use AppBundle\Entity\PartType;
 
@@ -88,6 +89,10 @@ class PartsController extends Controller {
             $part->setParttype($this->getDoctrine()
                 ->getRepository('AppBundle:PartType')
                 ->find( $part->getType()));
+            
+            $part->setLocationinfo($this->getDoctrine()
+                ->getRepository('AppBundle:Location')
+                ->find($part->getLocation()));
 
             // Saves the new part to the system
             $em = $this->getDoctrine()->getManager();
@@ -107,6 +112,22 @@ class PartsController extends Controller {
                 )
         );
         return new Response($html);
+    }
+    
+    public function searchAction(Request $request) {
+        $limit = 10;
+        $offset = 0;
+        if ($request->query->get('limit') && $request->query->get('offset')) {
+            $limit = $request->query->get('limit');
+            $offset = $request->query->get('offset');
+        }
+        $searchTerm = $request->query->get('search');
+        $em = $this->getDoctrine()->getManager();
+        $response = new JsonResponse();
+        $response->setData(
+            Part::search($em,$searchTerm,$limit,$offset)
+        );
+        return $response;
     }
 
     public function findAction() {

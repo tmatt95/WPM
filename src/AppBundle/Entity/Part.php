@@ -24,6 +24,12 @@ class Part {
      * @ORM\JoinColumn(name="added_by", referencedColumnName="id")
      */
     protected $addeduser;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Location", inversedBy="parts")
+     * @ORM\JoinColumn(name="location", referencedColumnName="id")
+     */
+    protected $locationinfo;
 
     /**
      * @ORM\Column(type="integer")
@@ -243,5 +249,78 @@ class Part {
     public function getAddeduser()
     {
         return $this->addeduser;
+    }
+
+    /**
+     * Set locationinfo
+     *
+     * @param \AppBundle\Entity\Location $locationinfo
+     * @return Part
+     */
+    public function setLocationinfo(\AppBundle\Entity\Location $locationinfo = null)
+    {
+        $this->locationinfo = $locationinfo;
+
+        return $this;
+    }
+
+    /**
+     * Get locationinfo
+     *
+     * @return \AppBundle\Entity\Location 
+     */
+    public function getLocationinfo()
+    {
+        return $this->locationinfo;
+    }
+    
+    static function getTotalNumber($em,$searchTerm) {
+        $qs = 'SELECT COUNT(p.id) as number
+            FROM AppBundle:Part p
+            JOIN p.locationinfo l
+            JOIN p.parttype pt
+            JOIN p.addeduser u';
+        if($searchTerm){
+            $qs .=' WHERE p.name LIKE :search OR l.name LIKE :search';
+             $qs .='OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search';
+        }
+        $query = $em->createQuery($qs);
+        return $query->getResult()[0]['number'];
+    }
+    
+    static function search($em,$searchTerm,$limit,$offset) {
+        $qs = 'SELECT p.id,
+            p.name,
+            p.qty,
+            p.added,
+            p.added_by,
+            p.location,
+            l.name AS location_name,
+            pt.name AS part_type,
+            p.type,
+            p.added_by,
+            CONCAT(u.name_first , \' \',u.name_last) AS added_by_name
+            FROM AppBundle:Part p
+            JOIN p.locationinfo l
+            JOIN p.parttype pt
+            JOIN p.addeduser u';
+        if($searchTerm){
+            $qs .=' WHERE p.name LIKE :search OR l.name LIKE :search';
+             $qs .='OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search';
+        }
+        $qs .=' ORDER BY p.name ASC';
+        $query = $em->createQuery($qs);
+        $query->setMaxResults($limit);
+        $query->setFirstResult($offset);
+        if($searchTerm){
+            $query->setParameter(
+                ':search',
+                '%'.$searchTerm.'%'
+            );
+        }
+        return array(
+            'total'=>self::getTotalNumber($em, $searchTerm),
+            'rows'=>$query->getResult()
+        );
     }
 }

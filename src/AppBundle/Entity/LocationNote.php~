@@ -193,4 +193,27 @@ class LocationNote {
             'rows'=>$query->getResult()
         );
     }
+
+    /**
+     * Set addeduser
+     *
+     * @param \AppBundle\Entity\User $addeduser
+     * @return LocationNote
+     */
+    public function setAddeduser(\AppBundle\Entity\User $addeduser = null)
+    {
+        $this->addeduser = $addeduser;
+
+        return $this;
+    }
+
+    /**
+     * Get addeduser
+     *
+     * @return \AppBundle\Entity\User 
+     */
+    public function getAddeduser()
+    {
+        return $this->addeduser;
+    }
 }

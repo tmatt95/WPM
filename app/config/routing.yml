@@ -17,6 +17,10 @@ parts_find:
     path:     /parts/find
     defaults: { _controller: AppBundle:Parts:find }
     methods:  [GET]
+parts_search:
+    path:     /parts/search
+    defaults: { _controller: AppBundle:Parts:search }
+    methods:  [GET]
 parts_manage:
     path:     /parts/manage
     defaults: { _controller: AppBundle:Parts:manage }

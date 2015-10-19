@@ -10,6 +10,11 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="location")
  */
 class Location {
+    
+    /**
+     * @ORM\OneToMany(targetEntity="Part", mappedBy="locationinfo")
+     */
+    protected $parts;
 
     /**
      * @ORM\Column(type="integer")
@@ -115,4 +120,44 @@ class Location {
         );
     }
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->parts = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add parts
+     *
+     * @param \AppBundle\Entity\Location $parts
+     * @return Location
+     */
+    public function addPart(\AppBundle\Entity\Location $parts)
+    {
+        $this->parts[] = $parts;
+
+        return $this;
+    }
+
+    /**
+     * Remove parts
+     *
+     * @param \AppBundle\Entity\Location $parts
+     */
+    public function removePart(\AppBundle\Entity\Location $parts)
+    {
+        $this->parts->removeElement($parts);
+    }
+
+    /**
+     * Get parts
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getParts()
+    {
+        return $this->parts;
+    }
 }
