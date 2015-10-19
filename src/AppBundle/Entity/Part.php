@@ -282,9 +282,15 @@ class Part {
             JOIN p.addeduser u';
         if($searchTerm){
             $qs .=' WHERE p.name LIKE :search OR l.name LIKE :search';
-             $qs .='OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search';
+             $qs .=' OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search';
         }
         $query = $em->createQuery($qs);
+        if($searchTerm){
+            $query->setParameter(
+                ':search',
+                '%'.$searchTerm.'%'
+            );
+        }
         return $query->getResult()[0]['number'];
     }
     
@@ -306,7 +312,7 @@ class Part {
             JOIN p.addeduser u';
         if($searchTerm){
             $qs .=' WHERE p.name LIKE :search OR l.name LIKE :search';
-             $qs .='OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search';
+             $qs .=' OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search';
         }
         $qs .=' ORDER BY p.name ASC';
         $query = $em->createQuery($qs);
