@@ -1,4 +1,3 @@
-{# app/Resources/views/lucky/number.html.twig #}
 {% extends 'parts.html.twig' %}
 
 {% block title %}Login{% endblock %}
@@ -15,6 +14,9 @@
                     <input type="password" id="password" class="form-control" placeholder="Password" name="_password" />
                     <input type="hidden" name="_target_path" value="/" />
                     <button class="btn btn-primary" type="submit">login</button>
+                    <input type="hidden" name="_csrf_security_token_login"
+                           value="{{ csrf_token('authenticate') }}"
+                           >
                 </form>
             </div>
         </div>
