@@ -199,6 +199,11 @@ class LocationsController extends Controller {
         $location = $this->getDoctrine()
                 ->getRepository('AppBundle:Location')
                 ->find($id);
+        if (!$location) {
+            throw $this->createNotFoundException(
+                    'Location not found. It may not exist or have been deleted.'
+            );
+        }
         $form = $this->formUpdate($request, $location);
         $lNForm = $this->formLNAdd($id, $request, new LocationNote());
         $formDelete = $this->formDelete($request, $location);

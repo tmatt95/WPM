@@ -172,14 +172,13 @@ class UserController extends Controller {
         );
         return new Response($html);
     }
-
+    
     public function editAction($userId, Request $request) {
-        $user = $this->getDoctrine()
-                ->getRepository('AppBundle:User')
-                ->find($userId);
+        $user = $this->getDoctrine()->getRepository('AppBundle:User')
+            ->find($userId);
         if (!$user || $user->getDeleted() === 1) {
             throw $this->createNotFoundException(
-                'User not found. The user may not exist or may have been deleted.'
+                    'User not found. It may not exist or have been deleted.'
             );
         }
         $formPassword = $this->formEditPassword($request, $user);
@@ -189,7 +188,6 @@ class UserController extends Controller {
         if ($this->redirectToUsers === true) {
             return $this->redirectToRoute('users_manage');
         }
-
         $html = $this->container->get('templating')->render(
                 'users/edit.html.twig', array(
             'form' => $formUser->createView(),

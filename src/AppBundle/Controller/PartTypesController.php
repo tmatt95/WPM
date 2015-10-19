@@ -73,6 +73,13 @@ class PartTypesController extends Controller {
         $partType = $this->getDoctrine()
                 ->getRepository('AppBundle:PartType')
                 ->find($id);
+        
+        if (!$partType) {
+            throw $this->createNotFoundException(
+                    'Part type not found. It may not exist or have been deleted.'
+            );
+        }
+        
         $form = $this->createForm(new FPartTypeUpdate(), $partType);
         $form->handleRequest($request);
         
