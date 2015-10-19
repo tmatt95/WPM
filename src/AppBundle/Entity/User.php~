@@ -1,16 +1,29 @@
 <?php
+
 // src/AppBundle/Entity/User.php
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\UserRepository")
  */
-class User implements UserInterface, \Serializable
-{
+class User implements AdvancedUserInterface, \Serializable {
+
+    /**
+     * @ORM\OneToMany(targetEntity="Part", mappedBy="addeduser")
+     */
+    protected $parts;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="LocationNote", mappedBy="addeduser")
+     */
+    protected $partsnotes;
+
     /**
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -19,108 +32,134 @@ class User implements UserInterface, \Serializable
     private $id;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=25, unique=true)
      */
     private $username;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=64)
      */
     private $password;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=64)
      */
     private $name_first;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=64)
      */
     private $name_last;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="string", length=60, unique=true)
      */
     private $email;
 
     /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="datetime")
      */
     private $added;
 
-  /**
+    /**
+     * @Assert\NotBlank()
      * @ORM\Column(type="integer")
      */
-  private $addedBy;
+    private $addedBy;
+    
+    /**
+     * @ORM\Column(type="integer")
+     */
+    private $deleted;
 
     /**
-     * @ORM\Column(name="is_active", type="boolean")
+     * @ORM\Column(type="integer")
      */
-    private $isActive;
+    private $deletedBy;
 
-    public function __construct()
+    public function isAccountNonExpired()
     {
-        $this->isActive = true;
-        // may not be needed, see section on salt below
-        // $this->salt = md5(uniqid(null, true));
+        return true;
     }
 
-    public function getUsername()
+    public function isAccountNonLocked()
     {
+        return true;
+    }
+
+    public function isCredentialsNonExpired()
+    {
+        return true;
+    }
+
+    public function isEnabled()
+    {
+        if($this->getDeleted()=== 1){
+            return false;
+        } else{
+            return true;
+        }
+    }
+
+    public function __construct() {
+    }
+
+    public function getUsername() {
         return $this->username;
     }
 
-    public function getSalt()
-    {
+    public function getSalt() {
         // you *may* need a real salt depending on your encoder
         // see section on salt below
         return null;
     }
-
-    public function getPassword()
-    {
+    
+    public function getPassword() {
         return $this->password;
     }
 
-    public function getRoles()
-    {
-        return array('ROLE_USER','ROLE_ADMIN');
+    public function getRoles() {
+        return array('ROLE_USER', 'ROLE_ADMIN');
     }
 
-  public function isAdmin(){
-    return in_array('ROLE_ADMIN',$this->getRoles());
-  }
+    public function isAdmin() {
+        return in_array('ROLE_ADMIN', $this->getRoles());
+    }
 
-    public function isUser(){
-    return in_array('ROLE_USER',$this->getRoles());
-  }
+    public function isUser() {
+        return in_array('ROLE_USER', $this->getRoles());
+    }
 
-    public function eraseCredentials()
-    {
+    public function eraseCredentials() {
+        
     }
 
     /** @see \Serializable::serialize() */
-    public function serialize()
-    {
+    public function serialize() {
         return serialize(array(
             $this->id,
             $this->username,
             $this->password,
-            // see section on salt below
-            // $this->salt,
+                // see section on salt below
+                // $this->salt,
         ));
     }
 
     /** @see \Serializable::unserialize() */
-    public function unserialize($serialized)
-    {
+    public function unserialize($serialized) {
         list (
-            $this->id,
-            $this->username,
-            $this->password,
-            // see section on salt below
-            // $this->salt
-        ) = unserialize($serialized);
+                $this->id,
+                $this->username,
+                $this->password,
+                // see section on salt below
+                // $this->salt
+                ) = unserialize($serialized);
     }
 
     /**
@@ -128,9 +167,13 @@ class User implements UserInterface, \Serializable
      *
      * @return integer
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
+    }
+    
+    public function setId($id) {
+        $this->id = $id;
+        return $this;
     }
 
     /**
@@ -139,8 +182,7 @@ class User implements UserInterface, \Serializable
      * @param string $username
      * @return User
      */
-    public function setUsername($username)
-    {
+    public function setUsername($username) {
         $this->username = $username;
 
         return $this;
@@ -152,11 +194,42 @@ class User implements UserInterface, \Serializable
      * @param string $password
      * @return User
      */
-    public function setPassword($password)
-    {
+    public function setPassword($password) {
         $this->password = $password;
 
         return $this;
+    }
+    
+    /**
+     * @param string $email
+     * @return User
+     */
+    public function setDeleted($deleted) {
+        $this->deleted = $deleted;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeleted() {
+        return $this->deleted;
+    }
+    
+    /**
+     * @param string $email
+     * @return User
+     */
+    public function setDeletedBy($deletedBy) {
+        $this->deletedBy = $deletedBy;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDeletedBy() {
+        return $this->deletedBy;
     }
 
     /**
@@ -165,8 +238,7 @@ class User implements UserInterface, \Serializable
      * @param string $email
      * @return User
      */
-    public function setEmail($email)
-    {
+    public function setEmail($email) {
         $this->email = $email;
 
         return $this;
@@ -177,8 +249,7 @@ class User implements UserInterface, \Serializable
      *
      * @return string
      */
-    public function getEmail()
-    {
+    public function getEmail() {
         return $this->email;
     }
 
@@ -188,8 +259,7 @@ class User implements UserInterface, \Serializable
      * @param boolean $isActive
      * @return User
      */
-    public function setIsActive($isActive)
-    {
+    public function setIsActive($isActive) {
         $this->isActive = $isActive;
 
         return $this;
@@ -200,8 +270,7 @@ class User implements UserInterface, \Serializable
      *
      * @return boolean
      */
-    public function getIsActive()
-    {
+    public function getIsActive() {
         return $this->isActive;
     }
 
@@ -211,8 +280,7 @@ class User implements UserInterface, \Serializable
      * @param string $nameFirst
      * @return User
      */
-    public function setNameFirst($nameFirst)
-    {
+    public function setNameFirst($nameFirst) {
         $this->name_first = $nameFirst;
 
         return $this;
@@ -223,8 +291,7 @@ class User implements UserInterface, \Serializable
      *
      * @return string
      */
-    public function getNameFirst()
-    {
+    public function getNameFirst() {
         return $this->name_first;
     }
 
@@ -234,8 +301,7 @@ class User implements UserInterface, \Serializable
      * @param string $nameLast
      * @return User
      */
-    public function setNameLast($nameLast)
-    {
+    public function setNameLast($nameLast) {
         $this->name_last = $nameLast;
 
         return $this;
@@ -246,8 +312,7 @@ class User implements UserInterface, \Serializable
      *
      * @return string
      */
-    public function getNameLast()
-    {
+    public function getNameLast() {
         return $this->name_last;
     }
 
@@ -257,8 +322,7 @@ class User implements UserInterface, \Serializable
      * @param \DateTime $added
      * @return User
      */
-    public function setAdded($added)
-    {
+    public function setAdded($added) {
         $this->added = $added;
 
         return $this;
@@ -269,8 +333,71 @@ class User implements UserInterface, \Serializable
      *
      * @return \DateTime
      */
-    public function getAdded()
-    {
+    public function getAdded() {
         return $this->added;
     }
+
+    /**
+     * Set addedBy
+     *
+     * @param integer $addedBy
+     * @return User
+     */
+    public function setAddedBy($addedBy) {
+        $this->addedBy = $addedBy;
+
+        return $this;
+    }
+
+    /**
+     * Get addedBy
+     *
+     * @return integer
+     */
+    public function getAddedBy() {
+        return $this->addedBy;
+    }
+
+    static function getTotalNumber($em, $searchTerm) {
+        $qs = 'SELECT COUNT(u.id) as number FROM AppBundle:User u';
+        if ($searchTerm) {
+            $qs .=' WHERE u.username LIKE :search  AND u.deleted IS NULL';
+        } else{
+            $qs .=' WHERE u.deleted IS NULL';
+        }
+        $query = $em->createQuery($qs);
+        if ($searchTerm) {
+            $query->setParameter(
+                    ':search', '%' . $searchTerm . '%'
+            );
+        }
+        return $query->getResult()[0]['number'];
+    }
+
+    static function search($em, $searchTerm, $limit, $offset) {
+        $qs = 'SELECT u.id,
+                u.username,
+                u.name_first,
+                u.name_last
+            FROM AppBundle:User u';
+        if ($searchTerm) {
+            $qs .=' WHERE u.username LIKE :search AND u.deleted IS NULL';
+        } else{
+            $qs .=' WHERE u.deleted IS NULL';
+        }
+        $qs .=' ORDER BY u.username ASC';
+        $query = $em->createQuery($qs);
+        $query->setMaxResults($limit);
+        $query->setFirstResult($offset);
+        if ($searchTerm) {
+            $query->setParameter(
+                    ':search', '%' . $searchTerm . '%'
+            );
+        }
+        return array(
+            'total' => self::getTotalNumber($em, $searchTerm),
+            'rows' => $query->getResult()
+        );
+    }
+
 }

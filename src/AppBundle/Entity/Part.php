@@ -93,11 +93,12 @@ class Part {
 
     // Type
     public function getType() {
-        return $this->parttype;
+        return $this->type;
     }
 
+    
     public function setType($type) {
-        $this->parttype = $type;
+        $this->type = $type;
     }
 
     // Location
@@ -197,4 +198,50 @@ class Part {
         );
     }
 
+
+    /**
+     * Set parttype
+     *
+     * @param \AppBundle\Entity\PartType $parttype
+     * @return Part
+     */
+    public function setParttype(\AppBundle\Entity\PartType $parttype = null)
+    {
+        $this->parttype = $parttype;
+
+        return $this;
+    }
+
+    /**
+     * Get parttype
+     *
+     * @return \AppBundle\Entity\PartType 
+     */
+    public function getParttype()
+    {
+        return $this->parttype;
+    }
+
+    /**
+     * Set addeduser
+     *
+     * @param \AppBundle\Entity\User $addeduser
+     * @return Part
+     */
+    public function setAddeduser(\AppBundle\Entity\User $addeduser = null)
+    {
+        $this->addeduser = $addeduser;
+
+        return $this;
+    }
+
+    /**
+     * Get addeduser
+     *
+     * @return \AppBundle\Entity\User 
+     */
+    public function getAddeduser()
+    {
+        return $this->addeduser;
+    }
 }

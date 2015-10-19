@@ -84,12 +84,10 @@ class PartsController extends Controller {
             $createdDate = new DateTime('Europe/London');
             $part->setAdded($createdDate);
             $part->setAddedBy($this->getUser());
-
-            // Loads the part type to link to the part
-            $partType = $this->getDoctrine()
-                    ->getRepository('AppBundle:PartType')
-                    ->find($part->getType());
-            $part->setType($partType);
+            
+            $part->setParttype($this->getDoctrine()
+                ->getRepository('AppBundle:PartType')
+                ->find( $part->getType()));
 
             // Saves the new part to the system
             $em = $this->getDoctrine()->getManager();
@@ -125,14 +123,49 @@ class PartsController extends Controller {
         return new Response($html);
     }
 
-    public function viewAction($partId) {
+    public function viewAction($partId, Request $request) {
+        $em = $this->getDoctrine()->getManager();
         // Loads part information
         $part = $this->getDoctrine()
                 ->getRepository('AppBundle:Part')
                 ->find($partId);
+        
+        if (!$part) {
+            throw $this->createNotFoundException(
+                    'Part not found. It may not exist or have been deleted.'
+            );
+        }
+        
+        $form = $this->createFormBuilder($part)
+                ->add('name', 'text')
+                ->add('description', 'textarea')
+                ->add('type', 'choice', array(
+                    'choices' => PartType::getList($em),
+                    'required' => false,
+                ))
+                ->add('location', 'choice', array(
+                    'choices' => Location::getList($em),
+                    'required' => false,
+                ))
+                ->add('qty', 'integer')
+                ->add('save', 'submit', array('label' => 'Update Part'))
+                ->getForm();
+
+        // Populates the form with submitted data if any present
+        $form->handleRequest($request);
+
+        // If form is posted and valid, then saves
+        if ($form->isValid()) {
+
+            // Saves the new part to the system
+            $em = $this->getDoctrine()->getManager();
+            $em->persist($part);
+            $em->flush();
+            $this->displayMessage['value'] = 'Successfuly updated part';
+        }
 
         $html = $this->container->get('templating')->render(
-                'parts/view.html.twig', array('part' => $part)
+                'parts/view.html.twig', array('part' => $part,'form'=>$form->createView(), 'displayMessage'=>$this->displayMessage)
         );
         return new Response($html);
     }

@@ -1,7 +1,4 @@
 <?php
-
-// src/AppBundle/Form/Parts/Part.php
-
 namespace AppBundle\Form\Parts;
 
 use Symfony\Component\Form\AbstractType;
@@ -9,7 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use AppBundle\Entity\PartTypeRepository;
 
-class Part extends AbstractType {
+class PartUpdate extends AbstractType {
 
     public function configureOptions(OptionsResolver $resolver) {
         $resolver->setDefaults(array(
@@ -30,7 +27,7 @@ class Part extends AbstractType {
                 ))
                 ->add('location', 'text')
                 ->add('qty', 'integer')
-                ->add('save', 'submit', array('label' => 'Add Part'))
+                ->add('save', 'submit', array('label' => 'Update Part'))
         ;
     }
 

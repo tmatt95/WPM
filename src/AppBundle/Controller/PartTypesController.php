@@ -8,6 +8,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\PartType;
 use AppBundle\Form\Parts\PartType as FPartType;
 use AppBundle\Form\Parts\PartTypeUpdate as FPartTypeUpdate;
+use AppBundle\Form\Parts\PartTypeDelete as FPartTypeDelete;
 
 class PartTypesController extends Controller {
     
@@ -81,6 +82,7 @@ class PartTypesController extends Controller {
         }
         
         $form = $this->createForm(new FPartTypeUpdate(), $partType);
+        $formDelete = $this->createForm(new FPartTypeDelete(), $partType);
         $form->handleRequest($request);
         
         // If form is posted and valid, then saves
@@ -95,6 +97,7 @@ class PartTypesController extends Controller {
             'parttypes/edit.html.twig',
             array(
                 'form'=>$form->createView(),
+                'formDelete'=>$formDelete->createView(),
                 'displayMessage'=>$this->displayMessage
             )
         );

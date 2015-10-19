@@ -6,7 +6,6 @@ parts_get:
 parts_view:
     path:     /parts/view/{partId}
     defaults: { _controller: AppBundle:Parts:view }
-    methods:  [GET]
 parts_dashboard:
     path:     /
     defaults: { _controller: AppBundle:Parts:index }

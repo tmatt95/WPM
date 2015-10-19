@@ -3,7 +3,20 @@
 {% block title %}Part Types: {{ form.vars.value.name }}{% endblock %}
 
 {% block body %}
-    <h1>{{ form.vars.value.name }}</h1>
+    <div class="row">
+        <div class="col-sm-8">
+            <h1>{{ form.vars.value.name }}</h1>
+        </div>
+        <div style="padding-top:20px;" class="col-sm-4 hidden-xs text-right">
+            {{ form_start(formDelete) }}
+            {{ form_widget(formDelete) }}
+            <button type="submit" class="btn btn-xl btn-danger"> 
+                <span aria-hidden="true" class="glyphicon glyphicon-minus"></span> 
+                Delete Part Type
+            </button>
+            {{ form_end(formDelete) }}
+        </div>
+    </div>
     <ol class="breadcrumb">
         <li><a href="{{ path('part_types_manage') }}">Part Types</a></li>
         <li class="active">{{ form.vars.value.name }}</li>
