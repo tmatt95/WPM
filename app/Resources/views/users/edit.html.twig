@@ -7,12 +7,12 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $("#deleteuser").click(function () {
-                $('#deleteUser').popover({html: true, content: $('.deleteuserform').html()});
-                $('#deleteUser').popover('show');
+                $('#deleteuser').popover({html: true, content: $('.deleteuserform').html()});
+                $('#deleteuser').popover('show');
             });
 
             $("body").on("click", ".deleteusercancel", function () {
-                $('#deleteUser').popover('destroy');
+                $('#deleteuser').popover('destroy');
                 return false;
             });
         });
