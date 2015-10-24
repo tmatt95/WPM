@@ -2,26 +2,51 @@
 
 {% block title %}Users: {{ form.vars.value.namefirst }} {{ form.vars.value.namelast }}{% endblock %}
 
+
+{% block javascripts %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#deleteuser").click(function () {
+                $('#deleteUser').popover({html: true, content: $('.deleteuserform').html()});
+                $('#deleteUser').popover('show');
+            });
+
+            $("body").on("click", ".deleteusercancel", function () {
+                $('#deleteUser').popover('destroy');
+                return false;
+            });
+        });
+    </script>
+{% endblock %}
+
 {% block body %}
     <div class="row">
         <div class="col-sm-8">
             <h1><h1>{{ form.vars.value.namefirst }} {{ form.vars.value.namelast }}</h1></h1>
         </div>
         <div style="padding-top:20px;" class="col-sm-4 hidden-xs text-right">
-            {{ form_start(formDelete) }}
-            {{ form_widget(formDelete) }}
-            <button type="submit" class="btn btn-xl btn-danger"> 
-                <span aria-hidden="true" class="glyphicon glyphicon-minus"></span> 
-                Delete User
+            <button type="button" class="btn btn-danger" id="deleteuser" title="Confirm Delete" data-container="body" data-toggle="popover" data-placement="bottom">
+                <span class="glyphicon glyphicon-minus"></span> Delete User
             </button>
-            {{ form_end(formDelete) }}
+            <div class="deleteuserform hidden">
+                {{ form_start(formDelete) }}
+                {{ form_widget(formDelete) }}
+                <p>Please confirm you would like to delete <strong>{{ form.vars.value.namefirst }} {{ form.vars.value.namelast }}</strong></p>
+                <button type="submit" class="btn btn-xl btn-danger">
+                    Delete
+                </button>
+                <button type="button" class="btn btn-xl btn-default pull-right deleteusercancel">
+                    Cancel
+                </button>
+                {{ form_end(formDelete) }}
+            </div>
         </div>
     </div>
     <ol class="breadcrumb">
         <li><a href="{{ path('users_manage') }}">Users</a></li>
         <li class="active">{{ form.vars.value.namefirst }} {{ form.vars.value.namelast }}</li>
     </ol>
-    
+
     {% if displayMessage.value != '' %}
         <div class="row">
             <div class="col-xs-12">
