@@ -121,11 +121,17 @@ class PartsController extends Controller {
             $limit = $request->query->get('limit');
             $offset = $request->query->get('offset');
         }
+        
+        // Sets location id if sent to limit the search to a specific location
+        $locationid = null;
+        if ($request->query->get('locationid')) {
+            $locationid = $request->query->get('locationid');
+        }
         $searchTerm = $request->query->get('search');
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-            Part::search($em,$searchTerm,$limit,$offset)
+            Part::search($em,$searchTerm,$limit,$offset, $locationid)
         );
         return $response;
     }

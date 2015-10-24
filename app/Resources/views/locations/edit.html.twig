@@ -27,20 +27,29 @@
             });
 
             $('#lparts').bootstrapTable({
-                sidePagination: 'server',
                 columns: [{
-                        title: 'Added / By',
+                        field: 'name',
+                        title: 'Name',
                         formatter: function (value, row, index) {
-                            return row.added.date + ' - ' + row.name_first + ' ' + row.name_last;
+                            return '<a href="/parts/view/' + row.id + '">' + value + '</a>';
                         }
-                    }, {
-                        field: 'notes',
-                        title: 'Notes'
-                    }
-                ],
-                url: '/locations/getnotes/{{ formLocation.vars.value.id }}',
+                    },
+                    {
+                        field: 'part_type',
+                        title: 'Type'
+                    },
+                    {
+                        field: 'qty',
+                        title: 'Qty'
+                    }],
+                url: '/parts/search',
                 pagination: true,
-                search: true
+                sidePagination: 'server',
+                search: true,
+                queryParams: function (params) {
+                    params['locationid'] = $('#locationid').val();
+                    return params;
+                }
             });
             
             $("#deletelocation").click(function () {
@@ -62,6 +71,7 @@
     <div class="row">
         <div class="col-sm-8">
             <h1>{{ formLocation.vars.value.name }}</h1>
+            <input type="hidden" value="{{ formLocation.vars.value.id }}" id="locationid"/>
         </div>
         <div style="padding-top:20px;" class="col-sm-4 hidden-xs text-right">            
             <button type="button" class="btn btn-danger" id="deletelocation" title="Confirm Delete" data-container="body" data-toggle="popover" data-placement="bottom">
@@ -117,17 +127,12 @@
                         <a href="#notes" aria-controls="notes" role="tab" data-toggle="tab">Notes</a>
                     </li>
                     <li role="presentation">
-                        <a href="#parts" aria-controls="parts" role="tab" data-toggle="tab">Parts In Location</a>
+                        <a href="#parts" aria-controls="parts" role="tab" data-toggle="tab">Parts in Location</a>
                     </li>
                 </ul>
                 <div class="tab-content">
                     <div role="tabpanel" class="tab-pane active" id="notes">
-                        <div class="row">
-                            <div class="col-xs-12">
-                                <h3>Notes</h3>
-                            </div>
-                        </div>
-                        <div class="row">
+                        <div class="row" style="margin-top:20px;">
                             <div class="col-xs-12">
                                 {{ form_start(formLocationNote) }}
                                 {{ form_widget(formLocationNote) }}
@@ -139,7 +144,6 @@
                     <div role="tabpanel" class="tab-pane" id="parts">
                         <div class="row">
                             <div class="col-xs-12">
-                                <h3>Parts</h3>
                                 <table id="lparts"></table>
                             </div>
                         </div>

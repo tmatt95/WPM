@@ -188,6 +188,15 @@ class LocationNote {
             'rows' => $query->getResult()
         );
     }
+    
+    static function deleteForLocation($em, $locationid) {
+        $qs = 'DELETE FROM AppBundle:LocationNote ln WHERE ln.location_id = :locationid';
+        $query = $em->createQuery($qs);
+        $query->setParameter(
+                ':locationid', $locationid
+        );
+        return $query->getResult();
+    }
 
     /**
      * Set addeduser

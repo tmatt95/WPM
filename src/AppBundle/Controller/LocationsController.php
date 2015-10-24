@@ -9,6 +9,7 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Location;
 use AppBundle\Entity\LocationNote;
 use AppBundle\Form\Locations\Location as FLocation;
+use AppBundle\Entity\Part;
 use AppBundle\Form\Locations\LocationNote as FLocationNote;
 use AppBundle\Form\Locations\LocationDelete as FLocationDelete;
 use DateTime;
@@ -40,6 +41,7 @@ class LocationsController extends Controller {
         'locationId' => null,
         'value' => ''
     );
+    private $redirectToLocations = false;
 
     /**
      * Location Update
@@ -62,13 +64,18 @@ class LocationsController extends Controller {
         }
         return $form;
     }
-    
+
     private function formDelete(Request $request, Location $location) {
         $form = $this->createForm(new FLocationDelete(), $location);
         $form->handleRequest($request);
 
         if ($form->isValid()) {
-            echo 'delete location';
+            $em = $this->getDoctrine()->getManager();
+            Part::moveAllOutLocation($em, $location->getId());
+            LocationNote::deleteForLocation($em, $location->getId());
+            $em->remove($location);
+            $em->flush();
+            $this->redirectToLocations = true;
         }
         return $form;
     }
@@ -207,17 +214,22 @@ class LocationsController extends Controller {
         $form = $this->formUpdate($request, $location);
         $lNForm = $this->formLNAdd($id, $request, new LocationNote());
         $formDelete = $this->formDelete($request, $location);
-        $html = $this->container->get('templating')->render
-        (
-            'locations/edit.html.twig',
-            array(
-                'formLocation' => $form->createView(),
-                'formLocationNote' => $lNForm->createView(),
-                'displayMessage' => $this->displayMessage,
-                'formDelete' => $formDelete->createView()
-            )
-        );
-        return new Response($html);
+
+        if ($this->redirectToLocations === true) {
+            return $this->redirectToRoute('locations_manage');
+        } else {
+            $html = $this->container->get('templating')->render
+            (
+                'locations/edit.html.twig',
+                array(
+                    'formLocation' => $form->createView(),
+                    'formLocationNote' => $lNForm->createView(),
+                    'displayMessage' => $this->displayMessage,
+                    'formDelete' => $formDelete->createView()
+                )
+            );
+            return new Response($html);
+        }
     }
 
 }

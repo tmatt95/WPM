@@ -232,7 +232,7 @@ class Part {
         return $this->locationinfo;
     }
 
-    static function getTotalNumber($em, $searchTerm, $locationId = null) {
+    static function getTotalNumber($em, $searchTerm, $locationid = null) {
         $qs = 'SELECT COUNT(p.id) as number
             FROM AppBundle:Part p
             JOIN p.locationinfo l
@@ -241,12 +241,12 @@ class Part {
         if ($searchTerm) {
             $qs .=' WHERE (p.name LIKE :search OR l.name LIKE :search';
             $qs .=' OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search)';
-            if ($locationId) {
-                $qs .=' AND location = :locationId';
+            if ($locationid) {
+                $qs .=' AND p.location = :locationid';
             }
         } else {
-            if ($locationId) {
-                $qs .=' WHERE location = :locationId';
+            if ($locationid) {
+                $qs .=' WHERE p.location = :locationid';
             }
         }
         $query = $em->createQuery($qs);
@@ -255,15 +255,39 @@ class Part {
                     ':search', '%' . $searchTerm . '%'
             );
         }
-        if ($locationId) {
+        if ($locationid) {
             $query->setParameter(
-                    ':locationId', $locationId
+                    ':locationid', $locationid
             );
         }
         return $query->getResult()[0]['number'];
     }
 
-    static function search($em, $searchTerm, $limit, $offset, $locationId = null) {
+    static function moveAllOutLocation($em, $locationid, $locationidnew = null) {
+        $qs = 'UPDATE AppBundle:Part p SET p.location = :locationidnew WHERE p.location = :locationid';
+        $query = $em->createQuery($qs);
+        $query->setParameter(
+                ':locationid', $locationid
+        );
+        $query->setParameter(
+                ':locationidnew', $locationidnew
+        );
+        return $query->getResult();
+    }
+    
+    static function moveAllOutPartType($em, $partytype, $parttypenew = null) {
+        $qs = 'UPDATE AppBundle:Part p SET p.type = :partytypenew WHERE p.type = :partytype';
+        $query = $em->createQuery($qs);
+        $query->setParameter(
+                ':partytype', $partytype
+        );
+        $query->setParameter(
+                ':partytypenew', $partytypenew
+        );
+        return $query->getResult();
+    }
+
+    static function search($em, $searchTerm, $limit, $offset, $locationid = null) {
         $qs = 'SELECT p.id,
             p.name,
             p.qty,
@@ -282,12 +306,12 @@ class Part {
         if ($searchTerm) {
             $qs .=' WHERE (p.name LIKE :search OR l.name LIKE :search';
             $qs .=' OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search)';
-            if ($locationId) {
-                $qs .=' AND location = :locationId';
+            if ($locationid) {
+                $qs .=' AND p.location = :locationid';
             }
         } else {
-            if ($locationId) {
-                $qs .=' WHERE location = :locationId';
+            if ($locationid) {
+                $qs .=' WHERE p.location = :locationid';
             }
         }
         $qs .=' ORDER BY p.name ASC';
@@ -299,13 +323,13 @@ class Part {
                     ':search', '%' . $searchTerm . '%'
             );
         }
-        if ($locationId) {
+        if ($locationid) {
             $query->setParameter(
-                    ':locationId', $locationId
+                    ':locationid', $locationid
             );
         }
         return array(
-            'total' => self::getTotalNumber($em, $searchTerm),
+            'total' => self::getTotalNumber($em, $searchTerm, $locationid),
             'rows' => $query->getResult()
         );
     }
