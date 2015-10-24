@@ -275,14 +275,14 @@ class Part {
         return $query->getResult();
     }
     
-    static function moveAllOutPartType($em, $partytype, $parttypenew = null) {
-        $qs = 'UPDATE AppBundle:Part p SET p.type = :partytypenew WHERE p.type = :partytype';
+    static function moveAllOutPartType($em, $parttype, $parttypenew = null) {
+        $qs = 'UPDATE AppBundle:Part p SET p.type = :parttypenew WHERE p.type = :parttype';
         $query = $em->createQuery($qs);
         $query->setParameter(
-                ':partytype', $partytype
+                ':parttype', $parttype
         );
         $query->setParameter(
-                ':partytypenew', $partytypenew
+                ':parttypenew', $parttypenew
         );
         return $query->getResult();
     }

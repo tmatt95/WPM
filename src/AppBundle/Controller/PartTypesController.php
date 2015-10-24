@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\PartType;
+use AppBundle\Entity\Part;
 use AppBundle\Form\Parts\PartType as FPartType;
 use AppBundle\Form\Parts\PartTypeUpdate as FPartTypeUpdate;
 use AppBundle\Form\Parts\PartTypeDelete as FPartTypeDelete;
