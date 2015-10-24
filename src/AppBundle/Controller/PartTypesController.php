@@ -85,6 +85,11 @@ class PartTypesController extends Controller {
         $formDelete = $this->createForm(new FPartTypeDelete(), $partType);
         $form->handleRequest($request);
         
+        $formDelete->handleRequest($request);
+        if ($formDelete->isValid()) {
+            echo 'Delete part type action here!';
+        }
+        
         // If form is posted and valid, then saves
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
