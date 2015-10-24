@@ -34,6 +34,10 @@ class PartsController extends Controller {
         'value' => ''
     );
 
+    public function partsAction() {
+        return $this->redirectToRoute('parts_find');
+    }
+
     public function indexAction() {
         // Information for the latest added parts widget
         $em = $this->getDoctrine()->getManager();
@@ -85,14 +89,14 @@ class PartsController extends Controller {
             $createdDate = new DateTime('Europe/London');
             $part->setAdded($createdDate);
             $part->setAddedBy($this->getUser());
-            
+
             $part->setParttype($this->getDoctrine()
-                ->getRepository('AppBundle:PartType')
-                ->find( $part->getType()));
-            
+                            ->getRepository('AppBundle:PartType')
+                            ->find($part->getType()));
+
             $part->setLocationinfo($this->getDoctrine()
-                ->getRepository('AppBundle:Location')
-                ->find($part->getLocation()));
+                            ->getRepository('AppBundle:Location')
+                            ->find($part->getLocation()));
 
             // Saves the new part to the system
             $em = $this->getDoctrine()->getManager();
@@ -113,7 +117,7 @@ class PartsController extends Controller {
         );
         return new Response($html);
     }
-    
+
     public function searchAction(Request $request) {
         $limit = 10;
         $offset = 0;
@@ -121,7 +125,7 @@ class PartsController extends Controller {
             $limit = $request->query->get('limit');
             $offset = $request->query->get('offset');
         }
-        
+
         // Sets location id if sent to limit the search to a specific location
         $locationid = null;
         if ($request->query->get('locationid')) {
@@ -131,7 +135,7 @@ class PartsController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-            Part::search($em,$searchTerm,$limit,$offset, $locationid)
+                Part::search($em, $searchTerm, $limit, $offset, $locationid)
         );
         return $response;
     }
@@ -143,26 +147,19 @@ class PartsController extends Controller {
         return new Response($html);
     }
 
-    public function manageAction() {
-        $html = $this->container->get('templating')->render(
-                'parts/manage.html.twig', array()
-        );
-        return new Response($html);
-    }
-
     public function viewAction($partId, Request $request) {
         $em = $this->getDoctrine()->getManager();
         // Loads part information
         $part = $this->getDoctrine()
                 ->getRepository('AppBundle:Part')
                 ->find($partId);
-        
+
         if (!$part) {
             throw $this->createNotFoundException(
                     'Part not found. It may not exist or have been deleted.'
             );
         }
-        
+
         $form = $this->createFormBuilder($part)
                 ->add('name', 'text')
                 ->add('description', 'textarea')
@@ -192,7 +189,7 @@ class PartsController extends Controller {
         }
 
         $html = $this->container->get('templating')->render(
-                'parts/view.html.twig', array('part' => $part,'form'=>$form->createView(), 'displayMessage'=>$this->displayMessage)
+                'parts/view.html.twig', array('part' => $part, 'form' => $form->createView(), 'displayMessage' => $this->displayMessage)
         );
         return new Response($html);
     }

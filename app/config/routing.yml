@@ -1,7 +1,7 @@
 # Parts
-parts_get:
-    path:     /parts/get
-    defaults: { _controller: AppBundle:Parts:get }
+parts:
+    path:     /parts/
+    defaults: { _controller: AppBundle:Parts:parts }
     methods:  [GET]
 parts_view:
     path:     /parts/view/{partId}
@@ -20,10 +20,6 @@ parts_find:
 parts_search:
     path:     /parts/search
     defaults: { _controller: AppBundle:Parts:search }
-    methods:  [GET]
-parts_manage:
-    path:     /parts/manage
-    defaults: { _controller: AppBundle:Parts:manage }
     methods:  [GET]
 
 # Locations
