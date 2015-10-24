@@ -42,6 +42,16 @@
                 pagination: true,
                 search: true
             });
+            
+            $("#deletelocation").click(function () {
+                $('#deletelocation').popover({html: true, content: $('.deletelocationform').html()});
+                $('#deletelocation').popover('show');
+            });
+
+            $("body").on("click", ".deletelocationcancel", function () {
+                $('#deletelocation').popover('destroy');
+                return false;
+            });
         });
     </script>
 {% endblock %}
@@ -53,14 +63,22 @@
         <div class="col-sm-8">
             <h1>{{ formLocation.vars.value.name }}</h1>
         </div>
-        <div style="padding-top:20px;" class="col-sm-4 hidden-xs text-right">
-            {{ form_start(formDelete) }}
-            {{ form_widget(formDelete) }}
-            <button type="submit" class="btn btn-xl btn-danger"> 
-                <span aria-hidden="true" class="glyphicon glyphicon-minus"></span> 
-                Delete Location
+        <div style="padding-top:20px;" class="col-sm-4 hidden-xs text-right">            
+            <button type="button" class="btn btn-danger" id="deletelocation" title="Confirm Delete" data-container="body" data-toggle="popover" data-placement="bottom">
+                <span class="glyphicon glyphicon-minus"></span> Delete Location
             </button>
-            {{ form_end(formDelete) }}
+            <div class="deletelocationform hidden">
+                {{ form_start(formDelete) }}
+                {{ form_widget(formDelete) }}
+                <p>Please confirm you would like to delete <strong>{{ formLocation.vars.value.name }}</strong></p>
+                <button type="submit" class="btn btn-xl btn-danger">
+                    Delete
+                </button>
+                <button type="button" class="btn btn-xl btn-default pull-right deletelocationcancel">
+                    Cancel
+                </button>
+                {{ form_end(formDelete) }}
+            </div>
         </div>
     </div>
     <div class="row">
