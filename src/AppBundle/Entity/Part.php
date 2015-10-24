@@ -24,7 +24,7 @@ class Part {
      * @ORM\JoinColumn(name="added_by", referencedColumnName="id")
      */
     protected $addeduser;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="Location", inversedBy="parts")
      * @ORM\JoinColumn(name="location", referencedColumnName="id")
@@ -102,7 +102,6 @@ class Part {
         return $this->type;
     }
 
-    
     public function setType($type) {
         $this->type = $type;
     }
@@ -170,49 +169,13 @@ class Part {
         $this->deleted_by = $addedBy;
     }
 
-    static function getTotalNumberLocation($em, $searchTerm) {
-        $qs = 'SELECT COUNT(l.id) as number FROM AppBundle:Location l';
-        if ($searchTerm) {
-            $qs .=' WHERE l.name LIKE :search';
-        }
-        $query = $em->createQuery($qs);
-        if ($searchTerm) {
-            $query->setParameter(
-                    ':search', '%' . $searchTerm . '%'
-            );
-        }
-        return $query->getResult()[0]['number'];
-    }
-
-    static function searchLocation($em, $searchTerm, $limit, $offset) {
-        $qs = '';
-        if ($searchTerm) {
-            $qs .=' WHERE l.name LIKE :search';
-        }
-        $qs .=' ORDER BY l.name ASC';
-        $query = $em->createQuery($qs);
-        $query->setMaxResults($limit);
-        $query->setFirstResult($offset);
-        if ($searchTerm) {
-            $query->setParameter(
-                    ':search', '%' . $searchTerm . '%'
-            );
-        }
-        return array(
-            'total' => self::getTotalNumber($em, $searchTerm),
-            'rows' => $query->getResult()
-        );
-    }
-
-
     /**
      * Set parttype
      *
      * @param \AppBundle\Entity\PartType $parttype
      * @return Part
      */
-    public function setParttype(\AppBundle\Entity\PartType $parttype = null)
-    {
+    public function setParttype(\AppBundle\Entity\PartType $parttype = null) {
         $this->parttype = $parttype;
 
         return $this;
@@ -223,8 +186,7 @@ class Part {
      *
      * @return \AppBundle\Entity\PartType 
      */
-    public function getParttype()
-    {
+    public function getParttype() {
         return $this->parttype;
     }
 
@@ -234,8 +196,7 @@ class Part {
      * @param \AppBundle\Entity\User $addeduser
      * @return Part
      */
-    public function setAddeduser(\AppBundle\Entity\User $addeduser = null)
-    {
+    public function setAddeduser(\AppBundle\Entity\User $addeduser = null) {
         $this->addeduser = $addeduser;
 
         return $this;
@@ -246,8 +207,7 @@ class Part {
      *
      * @return \AppBundle\Entity\User 
      */
-    public function getAddeduser()
-    {
+    public function getAddeduser() {
         return $this->addeduser;
     }
 
@@ -257,8 +217,7 @@ class Part {
      * @param \AppBundle\Entity\Location $locationinfo
      * @return Part
      */
-    public function setLocationinfo(\AppBundle\Entity\Location $locationinfo = null)
-    {
+    public function setLocationinfo(\AppBundle\Entity\Location $locationinfo = null) {
         $this->locationinfo = $locationinfo;
 
         return $this;
@@ -269,32 +228,42 @@ class Part {
      *
      * @return \AppBundle\Entity\Location 
      */
-    public function getLocationinfo()
-    {
+    public function getLocationinfo() {
         return $this->locationinfo;
     }
-    
-    static function getTotalNumber($em,$searchTerm) {
+
+    static function getTotalNumber($em, $searchTerm, $locationId = null) {
         $qs = 'SELECT COUNT(p.id) as number
             FROM AppBundle:Part p
             JOIN p.locationinfo l
             JOIN p.parttype pt
             JOIN p.addeduser u';
-        if($searchTerm){
-            $qs .=' WHERE p.name LIKE :search OR l.name LIKE :search';
-             $qs .=' OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search';
+        if ($searchTerm) {
+            $qs .=' WHERE (p.name LIKE :search OR l.name LIKE :search';
+            $qs .=' OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search)';
+            if ($locationId) {
+                $qs .=' AND location = :locationId';
+            }
+        } else {
+            if ($locationId) {
+                $qs .=' WHERE location = :locationId';
+            }
         }
         $query = $em->createQuery($qs);
-        if($searchTerm){
+        if ($searchTerm) {
             $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
+                    ':search', '%' . $searchTerm . '%'
+            );
+        }
+        if ($locationId) {
+            $query->setParameter(
+                    ':locationId', $locationId
             );
         }
         return $query->getResult()[0]['number'];
     }
-    
-    static function search($em,$searchTerm,$limit,$offset) {
+
+    static function search($em, $searchTerm, $limit, $offset, $locationId = null) {
         $qs = 'SELECT p.id,
             p.name,
             p.qty,
@@ -310,23 +279,35 @@ class Part {
             JOIN p.locationinfo l
             JOIN p.parttype pt
             JOIN p.addeduser u';
-        if($searchTerm){
-            $qs .=' WHERE p.name LIKE :search OR l.name LIKE :search';
-             $qs .=' OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search';
+        if ($searchTerm) {
+            $qs .=' WHERE (p.name LIKE :search OR l.name LIKE :search';
+            $qs .=' OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search)';
+            if ($locationId) {
+                $qs .=' AND location = :locationId';
+            }
+        } else {
+            if ($locationId) {
+                $qs .=' WHERE location = :locationId';
+            }
         }
         $qs .=' ORDER BY p.name ASC';
         $query = $em->createQuery($qs);
         $query->setMaxResults($limit);
         $query->setFirstResult($offset);
-        if($searchTerm){
+        if ($searchTerm) {
             $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
+                    ':search', '%' . $searchTerm . '%'
+            );
+        }
+        if ($locationId) {
+            $query->setParameter(
+                    ':locationId', $locationId
             );
         }
         return array(
-            'total'=>self::getTotalNumber($em, $searchTerm),
-            'rows'=>$query->getResult()
+            'total' => self::getTotalNumber($em, $searchTerm),
+            'rows' => $query->getResult()
         );
     }
+
 }

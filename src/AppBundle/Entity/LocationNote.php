@@ -1,4 +1,5 @@
 <?php
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -16,11 +17,11 @@ class LocationNote {
      * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="partsnotes")
      * @ORM\JoinColumn(name="added_by", referencedColumnName="id")
-    */
+     */
     protected $addeduser;
 
     /**
@@ -33,12 +34,12 @@ class LocationNote {
      * @ORM\Column(type="integer")
      */
     protected $location_id;
-    
+
     /**
      * @ORM\Column(type="integer")
      */
     protected $added_by;
-    
+
     /**
      * @ORM\Column(type="datetime")
      */
@@ -49,8 +50,7 @@ class LocationNote {
      *
      * @return integer 
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
@@ -60,8 +60,7 @@ class LocationNote {
      * @param string $notes
      * @return LocationNote
      */
-    public function setNotes($notes)
-    {
+    public function setNotes($notes) {
         $this->notes = $notes;
 
         return $this;
@@ -72,8 +71,7 @@ class LocationNote {
      *
      * @return string 
      */
-    public function getNotes()
-    {
+    public function getNotes() {
         return $this->notes;
     }
 
@@ -83,8 +81,7 @@ class LocationNote {
      * @param integer $locationId
      * @return LocationNote
      */
-    public function setLocationId($locationId)
-    {
+    public function setLocationId($locationId) {
         $this->location_id = $locationId;
 
         return $this;
@@ -95,8 +92,7 @@ class LocationNote {
      *
      * @return integer 
      */
-    public function getLocationId()
-    {
+    public function getLocationId() {
         return $this->location_id;
     }
 
@@ -106,8 +102,7 @@ class LocationNote {
      * @param integer $addedBy
      * @return LocationNote
      */
-    public function setAddedBy($addedBy)
-    {
+    public function setAddedBy($addedBy) {
         $this->addeduser = $addedBy;
 
         return $this;
@@ -118,8 +113,7 @@ class LocationNote {
      *
      * @return integer 
      */
-    public function getAddedBy()
-    {
+    public function getAddedBy() {
         return $this->addeduser;
     }
 
@@ -129,8 +123,7 @@ class LocationNote {
      * @param \DateTime $added
      * @return LocationNote
      */
-    public function setAdded($added)
-    {
+    public function setAdded($added) {
         $this->added = $added;
 
         return $this;
@@ -141,27 +134,31 @@ class LocationNote {
      *
      * @return \DateTime 
      */
-    public function getAdded()
-    {
+    public function getAdded() {
         return $this->added;
     }
-    
-    static function getTotalNumber($em,$searchTerm) {
+
+    static function getTotalNumber($em, $searchTerm, $locationId) {
         $qs = 'SELECT COUNT(ln.id) as number FROM AppBundle:LocationNote ln';
-        if($searchTerm){
-            $qs .=' WHERE ln.notes LIKE :search';
+        if ($searchTerm) {
+            $qs .=' WHERE ln.notes LIKE :search AND ln.location_id = :locationId';
+        } else {
+            $qs .=' WHERE ln.location_id = :locationId';
         }
+
         $query = $em->createQuery($qs);
-        if($searchTerm){
+        if ($searchTerm) {
             $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
+                    ':search', '%' . $searchTerm . '%'
             );
         }
+        $query->setParameter(
+                ':locationId', $locationId
+        );
         return $query->getResult()[0]['number'];
     }
-    
-    static function search($em,$locationId,$searchTerm,$limit,$offset) {
+
+    static function search($em, $locationId, $searchTerm, $limit, $offset) {
         $qs = 'SELECT ln.id,
                 ln.notes,
                 ln.added,
@@ -171,26 +168,24 @@ class LocationNote {
         FROM AppBundle:LocationNote ln
         JOIN ln.addeduser u
         WHERE ln.location_id = :locationid';
-        if($searchTerm){
+        if ($searchTerm) {
             $qs .=' AND ln.notes LIKE :search';
         }
         $qs .=' ORDER BY ln.added DESC';
         $query = $em->createQuery($qs);
         $query->setMaxResults($limit);
         $query->setFirstResult($offset);
-        if($searchTerm){
+        if ($searchTerm) {
             $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
+                    ':search', '%' . $searchTerm . '%'
             );
         }
         $query->setParameter(
-            ':locationid',
-            $locationId
+                ':locationid', $locationId
         );
         return array(
-            'total'=>1,
-            'rows'=>$query->getResult()
+            'total' => self::getTotalNumber($em, $searchTerm, $locationId),
+            'rows' => $query->getResult()
         );
     }
 
@@ -200,8 +195,7 @@ class LocationNote {
      * @param \AppBundle\Entity\User $addeduser
      * @return LocationNote
      */
-    public function setAddeduser(\AppBundle\Entity\User $addeduser = null)
-    {
+    public function setAddeduser(\AppBundle\Entity\User $addeduser = null) {
         $this->addeduser = $addeduser;
 
         return $this;
@@ -212,8 +206,8 @@ class LocationNote {
      *
      * @return \AppBundle\Entity\User 
      */
-    public function getAddeduser()
-    {
+    public function getAddeduser() {
         return $this->addeduser;
     }
+
 }
