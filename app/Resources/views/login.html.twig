@@ -7,7 +7,7 @@
         <div class="alert alert-danger" style="margin-top:10px;margin-bottom:0px;">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
     <nav class="navbar navbar-default" style="margin-top:10px;">
-        <div class="container-fluid">
+        <div class="col-xs-12">
             <div class="navbar-header">
                 <form action="{{ path('users_login_check') }}" class="navbar-form navbar-left" method="post">
                     <input type="text" id="username" class="form-control" placeholder="Username" name="_username" value="{{ last_username }}" />
@@ -21,7 +21,6 @@
             </div>
         </div>
     </nav>
-
     <div class="row">
         <div class="col-xs-12">
             <h1>Welcome</h1>
