@@ -42,7 +42,7 @@
                         {% for lap in partsAdded %}
                             <tr>
                                 <td>{{ lap.added|date("d/m/Y") }}</td>
-                                <td><a href="/part/edit/{{ lap.id }}">{{ lap.name }}</a></td>
+                                <td><a href="/part/view/{{ lap.id }}">{{ lap.name }}</a></td>
                                 <td>{{ lap.qty }}</td>
                                 <td>{{ lap.name_first }} {{ lap.name_last }}</td>
                             </tr>
