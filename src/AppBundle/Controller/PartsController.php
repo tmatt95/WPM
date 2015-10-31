@@ -10,6 +10,8 @@ use DateTime;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use AppBundle\Entity\Location;
 use AppBundle\Entity\PartType;
+use AppBundle\Form\Parts\PartChange as FPartChange;
+use AppBundle\Entity\PartChange as PartChange;
 
 class PartsController extends Controller {
 
@@ -159,6 +161,8 @@ class PartsController extends Controller {
                     'Part not found. It may not exist or have been deleted.'
             );
         }
+        
+        $FPartChange = $this->createForm(new FPartChange(), new PartChange());
 
         $form = $this->createFormBuilder($part)
                 ->add('name', 'text')
@@ -189,7 +193,13 @@ class PartsController extends Controller {
         }
 
         $html = $this->container->get('templating')->render(
-                'parts/view.html.twig', array('part' => $part, 'form' => $form->createView(), 'displayMessage' => $this->displayMessage)
+                'parts/view.html.twig',
+                array(
+                    'part' => $part,
+                    'FPartChange'=>$FPartChange->createView(),
+                    'form' => $form->createView(),
+                    'displayMessage' => $this->displayMessage
+                )
         );
         return new Response($html);
     }

@@ -1,12 +1,12 @@
 {% extends 'parts.html.twig' %}
 
-{% block title %}Parts: {{ form.vars.value.name }}{% endblock %}
+{% block title %}Parts: {{part.name}}{% endblock %}
 
 {% block body %}
-    <h1>View Part - {{ form.vars.value.name }}</h1>
+    <h1>View Part - {{part.name}}</h1>
     <ol class="breadcrumb">
         <li><a href="{{ path('parts_find') }}">Parts</a></li>
-        <li class="active">{{ form.vars.value.name }}</li>
+        <li class="active">{{part.name}}</li>
     </ol>
     {% if displayMessage.value != '' %}
         <div class="row">
@@ -20,8 +20,16 @@
             </div>
         </div>
     {% endif %}
+    <h3>Add/Use</h3>
+    {{ form_start(FPartChange) }}
+    {{ form_widget(FPartChange) }}
+    {{ form_end(FPartChange) }}
 
+    <h3>Info</h3>
     {{ form_start(form) }}
     {{ form_widget(form) }}
     {{ form_end(form) }}
+    
+    <h3>History</h3>
+    <p class="text-muted">No history for this part</p>
 {% endblock %}

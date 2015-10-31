@@ -5,21 +5,25 @@
 
 {% block body %}
     <div class="row">
-        <div class="col-md-6"><h3>Parts By Type</h3>
+        <div class="col-md-6" id="chartPartTypeBox"><h3>Parts By Type</h3>
             {% if partsAdded|length == 0 %}
                 <p class="text-muted">You are not storing any parts yet :O</p>
             {% endif %}
             {% if partsAdded|length > 0 %}
+                <div>
                 <canvas id="chartPartType"></canvas>
+                </div>
                 {% endif %}
         </div>
-        <div class="col-md-6">
+        <div class="col-md-6" id="chartPartsAddedBox">
             <h3>No Parts In Store</h3>
             {% if partsAdded|length == 0 %}
                 <p class="text-muted">You are not storing any parts yet :O</p>
             {% endif %}
             {% if partsAdded|length > 0 %}
+                <div>
                 <canvas id="chartPartsAdded"></canvas>
+                </div>
                 {% endif %}
         </div>
     </div>
@@ -105,7 +109,7 @@
 
             if ($('#chartPartsAdded').length > 0) {
                 var ctx = document.getElementById("chartPartsAdded").getContext("2d");
-                var myLineChart = new Chart(ctx).Line(data, {responsive: true});
+                var chartPartsAdded = new Chart(ctx).Line(data, {responsive:true});
             }
 
 
@@ -116,10 +120,9 @@
                     type: "GET"
                 }).done(function (data) {
                     var chartPartsAdded = document.getElementById("chartPartType").getContext("2d");
-                    var myLineChart = new Chart(chartPartsAdded).Pie(data, {responsive: true});
+                    var chartPartType = new Chart(chartPartsAdded).Pie(data, {responsive:true});
                 });
             }
-
 
         });
     </script>
