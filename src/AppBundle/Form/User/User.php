@@ -1,8 +1,7 @@
 <?php
 
 /**
- * User Form
- * The add user form.
+ * Add User Form.
  * 
  * PHP version 5.6
  * 
@@ -21,8 +20,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * User Form
- * The add user form.
+ * Add User Form.
  * 
  * PHP version 5.6
  * 
