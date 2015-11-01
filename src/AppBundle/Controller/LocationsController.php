@@ -1,4 +1,18 @@
 <?php
+/**
+ * Locations
+ * Parts get added to a location. This controls the management of locations
+ * in the system.
+ * 
+ * PHP version 5.6
+ * 
+ * @category WPM
+ * @package  Location
+ * @author   Matthew Turner <tmatt95@gmail.com>
+ * @license  http://opensource.org/licenses/GPL-3.0 GPL3
+ * @version  GIT: <1.0.0>
+ * @link     https://github.com/tmatt95/WPM/
+ */
 
 namespace AppBundle\Controller;
 
@@ -16,42 +30,46 @@ use DateTime;
 
 /**
  * Locations
- * Parts get added to a location. This file controls the management of locations
+ * Parts get added to a location. This controls the management of locations
  * in the system.
+ * 
+ * PHP version 5.6
+ * 
+ * @category WPM
+ * @package  Location
+ * @author   Matthew Turner <tmatt95@gmail.com>
+ * @license  http://opensource.org/licenses/GPL-3.0 GPL3
+ * @version  Release: <1.0.0>
+ * @link     https://github.com/tmatt95/WPM/
  */
-class LocationsController extends Controller {
-
+class LocationsController extends Controller
+{
     /**
      * Used to store notice messages to be displayed at the top of the 
-     * manage/edit windows after an ection has been carried out.
-     * 
-     * `class`:
-     * Class to be displayed on the alert box. Defaults to 'alert-success'.
-     * 
-     * `showButton`:
-     * Whether to show the button linking to the location the message relates to.
-     * Defaults to false.
-     * 
-     *  
+     * manage/edit windows after an action has been carried out.
      */
     private $displayMessage = array(
         'class' => 'alert-success',
         'showButton' => false,
         'buttonText' => 'Edit Location',
         'locationId' => null,
-        'value' => ''
+        'value' => '',
     );
+    
     private $redirectToLocations = false;
 
     /**
      * Location Update
      * This will take the location form an try and update the database with it
      * if one is sent to it.
-     * @param Request $request containing the POST data if sent
+     *
+     * @param Request  $request  containing the POST data if sent
      * @param Location $location record to be updated
+     *
      * @return FLocation Either updated or with errors
      */
-    private function formUpdate(Request $request, Location $location) {
+    private function formUpdate(Request $request, Location $location)
+    {
         $form = $this->createForm(new FLocation(), $location);
         $form->handleRequest($request);
 
@@ -62,10 +80,22 @@ class LocationsController extends Controller {
             $this->displayMessage['value'] = 'Successfuly updated location';
             $this->displayMessage['class'] = 'alert-info';
         }
+
         return $form;
     }
 
-    private function formDelete(Request $request, Location $location) {
+    /**
+     * Location delete
+     * Will move all parts out of a location and then remove the location from
+     * the system.
+     *
+     * @param Request  $request
+     * @param Location $location to remove
+     *
+     * @return FLocationDelete Delete location form
+     */
+    private function formDelete(Request $request, Location $location)
+    {
         $form = $this->createForm(new FLocationDelete(), $location);
         $form->handleRequest($request);
 
@@ -77,17 +107,21 @@ class LocationsController extends Controller {
             $em->flush();
             $this->redirectToLocations = true;
         }
+
         return $form;
     }
 
     /**
      * Location Add
      * Will try and add a new location to the system if there is one to add.
-     * @param Request $request containing the POST data if sent
+     *
+     * @param Request  $request  containing the POST data if sent
      * @param Location $location record to be updated
+     *
      * @return FLocation Either a blank new for on success orone with errors
      */
-    private function formAdd(Request $request, Location $location) {
+    private function formAdd(Request $request, Location $location)
+    {
         $form = $this->createForm(new FLocation(), $location);
         $form->handleRequest($request);
 
@@ -107,13 +141,16 @@ class LocationsController extends Controller {
     }
 
     /**
-     * 
-     * @param type $locationId
-     * @param Request $request
+     * Add location not.
+     *
+     * @param type         $locationId
+     * @param Request      $request
      * @param LocationNote $record
+     *
      * @return type
      */
-    private function formLNAdd($locationId, Request $request, LocationNote $record) {
+    private function formLNAdd($locationId, Request $request, LocationNote $record)
+    {
         $form = $this->createForm(new FLocationNote(), $record);
         $form->handleRequest($request);
 
@@ -131,6 +168,7 @@ class LocationsController extends Controller {
             $em->flush();
             $this->displayMessage['value'] = 'Successfuly added location note.';
             $this->displayMessage['class'] = 'alert-info';
+
             return $this->createForm(new FLocationNote(), new LocationNote());
         } else {
             return $form;
@@ -140,17 +178,21 @@ class LocationsController extends Controller {
     /**
      * Get Manage Screen
      * This will return the manage locations screen.
+     *
      * @param Request $request Could contain a new location
+     *
      * @return HTML The manage locations screen
      */
-    public function manageAction(Request $request) {
+    public function manageAction(Request $request)
+    {
         $form = $this->formAdd($request, new Location());
         $html = $this->container->get('templating')->render(
-                'locations/manage.html.twig', array(
+            'locations/manage.html.twig', array(
             'form' => $form->createView(),
-            'displayMessage' => $this->displayMessage
+            'displayMessage' => $this->displayMessage,
                 )
         );
+
         return new Response($html);
     }
 
@@ -161,10 +203,12 @@ class LocationsController extends Controller {
      * offset. This funcation may not return all the items from the table if
      * there are more than the total number. The total number of items is also
      * returned from the system.
+     *
      * @return JsonResponse containing up to 10 locations requested from the
-     * system
+     *                      system
      */
-    public function getAction(Request $request) {
+    public function getAction(Request $request)
+    {
         $limit = 10;
         $offset = 0;
         if ($request->query->get('limit') && $request->query->get('offset')) {
@@ -175,12 +219,14 @@ class LocationsController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-                Location::search($em, $searchTerm, $limit, $offset)
+            Location::search($em, $searchTerm, $limit, $offset)
         );
+
         return $response;
     }
 
-    public function getNotesAction($locationId, Request $request) {
+    public function getNotesAction($locationId, Request $request)
+    {
         $limit = 10;
         $offset = 0;
         if ($request->query->get('limit') && $request->query->get('offset')) {
@@ -191,24 +237,28 @@ class LocationsController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-                LocationNote::search($em, $locationId, $searchTerm, $limit, $offset)
+            LocationNote::search($em, $locationId, $searchTerm, $limit, $offset)
         );
+
         return $response;
     }
 
     /**
-     * Edit location screen
-     * @param int $id id of the location to edit
+     * Edit location screen.
+     *
+     * @param int     $id      id of the location to edit
      * @param Request $request containing the updated location information
+     *
      * @return Response
      */
-    public function editAction($id, Request $request) {
+    public function editAction($id, Request $request)
+    {
         $location = $this->getDoctrine()
-                ->getRepository('AppBundle:Location')
-                ->find($id);
+            ->getRepository('AppBundle:Location')
+            ->find($id);
         if (!$location) {
             throw $this->createNotFoundException(
-                    'Location not found. It may not exist or have been deleted.'
+                'Location not found. It may not exist or have been deleted.'
             );
         }
         $form = $this->formUpdate($request, $location);
@@ -218,18 +268,16 @@ class LocationsController extends Controller {
         if ($this->redirectToLocations === true) {
             return $this->redirectToRoute('locations_manage');
         } else {
-            $html = $this->container->get('templating')->render
-            (
-                'locations/edit.html.twig',
-                array(
-                    'formLocation' => $form->createView(),
-                    'formLocationNote' => $lNForm->createView(),
-                    'displayMessage' => $this->displayMessage,
-                    'formDelete' => $formDelete->createView()
-                )
+            $html = $this->container->get('templating')->render(
+                'locations/edit.html.twig', array(
+                'formLocation' => $form->createView(),
+                'formLocationNote' => $lNForm->createView(),
+                'displayMessage' => $this->displayMessage,
+                'formDelete' => $formDelete->createView(),
+                    )
             );
+
             return new Response($html);
         }
     }
-
 }

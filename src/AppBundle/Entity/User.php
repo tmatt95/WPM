@@ -2,6 +2,7 @@
 
 // src/AppBundle/Entity/User.php
 
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -12,18 +13,18 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\UserRepository")
  */
-class User implements AdvancedUserInterface, \Serializable {
-
+class User implements AdvancedUserInterface, \Serializable
+{
     /**
      * @ORM\OneToMany(targetEntity="Part", mappedBy="addeduser")
      */
     protected $parts;
-    
+
     /**
      * @ORM\OneToMany(targetEntity="PartChange", mappedBy="addeduser")
      */
     protected $partchanges;
-    
+
     /**
      * @ORM\OneToMany(targetEntity="LocationNote", mappedBy="addeduser")
      */
@@ -77,7 +78,7 @@ class User implements AdvancedUserInterface, \Serializable {
      * @ORM\Column(type="integer")
      */
     private $addedBy;
-    
+
     /**
      * @ORM\Column(type="integer")
      */
@@ -105,60 +106,75 @@ class User implements AdvancedUserInterface, \Serializable {
 
     public function isEnabled()
     {
-        if($this->getDeleted()=== 1){
+        if ($this->getDeleted() === 1) {
             return false;
-        } else{
+        } else {
             return true;
         }
     }
 
-    public function __construct() {
+    public function __construct()
+    {
     }
 
-    public function getUsername() {
+    public function getUsername()
+    {
         return $this->username;
     }
 
-    public function getSalt() {
+    public function getSalt()
+    {
         // you *may* need a real salt depending on your encoder
         // see section on salt below
-        return null;
+        return;
     }
-    
-    public function getPassword() {
+
+    public function getPassword()
+    {
         return $this->password;
     }
 
-    public function getRoles() {
+    public function getRoles()
+    {
         return array('ROLE_USER', 'ROLE_ADMIN');
     }
 
-    public function isAdmin() {
+    public function isAdmin()
+    {
         return in_array('ROLE_ADMIN', $this->getRoles());
     }
 
-    public function isUser() {
+    public function isUser()
+    {
         return in_array('ROLE_USER', $this->getRoles());
     }
 
-    public function eraseCredentials() {
-        
+    public function eraseCredentials()
+    {
     }
 
-    /** @see \Serializable::serialize() */
-    public function serialize() {
-        return serialize(array(
+    /**
+     * @see \Serializable::serialize() 
+     */
+    public function serialize()
+    {
+        return serialize(
+            array(
             $this->id,
             $this->username,
             $this->password,
                 // see section on salt below
                 // $this->salt,
-        ));
+            )
+        );
     }
 
-    /** @see \Serializable::unserialize() */
-    public function unserialize($serialized) {
-        list (
+    /**
+     * @see \Serializable::unserialize() 
+     */
+    public function unserialize($serialized)
+    {
+        list(
                 $this->id,
                 $this->username,
                 $this->password,
@@ -168,248 +184,285 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer
+     * @return int
      */
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
-    
-    public function setId($id) {
+
+    public function setId($id)
+    {
         $this->id = $id;
+
         return $this;
     }
 
     /**
-     * Set username
+     * Set username.
      *
      * @param string $username
+     *
      * @return User
      */
-    public function setUsername($username) {
+    public function setUsername($username)
+    {
         $this->username = $username;
 
         return $this;
     }
 
     /**
-     * Set password
+     * Set password.
      *
      * @param string $password
+     *
      * @return User
      */
-    public function setPassword($password) {
+    public function setPassword($password)
+    {
         $this->password = $password;
 
         return $this;
     }
-    
+
     /**
      * @param string $email
+     *
      * @return User
      */
-    public function setDeleted($deleted) {
+    public function setDeleted($deleted)
+    {
         $this->deleted = $deleted;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getDeleted() {
+    public function getDeleted()
+    {
         return $this->deleted;
     }
-    
+
     /**
      * @param string $email
+     *
      * @return User
      */
-    public function setDeletedBy($deletedBy) {
+    public function setDeletedBy($deletedBy)
+    {
         $this->deletedBy = $deletedBy;
+
         return $this;
     }
 
     /**
      * @return string
      */
-    public function getDeletedBy() {
+    public function getDeletedBy()
+    {
         return $this->deletedBy;
     }
 
     /**
-     * Set email
+     * Set email.
      *
      * @param string $email
+     *
      * @return User
      */
-    public function setEmail($email) {
+    public function setEmail($email)
+    {
         $this->email = $email;
 
         return $this;
     }
 
     /**
-     * Get email
+     * Get email.
      *
      * @return string
      */
-    public function getEmail() {
+    public function getEmail()
+    {
         return $this->email;
     }
 
     /**
-     * Set isActive
+     * Set isActive.
      *
-     * @param boolean $isActive
+     * @param bool $isActive
+     *
      * @return User
      */
-    public function setIsActive($isActive) {
+    public function setIsActive($isActive)
+    {
         $this->isActive = $isActive;
 
         return $this;
     }
 
     /**
-     * Get isActive
+     * Get isActive.
      *
-     * @return boolean
+     * @return bool
      */
-    public function getIsActive() {
+    public function getIsActive()
+    {
         return $this->isActive;
     }
 
     /**
-     * Set name_first
+     * Set name_first.
      *
      * @param string $nameFirst
+     *
      * @return User
      */
-    public function setNameFirst($nameFirst) {
+    public function setNameFirst($nameFirst)
+    {
         $this->name_first = $nameFirst;
 
         return $this;
     }
 
     /**
-     * Get name_first
+     * Get name_first.
      *
      * @return string
      */
-    public function getNameFirst() {
+    public function getNameFirst()
+    {
         return $this->name_first;
     }
 
     /**
-     * Set name_last
+     * Set name_last.
      *
      * @param string $nameLast
+     *
      * @return User
      */
-    public function setNameLast($nameLast) {
+    public function setNameLast($nameLast)
+    {
         $this->name_last = $nameLast;
 
         return $this;
     }
 
     /**
-     * Get name_last
+     * Get name_last.
      *
      * @return string
      */
-    public function getNameLast() {
+    public function getNameLast()
+    {
         return $this->name_last;
     }
 
     /**
-     * Set added
+     * Set added.
      *
      * @param \DateTime $added
+     *
      * @return User
      */
-    public function setAdded($added) {
+    public function setAdded($added)
+    {
         $this->added = $added;
 
         return $this;
     }
 
     /**
-     * Get added
+     * Get added.
      *
      * @return \DateTime
      */
-    public function getAdded() {
+    public function getAdded()
+    {
         return $this->added;
     }
 
     /**
-     * Set addedBy
+     * Set addedBy.
      *
-     * @param integer $addedBy
+     * @param int $addedBy
+     *
      * @return User
      */
-    public function setAddedBy($addedBy) {
+    public function setAddedBy($addedBy)
+    {
         $this->addedBy = $addedBy;
 
         return $this;
     }
 
     /**
-     * Get addedBy
+     * Get addedBy.
      *
-     * @return integer
+     * @return int
      */
-    public function getAddedBy() {
+    public function getAddedBy()
+    {
         return $this->addedBy;
     }
 
-    static function getTotalNumber($em, $searchTerm) {
+    public static function getTotalNumber($em, $searchTerm)
+    {
         $qs = 'SELECT COUNT(u.id) as number FROM AppBundle:User u';
         if ($searchTerm) {
-            $qs .=' WHERE u.username LIKE :search  AND u.deleted IS NULL';
-        } else{
-            $qs .=' WHERE u.deleted IS NULL';
+            $qs .= ' WHERE u.username LIKE :search  AND u.deleted IS NULL';
+        } else {
+            $qs .= ' WHERE u.deleted IS NULL';
         }
         $query = $em->createQuery($qs);
         if ($searchTerm) {
             $query->setParameter(
-                    ':search', '%' . $searchTerm . '%'
+                ':search', '%'.$searchTerm.'%'
             );
         }
+
         return $query->getResult()[0]['number'];
     }
 
-    static function search($em, $searchTerm, $limit, $offset) {
+    public static function search($em, $searchTerm, $limit, $offset)
+    {
         $qs = 'SELECT u.id,
                 u.username,
                 u.name_first,
                 u.name_last
             FROM AppBundle:User u';
         if ($searchTerm) {
-            $qs .=' WHERE u.username LIKE :search AND u.deleted IS NULL';
-        } else{
-            $qs .=' WHERE u.deleted IS NULL';
+            $qs .= ' WHERE u.username LIKE :search AND u.deleted IS NULL';
+        } else {
+            $qs .= ' WHERE u.deleted IS NULL';
         }
-        $qs .=' ORDER BY u.username ASC';
+        $qs .= ' ORDER BY u.username ASC';
         $query = $em->createQuery($qs);
         $query->setMaxResults($limit);
         $query->setFirstResult($offset);
         if ($searchTerm) {
             $query->setParameter(
-                    ':search', '%' . $searchTerm . '%'
+                ':search', '%'.$searchTerm.'%'
             );
         }
+
         return array(
             'total' => self::getTotalNumber($em, $searchTerm),
-            'rows' => $query->getResult()
+            'rows' => $query->getResult(),
         );
     }
 
-
     /**
-     * Add parts
+     * Add parts.
      *
      * @param \AppBundle\Entity\Part $parts
+     *
      * @return User
      */
     public function addPart(\AppBundle\Entity\Part $parts)
@@ -420,7 +473,7 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Remove parts
+     * Remove parts.
      *
      * @param \AppBundle\Entity\Part $parts
      */
@@ -430,9 +483,9 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Get parts
+     * Get parts.
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getParts()
     {
@@ -440,9 +493,10 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Add partsnotes
+     * Add partsnotes.
      *
      * @param \AppBundle\Entity\LocationNote $partsnotes
+     *
      * @return User
      */
     public function addPartsnote(\AppBundle\Entity\LocationNote $partsnotes)
@@ -453,7 +507,7 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Remove partsnotes
+     * Remove partsnotes.
      *
      * @param \AppBundle\Entity\LocationNote $partsnotes
      */
@@ -463,9 +517,9 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Get partsnotes
+     * Get partsnotes.
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getPartsnotes()
     {
@@ -473,9 +527,10 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Add partchanges
+     * Add partchanges.
      *
      * @param \AppBundle\Entity\PartChange $partchanges
+     *
      * @return User
      */
     public function addPartchange(\AppBundle\Entity\PartChange $partchanges)
@@ -486,7 +541,7 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Remove partchanges
+     * Remove partchanges.
      *
      * @param \AppBundle\Entity\PartChange $partchanges
      */
@@ -496,9 +551,9 @@ class User implements AdvancedUserInterface, \Serializable {
     }
 
     /**
-     * Get partchanges
+     * Get partchanges.
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getPartchanges()
     {

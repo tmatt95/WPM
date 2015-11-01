@@ -1,20 +1,43 @@
 <?php
+/**
+ * Site controller
+ * It is through this object that users log into the application.
+ * 
+ * PHP version 5.6
+ * 
+ * @category WPM
+ * @package  User
+ * @author   Matthew Turner <tmatt95@gmail.com>
+ * @license  http://opensource.org/licenses/GPL-3.0 GPL3
+ * @version  GIT: <1.0.0>
+ * @link     https://github.com/tmatt95/WPM/
+ */
 
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-class SiteController extends Controller {
-
+/**
+ * Site controller
+ * It is through this object that users log into the application.
+ * @category WPM
+ * @package User
+ * @author Matthew Turner <tmatt95@gmail.com>
+ * @license http://opensource.org/licenses/GPL-3.0 GPL3
+ * @version Release: <1.0.0>
+ * @link https://github.com/tmatt95/WPM/
+ */
+class SiteController extends Controller
+{
     /**
      * Login page
-     * The page that users will see when they log into the application.
-     * @param Request $request the user login details
+     * The page that users will see when they log into the application. and 
+     * controls what is displayed if they get their user name or password 
+     * wrong.
      * @return HTML the login page
      */
-    public function loginAction(Request $request) {
+    public function loginAction()
+    {
         $authenticationUtils = $this->get('security.authentication_utils');
 
         // Get the login error if there is one
@@ -35,11 +58,12 @@ class SiteController extends Controller {
     }
 
     /**
-     * @Route("/login_check", name="login_check")
+     * Login Check Action
+     * This controller will not be executed, as the route is handled by the 
+     * Security system.
+     * @return Nothing This function is not executed
      */
-    public function loginCheckAction() {
-        // this controller will not be executed,
-        // as the route is handled by the Security system
+    public function loginCheckAction()
+    {
     }
-
 }

@@ -9,14 +9,13 @@ use Symfony\Component\Validator\Constraints as Assert;
  * @ORM\Entity
  * @ORM\Table(name="location")
  */
-class Location {
-    
+class Location
+{
     /**
      * @ORM\OneToMany(targetEntity="Part", mappedBy="locationinfo")
      */
     protected $parts;
-    
-    
+
     /**
      * @ORM\OneToMany(targetEntity="PartChange", mappedBy="addedlocation")
      */
@@ -42,41 +41,50 @@ class Location {
     protected $description;
 
     // Id
-    public function getId() {
+    public function getId()
+    {
         return $this->id;
     }
 
-    public function setId($value) {
+    public function setId($value)
+    {
         $this->name = $value;
     }
 
     // Name
-    public function getName() {
+    public function getName()
+    {
         return $this->name;
     }
 
-    public function setName($name) {
+    public function setName($name)
+    {
         $this->name = $name;
     }
 
-    public function getIdDelete() {
+    public function getIdDelete()
+    {
         return $this->idDelete;
     }
 
-    public function setIdDelete($value) {
+    public function setIdDelete($value)
+    {
         $this->idDelete = $value;
     }
 
     // Description
-    public function getDescription() {
+    public function getDescription()
+    {
         return $this->description;
     }
 
-    public function setDescription($description) {
+    public function setDescription($description)
+    {
         $this->description = $description;
     }
-    
-    static function getList($em){
+
+    public static function getList($em)
+    {
         $qs = 'SELECT l.id, l.name FROM AppBundle:Location l ORDER BY l.name ASC';
         $query = $em->createQuery($qs);
         $pt = $query->getResult();
@@ -84,50 +92,55 @@ class Location {
         foreach ($pt as $p) {
             $list[$p['id']] = $p['name'];
         }
+
         return $list;
     }
 
-    static function getTotalNumber($em,$searchTerm) {
+    public static function getTotalNumber($em, $searchTerm)
+    {
         $qs = 'SELECT COUNT(l.id) as number FROM AppBundle:Location l';
-        if($searchTerm){
-            $qs .=' WHERE l.name LIKE :search';
+        if ($searchTerm) {
+            $qs .= ' WHERE l.name LIKE :search';
         }
         $query = $em->createQuery($qs);
-        if($searchTerm){
+        if ($searchTerm) {
             $query->setParameter(
                 ':search',
                 '%'.$searchTerm.'%'
             );
         }
+
         return $query->getResult()[0]['number'];
     }
-    
-    static function search($em,$searchTerm,$limit,$offset) {
+
+    public static function search($em, $searchTerm, $limit, $offset)
+    {
         $qs = 'SELECT l.id,
                 l.name,
                 CONCAT(SUBSTRING(l.description,1,50),\'...\') as description
             FROM AppBundle:Location l';
-        if($searchTerm){
-            $qs .=' WHERE l.name LIKE :search';
+        if ($searchTerm) {
+            $qs .= ' WHERE l.name LIKE :search';
         }
-        $qs .=' ORDER BY l.name ASC';
+        $qs .= ' ORDER BY l.name ASC';
         $query = $em->createQuery($qs);
         $query->setMaxResults($limit);
         $query->setFirstResult($offset);
-        if($searchTerm){
+        if ($searchTerm) {
             $query->setParameter(
                 ':search',
                 '%'.$searchTerm.'%'
             );
         }
+
         return array(
-            'total'=>self::getTotalNumber($em, $searchTerm),
-            'rows'=>$query->getResult()
+            'total' => self::getTotalNumber($em, $searchTerm),
+            'rows' => $query->getResult(),
         );
     }
 
     /**
-     * Constructor
+     * Constructor.
      */
     public function __construct()
     {
@@ -135,9 +148,10 @@ class Location {
     }
 
     /**
-     * Add parts
+     * Add parts.
      *
      * @param \AppBundle\Entity\Location $parts
+     *
      * @return Location
      */
     public function addPart(\AppBundle\Entity\Location $parts)
@@ -148,7 +162,7 @@ class Location {
     }
 
     /**
-     * Remove parts
+     * Remove parts.
      *
      * @param \AppBundle\Entity\Location $parts
      */
@@ -158,9 +172,9 @@ class Location {
     }
 
     /**
-     * Get parts
+     * Get parts.
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getParts()
     {
@@ -168,9 +182,10 @@ class Location {
     }
 
     /**
-     * Add partLocChanges
+     * Add partLocChanges.
      *
      * @param \AppBundle\Entity\PartChange $partLocChanges
+     *
      * @return Location
      */
     public function addPartLocChange(\AppBundle\Entity\PartChange $partLocChanges)
@@ -181,7 +196,7 @@ class Location {
     }
 
     /**
-     * Remove partLocChanges
+     * Remove partLocChanges.
      *
      * @param \AppBundle\Entity\PartChange $partLocChanges
      */
@@ -191,9 +206,9 @@ class Location {
     }
 
     /**
-     * Get partLocChanges
+     * Get partLocChanges.
      *
-     * @return \Doctrine\Common\Collections\Collection 
+     * @return \Doctrine\Common\Collections\Collection
      */
     public function getPartLocChanges()
     {

@@ -6,21 +6,25 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserDelete extends AbstractType {
-
-    public function configureOptions(OptionsResolver $resolver) {
-        $resolver->setDefaults(array(
+class UserDelete extends AbstractType
+{
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults(
+            array(
             'data_class' => 'AppBundle\Entity\User',
-            'csrf_field_name' => '_token_user_delete'
-        ));
+            'csrf_field_name' => '_token_user_delete',
+            )
+        );
     }
 
-    public function buildForm(FormBuilderInterface $builder, array $options) {
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
         $builder->add('id', 'hidden');
     }
 
-    public function getName() {
+    public function getName()
+    {
         return 'user_delete';
     }
-
 }

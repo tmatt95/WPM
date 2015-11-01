@@ -1,5 +1,21 @@
 <?php
 
+/**
+ * User Controller
+ * Users are the people who use the system. Most actions that involve parts will
+ * have a user attached to it when recorded in the system. This file is for the
+ * management of users.
+ * 
+ * PHP version 5.6
+ * 
+ * @category WPM
+ * @package  User
+ * @author   Matthew Turner <tmatt95@gmail.com>
+ * @license  http://opensource.org/licenses/GPL-3.0 GPL3
+ * @version  GIT: <1.0.0>
+ * @link     https://github.com/tmatt95/WPM/
+ */
+
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -17,68 +33,71 @@ use DateTime;
  * User Controller
  * Users are the people who use the system. Most actions that involve parts will
  * have a user attached to it when recorded in the system. This file is for the
- * management of users. All these actions should only be visible to 
- * administrators. 
+ * management of users.  
+ * 
+ * PHP version 5.6
+ * 
+ * @category WPM
+ * @package  User
+ * @author   Matthew Turner <tmatt95@gmail.com>
+ * @license  http://opensource.org/licenses/GPL-3.0 GPL3
+ * @version  Release: <1.0.0>
+ * @link     https://github.com/tmatt95/WPM/
  */
-class UserController extends Controller {
-
+class UserController extends Controller
+{
     /**
      * Used to store notice messages to be displayed at the top of the 
-     * manage/edit windows after an ection has been carried out.
-     * 
-     * `class`:
-     * Class to be displayed on the alert box. Defaults to 'alert-success'.
-     * 
-     * `showButton`:
-     * Whether to show the button linking to the location the message relates to.
-     * Defaults to false.
-     * 
+     * manage/edit windows after an action has been carried out.
+     * @var array
      */
-    private $displayMessage = array(
+    private $_displayMessage = array(
         'class' => 'alert-success',
         'showButton' => false,
         'buttonText' => 'Edit User',
         'userId' => null,
-        'value' => ''
+        'value' => '',
     );
 
     /**
-     * Whether to redirect to the users page or render the view
-     * @var boolean 
+     * Whether to redirect to the users page or render the view.
+     * @var bool defaults to false
      */
-    private $redirectToUsers = false;
+    private $_redirectToUsers = false;
 
     /**
      * User Add
      * Will try and add a new user to the system if there is one to add.
-     * @param Request $request containing the POST data if sent
-     * @param Location $user record to be added
-     * @return FLocation Either a blank new for on success orone with errors
+     * @param Request $request may containing the user form if one present
+     * @return FLocation either a blank form or one with errors
      */
-    private function formAdd(Request $request, User $user) {
-        // Adds created date of now
+    private function _formAdd(Request $request)
+    {
+        // Adds created date
         $createdDate = new DateTime('Europe/London');
+        $user = new User();
         $user->setAdded($createdDate);
 
         // The users who added the new user to the system
         $luser = $this->getUser();
         $user->setAddedBy($luser->getId());
 
+        // Populates form if form present to populate
         $form = $this->createForm(new FUser(), $user);
         $form->handleRequest($request);
 
         // If form is posted and valid, then saves
         if ($form->isValid()) {
             $encoder = $this->container->get('security.password_encoder');
-            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
-
-            // Saves the new record
+            $user->setPassword(
+                $encoder->encodePassword($user, $user->getPassword())
+            );
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            $this->displayMessage['value'] = 'Successfuly added user';
-            $this->displayMessage['showButton'] = true;
-            $this->displayMessage['userId'] = $user->getId();
+            $this->_displayMessage['value'] = 'Successfuly added user';
+            $this->_displayMessage['showButton'] = true;
+            $this->_displayMessage['userId'] = $user->getId();
             $form = $this->createForm(new FUser(), new User());
         }
         return $form;
@@ -86,12 +105,14 @@ class UserController extends Controller {
 
     /**
      * User edit
-     * Updates every field on the udser form apart from the password.
-     * @param Request $request containing the POST data if sent
-     * @param Location $user record to be added
-     * @return FLocation Either a blank new for on success or one with errors
+     * Used to Update every field on the user form apart from the password.
+     * @param Request  $request containing the POST data if sent
+     * @param Location $user    record to be added
+     * @return FLocation
      */
-    private function formEdit(Request $request, User $user) {
+    private function _formEdit(Request $request, User $user)
+    {
+        // Populates form if one sent to application
         $form = $this->createForm(new FUserUpdate(), $user);
         $form->handleRequest($request);
 
@@ -100,7 +121,7 @@ class UserController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            $this->displayMessage['value'] = 'Successfuly updated user';
+            $this->_displayMessage['value'] = 'Successfuly updated user';
         }
         return $form;
     }
@@ -110,10 +131,12 @@ class UserController extends Controller {
      * If a delete user form is posted to the application, then this will
      * process it.
      * @param Request $request containing the POST data if sent
-     * @param User $user record to be deleted if it needs to be
+     * @param User    $user    record to be deleted if it needs to be
      * @return FUserDelete
      */
-    private function formDelete(Request $request, User $user) {
+    private function _formDelete(Request $request, User $user)
+    {
+        // Populates form if one sent to the application
         $form = $this->createForm(new FUserDelete(), $user);
         $form->handleRequest($request);
 
@@ -125,7 +148,7 @@ class UserController extends Controller {
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            $this->redirectToUsers = true;
+            $this->_redirectToUsers = true;
         }
         return $form;
     }
@@ -135,21 +158,26 @@ class UserController extends Controller {
      * Updates the password of the linked user with the new one supplied
      * through the request.
      * @param Request $request containing the update password form
-     * @param User $user to update the password on
+     * @param User    $user    to update the password on
      * @return FUserPassword
      */
-    private function formEditPassword(Request $request, User $user) {
+    private function _formEditPassword(Request $request, User $user)
+    {
+        // Populates form if one sent to the application
         $form = $this->createForm(new FUserPassword(), $user);
         $form->handleRequest($request);
 
         // If form is posted and valid, then saves
         if ($form->isValid()) {
             $encoder = $this->container->get('security.password_encoder');
-            $user->setPassword($encoder->encodePassword($user, $user->getPassword()));
+            $user->setPassword(
+                $encoder->encodePassword($user, $user->getPassword())
+            );
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            $this->displayMessage['value'] = 'Successfuly updated user';
+            $message = 'Successfuly updated user password';
+            $this->_displayMessage['value'] = $message;
         }
         return $form;
     }
@@ -157,57 +185,71 @@ class UserController extends Controller {
     /**
      * Add new user
      * Will display the add new user form. If a new user has been posted to this
-     * action then it will try and add it, returning a blank new user form or a
-     * filled in form if any errors are found.
-     * @param Request $request (optional) containing the POSTED new user form
-     * @return Response HTML for new user form
+     * action then it will try and add it, returning a blank new user form.
+     * @param Request $request (optional) containing the new user form
+     * @return Response HTML add user page
      */
-    public function addAction(Request $request) {
-        $form = $this->formAdd($request, new User());
+    public function addAction(Request $request)
+    {
+        $form = $this->_formAdd($request);
         $html = $this->container->get('templating')->render(
-                'users/add.html.twig', array(
-            'form' => $form->createView(),
-            'displayMessage' => $this->displayMessage
-                )
+            'users/add.html.twig', 
+            array(
+                'form' => $form->createView(),
+                'displayMessage' => $this->_displayMessage,
+            )
         );
         return new Response($html);
     }
-    
-    public function editAction($userId, Request $request) {
+
+    /**
+     * Edit User Page
+     * @param type    $userId  Id of the user to edit
+     * @param Request $request may contain user update/delete/password forms
+     * @return Response HTML user edit page
+     * @throws Excpetion if User cannot be found
+     */
+    public function editAction($userId, Request $request)
+    {
+        // Loads the user record
         $user = $this->getDoctrine()->getRepository('AppBundle:User')
             ->find($userId);
         if (!$user || $user->getDeleted() === 1) {
             throw $this->createNotFoundException(
-                    'User not found. It may not exist or have been deleted.'
+                'User not found. It may not exist or have been deleted.'
             );
         }
-        $formPassword = $this->formEditPassword($request, $user);
-        $formUser = $this->formEdit($request, $user);
-        $formDelete = $this->formDelete($request, $user);
+        
+        // Process any of the forms if there are any to process
+        $formPassword = $this->_formEditPassword($request, $user);
+        $formUser = $this->_formEdit($request, $user);
+        $formDelete = $this->_formDelete($request, $user);
 
-        if ($this->redirectToUsers === true) {
+        // Redirect to users page or load up the user
+        if ($this->_redirectToUsers === true) {
             return $this->redirectToRoute('users_manage');
         }
         $html = $this->container->get('templating')->render(
-                'users/edit.html.twig', array(
-            'form' => $formUser->createView(),
-            'formPassword' => $formPassword->createView(),
-            'displayMessage' => $this->displayMessage,
-            'formDelete' => $formDelete->createView()
-                )
+            'users/edit.html.twig',
+            array(
+                'form' => $formUser->createView(),
+                'formPassword' => $formPassword->createView(),
+                'displayMessage' => $this->_displayMessage,
+                'formDelete' => $formDelete->createView(),
+            )
         );
         return new Response($html);
     }
 
     /**
      * Manage user page
-     * This page is where the user administration takes place. 
-     * @return Response user admin HTML
+     * The page containing the list of all the users in the system.
+     * @return Response HTML the manage user page
      */
-    public function manageAction() {
-        $html = $this->container->get('templating')->render(
-                'users/manage.html.twig', array()
-        );
+    public function manageAction()
+    {
+        $html = $this->container->get('templating')
+            ->render('users/manage.html.twig');
         return new Response($html);
     }
 
@@ -216,10 +258,12 @@ class UserController extends Controller {
      * Finds a list of users in the database which are not marked as 
      * deleted. The users found are returned based on the supplied limit and
      * offset. The total number of users is also returned from the system.
+     * @param Request $request with POST information
      * @return JsonResponse containing up to 10 users requested from the
-     * system and a total number of users
+     *                      system and a total number of users
      */
-    public function getAction(Request $request) {
+    public function getAction(Request $request)
+    {
         $limit = 10;
         $offset = 0;
         if ($request->query->get('limit') && $request->query->get('offset')) {
@@ -230,9 +274,8 @@ class UserController extends Controller {
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-                User::search($em, $searchTerm, $limit, $offset)
+            User::search($em, $searchTerm, $limit, $offset)
         );
         return $response;
     }
-
 }

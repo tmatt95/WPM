@@ -2,6 +2,7 @@
 
 // src/AppBundle/Entity/Part.php
 
+
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
@@ -10,20 +11,20 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity
  * @ORM\Table(name="part_change")
  */
-class PartChange {
-    
+class PartChange
+{
     /**
      * @ORM\ManyToOne(targetEntity="User", inversedBy="partchanges")
      * @ORM\JoinColumn(name="added_by", referencedColumnName="id")
      */
     protected $addeduser;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="Location", inversedBy="partLocChanges")
      * @ORM\JoinColumn(name="location_id", referencedColumnName="id")
      */
     protected $addedlocation;
-    
+
     /**
      * @ORM\ManyToOne(targetEntity="Part", inversedBy="changes")
      * @ORM\JoinColumn(name="part_id", referencedColumnName="id")
@@ -46,7 +47,7 @@ class PartChange {
      * @ORM\Column(type="integer")
      */
     protected $type;
-    
+
     /**
      * @ORM\Column(type="integer")
      */
@@ -71,26 +72,26 @@ class PartChange {
      * @ORM\Column(type="datetime")
      */
     protected $added;
-    
-     /**
+
+    /**
      * @ORM\Column(type="date")
      */
     protected $added_date;
-    
+
     /**
      * @ORM\Column(type="text")
      */
     protected $comment;
-    
+
     /**
      * @ORM\Column(type="integer")
      */
     protected $added_by;
 
     /**
-     * Get id
+     * Get id.
      *
-     * @return integer 
+     * @return int
      */
     public function getId()
     {
@@ -98,9 +99,10 @@ class PartChange {
     }
 
     /**
-     * Set no_added
+     * Set no_added.
      *
-     * @param integer $noAdded
+     * @param int $noAdded
+     *
      * @return PartChange
      */
     public function setNoAdded($noAdded)
@@ -111,9 +113,9 @@ class PartChange {
     }
 
     /**
-     * Get no_added
+     * Get no_added.
      *
-     * @return integer 
+     * @return int
      */
     public function getNoAdded()
     {
@@ -121,9 +123,10 @@ class PartChange {
     }
 
     /**
-     * Set no_taken
+     * Set no_taken.
      *
-     * @param integer $noTaken
+     * @param int $noTaken
+     *
      * @return PartChange
      */
     public function setNoTaken($noTaken)
@@ -134,9 +137,9 @@ class PartChange {
     }
 
     /**
-     * Get no_taken
+     * Get no_taken.
      *
-     * @return integer 
+     * @return int
      */
     public function getNoTaken()
     {
@@ -144,9 +147,10 @@ class PartChange {
     }
 
     /**
-     * Set no_total
+     * Set no_total.
      *
-     * @param integer $noTotal
+     * @param int $noTotal
+     *
      * @return PartChange
      */
     public function setNoTotal($noTotal)
@@ -157,9 +161,9 @@ class PartChange {
     }
 
     /**
-     * Get no_total
+     * Get no_total.
      *
-     * @return integer 
+     * @return int
      */
     public function getNoTotal()
     {
@@ -167,9 +171,10 @@ class PartChange {
     }
 
     /**
-     * Set location_id
+     * Set location_id.
      *
-     * @param integer $locationId
+     * @param int $locationId
+     *
      * @return PartChange
      */
     public function setLocationId($locationId)
@@ -180,9 +185,9 @@ class PartChange {
     }
 
     /**
-     * Get location_id
+     * Get location_id.
      *
-     * @return integer 
+     * @return int
      */
     public function getLocationId()
     {
@@ -190,9 +195,10 @@ class PartChange {
     }
 
     /**
-     * Set part_id
+     * Set part_id.
      *
-     * @param integer $partId
+     * @param int $partId
+     *
      * @return PartChange
      */
     public function setPartId($partId)
@@ -203,9 +209,9 @@ class PartChange {
     }
 
     /**
-     * Get part_id
+     * Get part_id.
      *
-     * @return integer 
+     * @return int
      */
     public function getPartId()
     {
@@ -213,9 +219,10 @@ class PartChange {
     }
 
     /**
-     * Set added
+     * Set added.
      *
      * @param \DateTime $added
+     *
      * @return PartChange
      */
     public function setAdded($added)
@@ -226,19 +233,20 @@ class PartChange {
     }
 
     /**
-     * Get added
+     * Get added.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getAdded()
     {
         return $this->added;
     }
-    
+
     /**
-     * Set added date
+     * Set added date.
      *
      * @param \DateTime $added
+     *
      * @return PartChange
      */
     public function setAddedDate($added)
@@ -249,9 +257,9 @@ class PartChange {
     }
 
     /**
-     * Get added date
+     * Get added date.
      *
-     * @return \DateTime 
+     * @return \DateTime
      */
     public function getAddedDate()
     {
@@ -259,9 +267,10 @@ class PartChange {
     }
 
     /**
-     * Set comment
+     * Set comment.
      *
      * @param string $comment
+     *
      * @return PartChange
      */
     public function setComment($comment)
@@ -272,9 +281,9 @@ class PartChange {
     }
 
     /**
-     * Get comment
+     * Get comment.
      *
-     * @return string 
+     * @return string
      */
     public function getComment()
     {
@@ -282,9 +291,10 @@ class PartChange {
     }
 
     /**
-     * Set added_by
+     * Set added_by.
      *
-     * @param integer $addedBy
+     * @param int $addedBy
+     *
      * @return PartChange
      */
     public function setAddedBy($addedBy)
@@ -295,9 +305,9 @@ class PartChange {
     }
 
     /**
-     * Get added_by
+     * Get added_by.
      *
-     * @return integer 
+     * @return int
      */
     public function getAddedBy()
     {
@@ -305,9 +315,10 @@ class PartChange {
     }
 
     /**
-     * Set type
+     * Set type.
      *
-     * @param integer $type
+     * @param int $type
+     *
      * @return PartChange
      */
     public function setType($type)
@@ -318,9 +329,9 @@ class PartChange {
     }
 
     /**
-     * Get type
+     * Get type.
      *
-     * @return integer 
+     * @return int
      */
     public function getType()
     {
@@ -328,9 +339,10 @@ class PartChange {
     }
 
     /**
-     * Set addeduser
+     * Set addeduser.
      *
      * @param \AppBundle\Entity\User $addeduser
+     *
      * @return PartChange
      */
     public function setAddeduser(\AppBundle\Entity\User $addeduser = null)
@@ -341,9 +353,9 @@ class PartChange {
     }
 
     /**
-     * Get addeduser
+     * Get addeduser.
      *
-     * @return \AppBundle\Entity\User 
+     * @return \AppBundle\Entity\User
      */
     public function getAddeduser()
     {
@@ -351,9 +363,10 @@ class PartChange {
     }
 
     /**
-     * Set partInfo
+     * Set partInfo.
      *
      * @param \AppBundle\Entity\Part $partInfo
+     *
      * @return PartChange
      */
     public function setPartInfo(\AppBundle\Entity\Part $partInfo = null)
@@ -364,9 +377,9 @@ class PartChange {
     }
 
     /**
-     * Get partInfo
+     * Get partInfo.
      *
-     * @return \AppBundle\Entity\Part 
+     * @return \AppBundle\Entity\Part
      */
     public function getPartInfo()
     {
@@ -374,9 +387,10 @@ class PartChange {
     }
 
     /**
-     * Set addedlocation
+     * Set addedlocation.
      *
      * @param \AppBundle\Entity\Location $addedlocation
+     *
      * @return PartChange
      */
     public function setAddedlocation(\AppBundle\Entity\Location $addedlocation = null)
@@ -387,9 +401,9 @@ class PartChange {
     }
 
     /**
-     * Get addedlocation
+     * Get addedlocation.
      *
-     * @return \AppBundle\Entity\Location 
+     * @return \AppBundle\Entity\Location
      */
     public function getAddedlocation()
     {
