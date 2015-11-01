@@ -27,6 +27,7 @@ use AppBundle\Entity\Location;
 use AppBundle\Entity\PartType;
 use AppBundle\Form\Parts\PartChange as FPartChange;
 use AppBundle\Entity\PartChange as PartChange;
+use Exception;
 
 /**
  * Parts

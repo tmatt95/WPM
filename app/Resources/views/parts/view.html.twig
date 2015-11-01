@@ -6,25 +6,25 @@
     <script type="text/javascript">
         $(document).ready(function () {
             adduseformupdate();
-            $("#parttype_type").change(function () {
+            $("#parttype_changeqty_type").change(function () {
                 adduseformupdate();
             });
         });
 
         function adduseformupdate() {
-            $('.aucomment,.aunotaken,.aunoadded,#parttype_save').removeClass('hidden');
-            if ($('#parttype_type').val() === '') {
-                $('.aucomment,.aunotaken,.aunoadded,#parttype_save').addClass('hidden');
+            $('.aucomment,.aunotaken,.aunoadded,#parttype_changeqty_save').removeClass('hidden');
+            if ($('#parttype_changeqty_type').val() === '') {
+                $('.aucomment,.aunotaken,.aunoadded,#parttype_changeqty_save').addClass('hidden');
             }
-            if ($('#parttype_type').val() === '1') {
+            if ($('#parttype_changeqty_type').val() === '1') {
                 $('.aunoadded').addClass('hidden');
-                $('#parttype_no_added').val('0');
-                $('#parttype_save').text('Use');
+                $('#parttype_changeqty_no_added').val('0');
+                $('#parttype_changeqty_save').text('Use');
             }
-            if ($('#parttype_type').val() === '0') {
+            if ($('#parttype_changeqty_type').val() === '0') {
                 $('.aunotaken').addClass('hidden');
-                $('#parttype_no_taken').val('0');
-                $('#parttype_save').text('Add');
+                $('#parttype_changeqty_no_taken').val('0');
+                $('#parttype_changeqty_save').text('Add');
             }
         }
     </script>
