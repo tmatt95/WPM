@@ -116,10 +116,10 @@
             <thead>
                 <tr>
                     <th>Changed</th>
-                    <th>By</th>
+                    <th class="hidden-xs">By</th>
                     <th>Taken</th>
                     <th>Added</th>
-                    <th>Total</th>
+                    <th class="hidden-xs">Total</th>
                     <th>Comment</th>
                 </tr>
             </thead>
@@ -127,10 +127,10 @@
                 {% for ph in partHistory %}
                     <tr>
                         <td>{{ph.added|date("d/m/Y H:i:s")}}</td>
-                        <td>{{ph.name_first }} {{ ph.name_last }}</td>
+                        <td class="hidden-xs">{{ph.name_first }} {{ ph.name_last }}</td>
                         <td>{{ph.no_taken}}</td>
                         <td>{{ph.no_added}}</td>
-                        <td>{{ph.no_total}}</td>
+                        <td class="hidden-xs">{{ph.no_total}}</td>
                         <td>{{ph.comment}}</td>
                     </tr>
                 {% endfor %}
