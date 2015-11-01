@@ -48,7 +48,7 @@ class LocationsController extends Controller
      * Used to store notice messages to be displayed at the top of the 
      * manage/edit windows after an action has been carried out.
      */
-    private $displayMessage = array(
+    private $_displayMessage = array(
         'class' => 'alert-success',
         'showButton' => false,
         'buttonText' => 'Edit Location',
@@ -56,49 +56,52 @@ class LocationsController extends Controller
         'value' => '',
     );
     
-    private $redirectToLocations = false;
+    /**
+     * Whether to redirect to the locations screen or not
+     * @var boolean defaults to false 
+     */
+    private $_redirectToLocations = false;
 
     /**
      * Location Update
      * This will take the location form an try and update the database with it
      * if one is sent to it.
-     *
      * @param Request  $request  containing the POST data if sent
      * @param Location $location record to be updated
-     *
-     * @return FLocation Either updated or with errors
+     * @return AppBundle\Form\Locations\Location
      */
-    private function formUpdate(Request $request, Location $location)
+    private function _formUpdate(Request $request, Location $location)
     {
+        // Populates form if one sent to application
         $form = $this->createForm(new FLocation(), $location);
         $form->handleRequest($request);
 
+        // If form is posted and valid, then saves
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             $em->persist($location);
             $em->flush();
-            $this->displayMessage['value'] = 'Successfuly updated location';
-            $this->displayMessage['class'] = 'alert-info';
+            $this->_displayMessage['value'] = 'Successfuly updated location';
+            $this->_displayMessage['class'] = 'alert-info';
         }
-
         return $form;
     }
 
     /**
-     * Location delete
+     * Location Delete
      * Will move all parts out of a location and then remove the location from
      * the system.
-     *
-     * @param Request  $request
+     * @param Request  $request  may contain a location to remove
      * @param Location $location to remove
-     *
-     * @return FLocationDelete Delete location form
+     * @return AppBundle\Form\Locations\LocationDelete
      */
-    private function formDelete(Request $request, Location $location)
+    private function _formDelete(Request $request, Location $location)
     {
+        // Populates form if one sent to application
         $form = $this->createForm(new FLocationDelete(), $location);
         $form->handleRequest($request);
 
+        // If form is posted and valid, then saves
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
             Part::moveAllOutLocation($em, $location->getId());
@@ -107,21 +110,19 @@ class LocationsController extends Controller
             $em->flush();
             $this->redirectToLocations = true;
         }
-
         return $form;
     }
 
     /**
      * Location Add
      * Will try and add a new location to the system if there is one to add.
-     *
      * @param Request  $request  containing the POST data if sent
      * @param Location $location record to be updated
-     *
-     * @return FLocation Either a blank new for on success orone with errors
+     * @return AppBundle\Form\Locations\Location
      */
-    private function formAdd(Request $request, Location $location)
+    private function _formAdd(Request $request, Location $location)
     {
+        // Populates form if one sent to application
         $form = $this->createForm(new FLocation(), $location);
         $form->handleRequest($request);
 
@@ -131,9 +132,9 @@ class LocationsController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($location);
             $em->flush();
-            $this->displayMessage['value'] = 'Successfuly added location';
-            $this->displayMessage['showButton'] = true;
-            $this->displayMessage['locationId'] = $location->getId();
+            $this->_displayMessage['value'] = 'Successfuly added location';
+            $this->_displayMessage['showButton'] = true;
+            $this->_displayMessage['locationId'] = $location->getId();
             return $this->createForm(new FLocation(), new Location());
         } else {
             return $form;
@@ -141,16 +142,15 @@ class LocationsController extends Controller
     }
 
     /**
-     * Add location not.
-     *
-     * @param type         $locationId
-     * @param Request      $request
-     * @param LocationNote $record
-     *
-     * @return type
+     * Location Note Add
+     * @param type    $locationId location the note should link to
+     * @param Request $request    may contain a location note to add
+     * @return AppBundle\Form\Locations\LocationNote
      */
-    private function formLNAdd($locationId, Request $request, LocationNote $record)
+    private function _formLNAdd($locationId, Request $request)
     {
+        // Populates form if one sent to application
+        $record = new LocationNote();
         $form = $this->createForm(new FLocationNote(), $record);
         $form->handleRequest($request);
 
@@ -166,9 +166,8 @@ class LocationsController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($record);
             $em->flush();
-            $this->displayMessage['value'] = 'Successfuly added location note.';
-            $this->displayMessage['class'] = 'alert-info';
-
+            $this->_displayMessage['value'] = 'Successfuly added location note.';
+            $this->_displayMessage['class'] = 'alert-info';
             return $this->createForm(new FLocationNote(), new LocationNote());
         } else {
             return $form;
@@ -176,34 +175,32 @@ class LocationsController extends Controller
     }
 
     /**
-     * Get Manage Screen
-     * This will return the manage locations screen.
-     *
+     * Manage Locations
+     * The manage locations screen.
      * @param Request $request Could contain a new location
-     *
      * @return HTML The manage locations screen
      */
     public function manageAction(Request $request)
     {
-        $form = $this->formAdd($request, new Location());
+        $form = $this->_formAdd($request, new Location());
         $html = $this->container->get('templating')->render(
-            'locations/manage.html.twig', array(
-            'form' => $form->createView(),
-            'displayMessage' => $this->displayMessage,
-                )
+            'locations/manage.html.twig',
+            array(
+                'form' => $form->createView(),
+                'displayMessage' => $this->_displayMessage,
+            )
         );
-
         return new Response($html);
     }
 
     /**
-     * Get location list
+     * Get Location List
      * Finds a list of locations in the database which are not marked as 
      * deleted. The items found are returned based on the supplied limit and
      * offset. This funcation may not return all the items from the table if
      * there are more than the total number. The total number of items is also
      * returned from the system.
-     *
+     * @param Request $request containing filter criteria
      * @return JsonResponse containing up to 10 locations requested from the
      *                      system
      */
@@ -221,10 +218,16 @@ class LocationsController extends Controller
         $response->setData(
             Location::search($em, $searchTerm, $limit, $offset)
         );
-
         return $response;
     }
 
+    /**
+     * Get Notes
+     * Gets notes for a location (optionally filtered).
+     * @param int     $locationId the id of the location the notes should link to
+     * @param Request $request    filtering for the location notes
+     * @return JsonResponse
+     */
     public function getNotesAction($locationId, Request $request)
     {
         $limit = 10;
@@ -239,20 +242,19 @@ class LocationsController extends Controller
         $response->setData(
             LocationNote::search($em, $locationId, $searchTerm, $limit, $offset)
         );
-
         return $response;
     }
 
     /**
-     * Edit location screen.
-     *
+     * Edit Location
+     * The screen through which locations can be edited.
      * @param int     $id      id of the location to edit
      * @param Request $request containing the updated location information
-     *
-     * @return Response
+     * @return HTML edit location page 
      */
     public function editAction($id, Request $request)
     {
+        // Loads the location to edit
         $location = $this->getDoctrine()
             ->getRepository('AppBundle:Location')
             ->find($id);
@@ -261,22 +263,25 @@ class LocationsController extends Controller
                 'Location not found. It may not exist or have been deleted.'
             );
         }
-        $form = $this->formUpdate($request, $location);
-        $lNForm = $this->formLNAdd($id, $request, new LocationNote());
-        $formDelete = $this->formDelete($request, $location);
+        
+        // Carry out page functions if needed
+        $form = $this->_formUpdate($request, $location);
+        $lNForm = $this->_formLNAdd($id, $request);
+        $formDelete = $this->_formDelete($request, $location);
 
-        if ($this->redirectToLocations === true) {
+        // Load the page or redirect to the locations
+        if ($this->_redirectToLocations === true) {
             return $this->redirectToRoute('locations_manage');
         } else {
             $html = $this->container->get('templating')->render(
-                'locations/edit.html.twig', array(
-                'formLocation' => $form->createView(),
-                'formLocationNote' => $lNForm->createView(),
-                'displayMessage' => $this->displayMessage,
-                'formDelete' => $formDelete->createView(),
-                    )
+                'locations/edit.html.twig',
+                array(
+                    'formLocation' => $form->createView(),
+                    'formLocationNote' => $lNForm->createView(),
+                    'displayMessage' => $this->_displayMessage,
+                    'formDelete' => $formDelete->createView(),
+                )
             );
-
             return new Response($html);
         }
     }

@@ -98,7 +98,7 @@ class PartTypesController extends Controller
     }
 
     /**
-     * Manage part types page
+     * Manage Part Types
      * From this page a user can add and select part types to edit.
      * @param Request $request may contain a new user form 
      * @return HTML [art type management page

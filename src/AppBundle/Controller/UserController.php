@@ -66,7 +66,7 @@ class UserController extends Controller
     private $_redirectToUsers = false;
 
     /**
-     * User Add
+     * Form Add
      * Will try and add a new user to the system if there is one to add.
      * @param Request $request may containing the user form if one present
      * @return FLocation either a blank form or one with errors
@@ -104,7 +104,7 @@ class UserController extends Controller
     }
 
     /**
-     * User edit
+     * Form Edit
      * Used to Update every field on the user form apart from the password.
      * @param Request  $request containing the POST data if sent
      * @param Location $user    record to be added
@@ -154,7 +154,7 @@ class UserController extends Controller
     }
 
     /**
-     * Edit Password
+     * Form Edit Password
      * Updates the password of the linked user with the new one supplied
      * through the request.
      * @param Request $request containing the update password form
@@ -183,7 +183,7 @@ class UserController extends Controller
     }
 
     /**
-     * Add new user
+     * Add New User
      * Will display the add new user form. If a new user has been posted to this
      * action then it will try and add it, returning a blank new user form.
      * @param Request $request (optional) containing the new user form
@@ -203,8 +203,8 @@ class UserController extends Controller
     }
 
     /**
-     * Edit User Page
-     * @param type    $userId  Id of the user to edit
+     * Edit User
+     * @param type    $userId  ID of the user to edit
      * @param Request $request may contain user update/delete/password forms
      * @return Response HTML user edit page
      * @throws Excpetion if User cannot be found
@@ -242,7 +242,7 @@ class UserController extends Controller
     }
 
     /**
-     * Manage user page
+     * Manage User
      * The page containing the list of all the users in the system.
      * @return Response HTML the manage user page
      */
@@ -254,7 +254,7 @@ class UserController extends Controller
     }
 
     /**
-     * Get user list
+     * Get User List
      * Finds a list of users in the database which are not marked as 
      * deleted. The users found are returned based on the supplied limit and
      * offset. The total number of users is also returned from the system.

@@ -1,5 +1,20 @@
 <?php
 
+/**
+ * Parts
+ * The main entity in the application. All actions to do with managing parts 
+ * are done through this controller.
+ * 
+ * PHP version 5.6
+ * 
+ * @category WPM
+ * @package  Part
+ * @author   Matthew Turner <tmatt95@gmail.com>
+ * @license  http://opensource.org/licenses/GPL-3.0 GPL3
+ * @version  GIT: <1.0.0>
+ * @link     https://github.com/tmatt95/WPM/
+ */
+
 namespace AppBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -13,20 +28,27 @@ use AppBundle\Entity\PartType;
 use AppBundle\Form\Parts\PartChange as FPartChange;
 use AppBundle\Entity\PartChange as PartChange;
 
+/**
+ * Parts
+ * The main entity in the application. All actions to do with managing parts 
+ * are done through this controller.
+ * 
+ * PHP version 5.6
+ * 
+ * @category WPM
+ * @package  Part
+ * @author   Matthew Turner <tmatt95@gmail.com>
+ * @license  http://opensource.org/licenses/GPL-3.0 GPL3
+ * @version  Release: <1.0.0>
+ * @link     https://github.com/tmatt95/WPM/
+ */
 class PartsController extends Controller
 {
     /**
      * Used to store notice messages to be displayed at the top of the 
-     * manage/edit windows after an ection has been carried out.
-     * 
-     * `class`:
-     * Class to be displayed on the alert box. Defaults to 'alert-success'.
-     * 
-     * `showButton`:
-     * Whether to show the button linking to the location the message relates to.
-     * Defaults to false.
+     * manage/edit windows after an action has been carried out.
      */
-    private $displayMessage = array(
+    private $_displayMessage = array(
         'class' => 'alert-success',
         'showButton' => false,
         'buttonText' => 'Edit Part',
@@ -34,13 +56,25 @@ class PartsController extends Controller
         'value' => '',
     );
 
+    /**
+     * Used to enable people to load the parts find page when they go to /parts/
+     * in the web browser.
+     * @return Page redirect
+     */
     public function partsAction()
     {
         return $this->redirectToRoute('parts_find');
     }
 
+    /**
+     * Get Date and Part Number Information
+     * Gets information on the number of parts that are in the system on each
+     * day changes were made.
+     * @return JsonResponse
+     */
     public function getDatePartNumbersAction()
     {
+        // Generate the info
         $em = $this->getDoctrine()->getManager();
         $queryDatePartNumbers = $em->createQuery(
             'SELECT pc.added_date,
@@ -60,14 +94,19 @@ class PartsController extends Controller
             );
         }
 
+        // Output to browser
         $response = new JsonResponse();
         $response->setData(
             $output
         );
-
         return $response;
     }
 
+    /**
+     * Dashboard
+     * The main dashboard of the application
+     * @return HTML dashboard
+     */
     public function indexAction()
     {
         // Information for the latest added parts widget
@@ -102,12 +141,21 @@ class PartsController extends Controller
         $queryPartsUpdated->setMaxResults(10);
         $partsUpdated = $queryPartsUpdated->getResult();
         $html = $this->container->get('templating')->render(
-            'parts/index.html.twig', array('partsAdded' => $partsAdded, 'partsUpdated' => $partsUpdated)
+            'parts/index.html.twig',
+            array(
+                'partsAdded' => $partsAdded,
+                'partsUpdated' => $partsUpdated
+            )
         );
-
         return new Response($html);
     }
 
+    /**
+     * Add Part
+     * Add a new part to the system
+     * @param Request $request may contain new part information
+     * @return HTML add part page
+     */
     public function addAction(Request $request)
     {
         $em = $this->getDoctrine()->getManager();
@@ -118,16 +166,18 @@ class PartsController extends Controller
             ->add('name', 'text')
             ->add('description', 'textarea')
             ->add(
-                'type', 'choice', array(
+                'type', 'choice',
+                array(
                     'choices' => PartType::getList($em),
                     'required' => false,
-                    )
+                )
             )
             ->add(
-                'location', 'choice', array(
+                'location', 'choice',
+                array(
                     'choices' => Location::getList($em),
                     'required' => false,
-                    )
+                )
             )
             ->add('qty', 'integer')
             ->add('save', 'submit', array('label' => 'Add Part'))
@@ -161,9 +211,9 @@ class PartsController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($part);
             $em->flush();
-            $this->displayMessage['value'] = 'Successfuly added part';
-            $this->displayMessage['showButton'] = true;
-            $this->displayMessage['partId'] = $part->getId();
+            $this->_displayMessage['value'] = 'Successfuly added part';
+            $this->_displayMessage['showButton'] = true;
+            $this->_displayMessage['partId'] = $part->getId();
             $partChange = new PartChange();
             $partChange->setPartInfo($part);
             $partChange->setNoAdded($part->getQty());
@@ -182,15 +232,21 @@ class PartsController extends Controller
 
         // Renders the add part screen
         $html = $this->container->get('templating')->render(
-            'parts/add.html.twig', array(
-            'form' => $form->createView(),
-            'displayMessage' => $this->displayMessage,
-                )
+            'parts/add.html.twig',
+            array(
+                'form' => $form->createView(),
+                'displayMessage' => $this->_displayMessage,
+            )
         );
-
         return new Response($html);
     }
 
+    /**
+     * Search Parts
+     * Search parts in the system. 
+     * @param Request $request optional filters
+     * @return JsonResponse containing parts found in the system
+     */
     public function searchAction(Request $request)
     {
         $limit = 10;
@@ -211,19 +267,32 @@ class PartsController extends Controller
         $response->setData(
             Part::search($em, $searchTerm, $limit, $offset, $locationid)
         );
-
         return $response;
     }
 
+    /**
+     * Find Parts
+     * It is through this page that you can find parts in the system.
+     * @return HTML Find parts screen
+     */
     public function findAction()
     {
         $html = $this->container->get('templating')->render(
-            'parts/find.html.twig', array()
+            'parts/find.html.twig'
         );
-
         return new Response($html);
     }
 
+    /**
+     * View Part
+     * Used to manage an individual part information.
+     * @param int     $partId  id of part
+     * @param Request $request may contain forms for updating the part
+     * @return Response HTML
+     * @throws Exception if the part could not be found
+     * @throws Exception if updating the part would result in it having a 
+     * negative qty
+     */
     public function viewAction($partId, Request $request)
     {
         $em = $this->getDoctrine()->getManager();
@@ -244,7 +313,9 @@ class PartsController extends Controller
         if ($FPartChange->isValid()) {
 
             // Calculates values which need to be added from the server side
-            $noTotal = $part->getQty() - $partChange->getNoTaken() + $partChange->getNoAdded();
+            $noTotal = $part->getQty() 
+                - $partChange->getNoTaken()
+                + $partChange->getNoAdded();
             if ($noTotal < 0) {
                 throw new Exception('You do not have enough parts!', 400);
             }
@@ -269,8 +340,14 @@ class PartsController extends Controller
             } else {
                 $message = 'Successfuly taken '.$partChange->getNoTaken();
             }
-            $this->displayMessage['value'] = $message.'. There are now '.$partChange->getNoTotal().' in the system.';
-            $FPartChange = $this->createForm(new FPartChange(), new PartChange());
+            $this->_displayMessage['value'] = $message
+                .'. There are now '
+                .$partChange->getNoTotal()
+                .' in the system.';
+            $FPartChange = $this->createForm(
+                new FPartChange(),
+                new PartChange()
+            );
         }
 
         $form = $this->createFormBuilder($part)
@@ -295,7 +372,7 @@ class PartsController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($part);
             $em->flush();
-            $this->displayMessage['value'] = 'Successfuly updated part';
+            $this->_displayMessage['value'] = 'Successfuly updated part';
         }
 
         $queryPartHistory = $em->createQuery(
@@ -324,11 +401,10 @@ class PartsController extends Controller
             'part' => $part,
             'FPartChange' => $FPartChange->createView(),
             'form' => $form->createView(),
-            'displayMessage' => $this->displayMessage,
+            'displayMessage' => $this->_displayMessage,
             'partHistory' => $partHistory,
                 )
         );
-
         return new Response($html);
     }
 }

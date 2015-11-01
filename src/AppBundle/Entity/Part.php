@@ -1,16 +1,39 @@
 <?php
 
-// src/AppBundle/Entity/Part.php
-
-
+/**
+ * Part
+ * The main entity in the application. These are the items which the system
+ * is designed to track. Everything else is in some way linked to these.
+ * 
+ * PHP version 5.6
+ * 
+ * @category WPM
+ * @package  Part
+ * @author   Matthew Turner <tmatt95@gmail.com>
+ * @license  http://opensource.org/licenses/GPL-3.0 GPL3
+ * @version  GIT: <1.0.0>
+ * @link     https://github.com/tmatt95/WPM/
+ */
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
 /**
+ * Part
+ * The main entity in the application. These are the items which the system
+ * is designed to track. Everything else is in some way linked to these.
+ * 
+ * PHP version 5.6
+ * 
+ * @category               WPM
+ * @package                Part
+ * @author                 Matthew Turner <tmatt95@gmail.com>
+ * @license                http://opensource.org/licenses/GPL-3.0 GPL3
+ * @version                Release: <1.0.0>
+ * @link                   https://github.com/tmatt95/WPM/
  * @ORM\Entity
  * @ORM\Table(name="part")
- * @ORM\Entity(repositoryClass="AppBundle\Entity\PartTypeRepository")
+ * @ORM\Entity             (repositoryClass="AppBundle\Entity\PartTypeRepository")
  */
 class Part
 {
