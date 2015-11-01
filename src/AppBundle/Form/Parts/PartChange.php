@@ -58,10 +58,13 @@ class PartChange extends AbstractType
     {
         $builder
             ->add(
-                'type', 'choice', array(
-                'choices' => ['Add', 'Use'],
-                'required' => false,
-                'label' => 'Add or Use',
+                'type',
+                'choice',
+                array(
+                    'choices' => ['Add', 'Use'],
+                    'required' => false,
+                    'label' => 'Add or Use',
+                    'placeholder' => 'Add or Use'
                 )
             )
             ->add(
