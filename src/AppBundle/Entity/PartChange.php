@@ -11,6 +11,24 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="part_change")
  */
 class PartChange {
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="partchanges")
+     * @ORM\JoinColumn(name="added_by", referencedColumnName="id")
+     */
+    protected $addeduser;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Location", inversedBy="partLocChanges")
+     * @ORM\JoinColumn(name="location_id", referencedColumnName="id")
+     */
+    protected $addedlocation;
+    
+    /**
+     * @ORM\ManyToOne(targetEntity="Part", inversedBy="changes")
+     * @ORM\JoinColumn(name="part_id", referencedColumnName="id")
+     */
+    protected $partInfo;
 
     /**
      * @ORM\Column(type="integer")
@@ -53,6 +71,11 @@ class PartChange {
      * @ORM\Column(type="datetime")
      */
     protected $added;
+    
+     /**
+     * @ORM\Column(type="date")
+     */
+    protected $added_date;
     
     /**
      * @ORM\Column(type="text")
@@ -211,6 +234,29 @@ class PartChange {
     {
         return $this->added;
     }
+    
+    /**
+     * Set added date
+     *
+     * @param \DateTime $added
+     * @return PartChange
+     */
+    public function setAddedDate($added)
+    {
+        $this->added_date = $added;
+
+        return $this;
+    }
+
+    /**
+     * Get added date
+     *
+     * @return \DateTime 
+     */
+    public function getAddedDate()
+    {
+        return $this->added_date;
+    }
 
     /**
      * Set comment
@@ -279,5 +325,74 @@ class PartChange {
     public function getType()
     {
         return $this->type;
+    }
+
+    /**
+     * Set addeduser
+     *
+     * @param \AppBundle\Entity\User $addeduser
+     * @return PartChange
+     */
+    public function setAddeduser(\AppBundle\Entity\User $addeduser = null)
+    {
+        $this->addeduser = $addeduser;
+
+        return $this;
+    }
+
+    /**
+     * Get addeduser
+     *
+     * @return \AppBundle\Entity\User 
+     */
+    public function getAddeduser()
+    {
+        return $this->addeduser;
+    }
+
+    /**
+     * Set partInfo
+     *
+     * @param \AppBundle\Entity\Part $partInfo
+     * @return PartChange
+     */
+    public function setPartInfo(\AppBundle\Entity\Part $partInfo = null)
+    {
+        $this->partInfo = $partInfo;
+
+        return $this;
+    }
+
+    /**
+     * Get partInfo
+     *
+     * @return \AppBundle\Entity\Part 
+     */
+    public function getPartInfo()
+    {
+        return $this->partInfo;
+    }
+
+    /**
+     * Set addedlocation
+     *
+     * @param \AppBundle\Entity\Location $addedlocation
+     * @return PartChange
+     */
+    public function setAddedlocation(\AppBundle\Entity\Location $addedlocation = null)
+    {
+        $this->addedlocation = $addedlocation;
+
+        return $this;
+    }
+
+    /**
+     * Get addedlocation
+     *
+     * @return \AppBundle\Entity\Location 
+     */
+    public function getAddedlocation()
+    {
+        return $this->addedlocation;
     }
 }

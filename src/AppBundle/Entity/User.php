@@ -20,6 +20,11 @@ class User implements AdvancedUserInterface, \Serializable {
     protected $parts;
     
     /**
+     * @ORM\OneToMany(targetEntity="PartChange", mappedBy="addeduser")
+     */
+    protected $partchanges;
+    
+    /**
      * @ORM\OneToMany(targetEntity="LocationNote", mappedBy="addeduser")
      */
     protected $partsnotes;
@@ -465,5 +470,38 @@ class User implements AdvancedUserInterface, \Serializable {
     public function getPartsnotes()
     {
         return $this->partsnotes;
+    }
+
+    /**
+     * Add partchanges
+     *
+     * @param \AppBundle\Entity\PartChange $partchanges
+     * @return User
+     */
+    public function addPartchange(\AppBundle\Entity\PartChange $partchanges)
+    {
+        $this->partchanges[] = $partchanges;
+
+        return $this;
+    }
+
+    /**
+     * Remove partchanges
+     *
+     * @param \AppBundle\Entity\PartChange $partchanges
+     */
+    public function removePartchange(\AppBundle\Entity\PartChange $partchanges)
+    {
+        $this->partchanges->removeElement($partchanges);
+    }
+
+    /**
+     * Get partchanges
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPartchanges()
+    {
+        return $this->partchanges;
     }
 }

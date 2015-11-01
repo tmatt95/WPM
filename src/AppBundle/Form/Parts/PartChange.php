@@ -22,12 +22,12 @@ class PartChange extends AbstractType {
             ->add('type', 'choice', array(
                 'choices' => ['Add', 'Use'],
                 'required' => false,
-                'label' => 'Add / Use'
+                'label' => 'Add or Use'
             ))
-            ->add('no_added', 'text', array('label' => 'Added'))
-            ->add('no_taken', 'text', array('label' => 'Used'))
-            ->add('comment', 'textarea')
-            ->add('save', 'submit', array('label' => 'Update'));
+            ->add('no_added', 'integer', array('label' => 'No Added', 'attr'=>array('placeholder'=>'No Added')))
+            ->add('no_taken', 'integer', array('label' => 'No Removed', 'attr'=>array('placeholder'=>'No Removed')))
+            ->add('comment', 'textarea', array('label' => 'Comment'))
+            ->add('save', 'submit', array('label' => 'Update', 'attr'=>array('class'=>'btn btn-block btn-default')));
     }
 
     public function getName() {

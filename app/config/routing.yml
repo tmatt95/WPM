@@ -3,6 +3,10 @@ parts:
     path:     /parts/
     defaults: { _controller: AppBundle:Parts:parts }
     methods:  [GET]
+parts_date_numbers:
+    path:     /parts/getdatepartnumbers/
+    defaults: { _controller: AppBundle:Parts:getDatePartNumbers }
+    methods:  [GET]
 parts_view:
     path:     /parts/view/{partId}
     defaults: { _controller: AppBundle:Parts:view }

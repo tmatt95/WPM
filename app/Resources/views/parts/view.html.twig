@@ -2,6 +2,34 @@
 
 {% block title %}Parts: {{part.name}}{% endblock %}
 
+{% block javascripts %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            adduseformupdate();
+            $("#parttype_type").change(function () {
+                adduseformupdate();
+            });
+        });
+
+        function adduseformupdate() {
+            $('.aucomment,.aunotaken,.aunoadded,#parttype_save').removeClass('hidden');
+            if ($('#parttype_type').val() === '') {
+                $('.aucomment,.aunotaken,.aunoadded,#parttype_save').addClass('hidden');
+            }
+            if ($('#parttype_type').val() === '1') {
+                $('.aunoadded').addClass('hidden');
+                $('#parttype_no_added').val('0');
+                $('#parttype_save').text('Use');
+            }
+            if ($('#parttype_type').val() === '0') {
+                $('.aunotaken').addClass('hidden');
+                $('#parttype_no_taken').val('0');
+                $('#parttype_save').text('Add');
+            }
+        }
+    </script>
+{% endblock %}
+
 {% block body %}
     <h1>View Part - {{part.name}}</h1>
     <ol class="breadcrumb">
@@ -22,14 +50,91 @@
     {% endif %}
     <h3>Add/Use</h3>
     {{ form_start(FPartChange) }}
-    {{ form_widget(FPartChange) }}
+    {{ form_errors(FPartChange) }}
+    <div class="row">
+        <div class="col-sm-2 autype">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="{{ FPartChange.type.vars.id }}">{{ FPartChange.type.vars.label}}</label>
+                </div>
+                <div class="col-sm-12">
+                    {{ form_widget(FPartChange.type) }}
+                    {{ form_errors(FPartChange.type) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2 aunoadded">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="{{ FPartChange.no_added.vars.id }}">{{ FPartChange.no_added.vars.label }}</label>
+                </div>
+                <div class="col-sm-12">
+                    {{ form_widget(FPartChange.no_added) }}
+                    {{ form_errors(FPartChange.no_added) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2 aunotaken">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="{{ FPartChange.no_taken.vars.id }}">{{ FPartChange.no_taken.vars.label }}</label>
+                </div>
+                <div class="col-sm-12">
+                    {{ form_widget(FPartChange.no_taken) }}
+                    {{ form_errors(FPartChange.no_taken) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-6 col-lg-7 aucomment">
+            <div class="form-group">
+                <div class="col-sm-12">
+                    <label for="{{ FPartChange.comment.vars.id }}">{{ FPartChange.comment.vars.label }}</label>
+                </div>
+                <div class="col-sm-12">
+                    {{ form_widget(FPartChange.comment) }}
+                    {{ form_errors(FPartChange.comment) }}
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-2 col-lg-1" style="padding-top:25px;">
+            {{ form_widget(FPartChange.save) }}
+        </div>
+    </div>
     {{ form_end(FPartChange) }}
-
+    <hr />
     <h3>Info</h3>
     {{ form_start(form) }}
     {{ form_widget(form) }}
     {{ form_end(form) }}
-    
+
     <h3>History</h3>
-    <p class="text-muted">No history for this part</p>
+    {% if partHistory|length == 0 %}
+        <p class="text-muted">This part has no history</p>
+    {% endif %}
+    {% if partHistory|length > 0 %}
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Changed</th>
+                    <th>By</th>
+                    <th>Qty Taken</th>
+                    <th>Qty Added</th>
+                    <th>Total</th>
+                    <th>Comment</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ph in partHistory %}
+                    <tr>
+                        <td>{{ph.added|date("d/m/Y H:i:s")}}</td>
+                        <td>{{ph.name_first }} {{ ph.name_last }}</td>
+                        <td>{{ph.no_taken}}</td>
+                        <td>{{ph.no_added}}</td>
+                        <td>{{ph.no_total}}</td>
+                        <td>{{ph.comment}}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
 {% endblock %}

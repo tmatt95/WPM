@@ -24,6 +24,11 @@ class Part {
      * @ORM\JoinColumn(name="added_by", referencedColumnName="id")
      */
     protected $addeduser;
+    
+    /**
+     * @ORM\OneToMany(targetEntity="PartChange", mappedBy="partInfo")
+     */
+    protected $changes;
 
     /**
      * @ORM\ManyToOne(targetEntity="Location", inversedBy="parts")
@@ -334,4 +339,44 @@ class Part {
         );
     }
 
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->changes = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * Add changes
+     *
+     * @param \AppBundle\Entity\PartChange $changes
+     * @return Part
+     */
+    public function addChange(\AppBundle\Entity\PartChange $changes)
+    {
+        $this->changes[] = $changes;
+
+        return $this;
+    }
+
+    /**
+     * Remove changes
+     *
+     * @param \AppBundle\Entity\PartChange $changes
+     */
+    public function removeChange(\AppBundle\Entity\PartChange $changes)
+    {
+        $this->changes->removeElement($changes);
+    }
+
+    /**
+     * Get changes
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getChanges()
+    {
+        return $this->changes;
+    }
 }

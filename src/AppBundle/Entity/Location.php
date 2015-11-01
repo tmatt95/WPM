@@ -15,6 +15,12 @@ class Location {
      * @ORM\OneToMany(targetEntity="Part", mappedBy="locationinfo")
      */
     protected $parts;
+    
+    
+    /**
+     * @ORM\OneToMany(targetEntity="PartChange", mappedBy="addedlocation")
+     */
+    protected $partLocChanges;
 
     /**
      * @ORM\Column(type="integer")
@@ -159,5 +165,38 @@ class Location {
     public function getParts()
     {
         return $this->parts;
+    }
+
+    /**
+     * Add partLocChanges
+     *
+     * @param \AppBundle\Entity\PartChange $partLocChanges
+     * @return Location
+     */
+    public function addPartLocChange(\AppBundle\Entity\PartChange $partLocChanges)
+    {
+        $this->partLocChanges[] = $partLocChanges;
+
+        return $this;
+    }
+
+    /**
+     * Remove partLocChanges
+     *
+     * @param \AppBundle\Entity\PartChange $partLocChanges
+     */
+    public function removePartLocChange(\AppBundle\Entity\PartChange $partLocChanges)
+    {
+        $this->partLocChanges->removeElement($partLocChanges);
+    }
+
+    /**
+     * Get partLocChanges
+     *
+     * @return \Doctrine\Common\Collections\Collection 
+     */
+    public function getPartLocChanges()
+    {
+        return $this->partLocChanges;
     }
 }

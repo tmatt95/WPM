@@ -11,20 +11,20 @@
             {% endif %}
             {% if partsAdded|length > 0 %}
                 <div>
-                <canvas id="chartPartType"></canvas>
+                    <canvas id="chartPartType"></canvas>
                 </div>
-                {% endif %}
+            {% endif %}
         </div>
         <div class="col-md-6" id="chartPartsAddedBox">
-            <h3>No Parts In Store</h3>
+            <h3>Parts In Store</h3>
             {% if partsAdded|length == 0 %}
                 <p class="text-muted">You are not storing any parts yet :O</p>
             {% endif %}
             {% if partsAdded|length > 0 %}
                 <div>
-                <canvas id="chartPartsAdded"></canvas>
+                    <canvas id="chartPartsAdded"></canvas>
                 </div>
-                {% endif %}
+            {% endif %}
         </div>
     </div>
     <div class="row">
@@ -36,10 +36,10 @@
                 <table class="table table-bordered">
                     <thead>
                         <tr>
-                            <th>Added</th>
+                            <th>Date</th>
                             <th>Part</th>
                             <th>Qty</th>
-                            <th>Added By</th>
+                            <th>By</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -55,19 +55,32 @@
                 </table>
             {% endif %}
         </div>
-        <div class="col-md-6"><h3>Last 10 Parts Used</h3>
-            {% if partsUsed|length == 0 %}
-                <p class="text-muted">No parts have been removed from the stores yet :O</p>
+        <div class="col-md-6"><h3>Last 10 Parts Updated</h3>
+            {% if partsUpdated|length == 0 %}
+                <p class="text-muted">No parts have been updated yet :O</p>
             {% endif %}
-            {% if partsUsed|length > 0 %}
+            {% if partsUpdated|length > 0 %}
                 <table class="table table-bordered">
                     <thead>
                         <tr>
+                            <th>Date</th>
                             <th>Part</th>
-                            <th>Qty Used</th>
-                            <th>Used By</th>
+                            <th>Taken</th>
+                            <th>Added</th>
+                            <th>By</th>
                         </tr>
                     </thead>
+                    <tbody>
+                        {% for lup in partsUpdated %}
+                            <tr>
+                                <td>{{ lup.added|date("d/m/Y") }}</td>
+                                <td><a href="/parts/view/{{ lup.part_id }}">{{ lup.name }}</a></td>
+                                <td>{{ lup.no_taken }}</td>
+                                <td>{{ lup.no_added }}</td>
+                                <td>{{ lup.name_first }} {{ lup.name_last }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
                 </table>
             {% endif %}
         </div>
@@ -77,39 +90,38 @@
 {% block javascripts %}
     <script type="text/javascript">
         $(document).ready(function () {
-
-            // Generates the chart showing the
-
-            // Generates the parts added chart
-            var data = {
-                labels: ["January", "February", "March", "April", "May", "June", "July"],
-                datasets: [
-                    {
-                        label: "My First dataset",
-                        fillColor: "rgba(220,220,220,0.2)",
-                        strokeColor: "rgba(220,220,220,1)",
-                        pointColor: "rgba(220,220,220,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(220,220,220,1)",
-                        data: [65, 59, 80, 81, 56, 55, 40]
-                    },
-                    {
-                        label: "My Second dataset",
-                        fillColor: "rgba(151,187,205,0.2)",
-                        strokeColor: "rgba(151,187,205,1)",
-                        pointColor: "rgba(151,187,205,1)",
-                        pointStrokeColor: "#fff",
-                        pointHighlightFill: "#fff",
-                        pointHighlightStroke: "rgba(151,187,205,1)",
-                        data: [28, 48, 40, 19, 86, 27, 90]
-                    }
-                ]
-            };
-
             if ($('#chartPartsAdded').length > 0) {
-                var ctx = document.getElementById("chartPartsAdded").getContext("2d");
-                var chartPartsAdded = new Chart(ctx).Line(data, {responsive:true});
+
+                $.ajax({
+                    url: "/parts/getdatepartnumbers/",
+                    dataType: "json",
+                    type: "GET"
+                }).done(function (data) {
+
+                    var chartLabels = new Array();
+                    var chartData = new Array();
+                    $.each(data, function (index, value) {
+                        chartLabels[index] = value.date.date.split(" ")[0];
+                        chartData[index] = value.total;
+                    });
+                    var data = {
+                        labels: chartLabels,
+                        datasets: [
+                            {
+                                label: "Total Parts",
+                                fillColor: "rgba(220,220,220,0.2)",
+                                strokeColor: "rgba(220,220,220,1)",
+                                pointColor: "rgba(220,220,220,1)",
+                                pointStrokeColor: "#fff",
+                                pointHighlightFill: "#fff",
+                                pointHighlightStroke: "rgba(220,220,220,1)",
+                                data: chartData
+                            }
+                        ]
+                    };
+                    var ctx = document.getElementById("chartPartsAdded").getContext("2d");
+                    var chartPartsAdded = new Chart(ctx).Line(data, {responsive: true});
+                });
             }
 
 
@@ -120,7 +132,7 @@
                     type: "GET"
                 }).done(function (data) {
                     var chartPartsAdded = document.getElementById("chartPartType").getContext("2d");
-                    var chartPartType = new Chart(chartPartsAdded).Pie(data, {responsive:true});
+                    var chartPartType = new Chart(chartPartsAdded).Pie(data, {responsive: true});
                 });
             }
 

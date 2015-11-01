@@ -12,6 +12,7 @@ use AppBundle\Entity\Location;
 use AppBundle\Entity\PartType;
 use AppBundle\Form\Parts\PartChange as FPartChange;
 use AppBundle\Entity\PartChange as PartChange;
+use Ex;
 
 class PartsController extends Controller {
 
@@ -40,6 +41,32 @@ class PartsController extends Controller {
         return $this->redirectToRoute('parts_find');
     }
 
+    public function getDatePartNumbersAction() {
+        $em = $this->getDoctrine()->getManager();
+        $queryDatePartNumbers = $em->createQuery(
+                'SELECT pc.added_date,
+                SUM(pc.no_added) - sum(pc.no_taken) AS number_added_removed
+            FROM AppBundle:PartChange pc
+            GROUP BY pc.added_date');
+        $datePartNumbers = $queryDatePartNumbers->getResult();
+
+        $output = array();
+        $total = 0;
+        foreach ($datePartNumbers as $dpn) {
+            $total = $total + $dpn['number_added_removed'];
+            $output[] = array(
+                'date'=>$dpn['added_date'],
+                'total'=> $total
+            );
+        }
+
+        $response = new JsonResponse();
+        $response->setData(
+                $output
+        );
+        return $response;
+    }
+
     public function indexAction() {
         // Information for the latest added parts widget
         $em = $this->getDoctrine()->getManager();
@@ -54,8 +81,24 @@ class PartsController extends Controller {
             JOIN p.addeduser u');
         $query->setMaxResults(10);
         $partsAdded = $query->getResult();
+
+        $queryPartsUpdated = $em->createQuery(
+                'SELECT pc.no_added,
+            pc.no_taken,
+            pc.added,
+            pc.no_total,
+            u.name_first,
+            u.name_last,
+            pi.name,
+            pi.id AS part_id
+            FROM AppBundle:PartChange pc
+            JOIN pc.addeduser u
+            JOIN pc.partInfo pi
+            ORDER BY pc.added DESC');
+        $queryPartsUpdated->setMaxResults(10);
+        $partsUpdated = $queryPartsUpdated->getResult();
         $html = $this->container->get('templating')->render(
-                'parts/index.html.twig', array('partsAdded' => $partsAdded, 'partsUsed' => array())
+                'parts/index.html.twig', array('partsAdded' => $partsAdded, 'partsUpdated' => $partsUpdated)
         );
         return new Response($html);
     }
@@ -161,8 +204,41 @@ class PartsController extends Controller {
                     'Part not found. It may not exist or have been deleted.'
             );
         }
-        
-        $FPartChange = $this->createForm(new FPartChange(), new PartChange());
+
+        $partChange = new PartChange();
+        $FPartChange = $this->createForm(new FPartChange(), $partChange);
+        $FPartChange->handleRequest($request);
+        if ($FPartChange->isValid()) {
+
+            // Calculates values which need to be added from the server side
+            $noTotal = $part->getQty() - $partChange->getNoTaken() + $partChange->getNoAdded();
+            if ($noTotal < 0) {
+                throw new Exception('You do not have enough parts!', 400);
+            }
+            $em = $this->getDoctrine()->getManager();
+            $createdDate = new DateTime('Europe/London');
+            $partChange->setAdded($createdDate);
+            $partChange->setAddedDate($createdDate);
+            $partChange->setAddeduser($this->getUser());
+            $partChange->setPartInfo($part);
+            $partChange->setAddedlocation($part->getLocationInfo());
+            $partChange->setNoTotal($noTotal);
+
+            // Updates the total number on the part
+            $part->setQty($noTotal);
+            $em->persist($part);
+            $em->persist($partChange);
+            $em->flush();
+
+            $message = '';
+            if ($partChange->getType() === 0) {
+                $message = 'Successfuly added ' . $partChange->getNoAdded();
+            } else {
+                $message = 'Successfuly taken ' . $partChange->getNoTaken();
+            }
+            $this->displayMessage['value'] = $message . '. There are now ' . $partChange->getNoTotal() . ' in the system.';
+            $FPartChange = $this->createForm(new FPartChange(), new PartChange());
+        }
 
         $form = $this->createFormBuilder($part)
                 ->add('name', 'text')
@@ -175,30 +251,39 @@ class PartsController extends Controller {
                     'choices' => Location::getList($em),
                     'required' => false,
                 ))
-                ->add('qty', 'integer')
                 ->add('save', 'submit', array('label' => 'Update Part'))
                 ->getForm();
-
-        // Populates the form with submitted data if any present
         $form->handleRequest($request);
-
-        // If form is posted and valid, then saves
         if ($form->isValid()) {
-
-            // Saves the new part to the system
             $em = $this->getDoctrine()->getManager();
             $em->persist($part);
             $em->flush();
             $this->displayMessage['value'] = 'Successfuly updated part';
         }
 
+        $queryPartHistory = $em->createQuery(
+                'SELECT pc.no_added,
+            pc.no_taken,
+            pc.added,
+            pc.no_total,
+            pc.comment,
+            u.name_first,
+            u.name_last,
+            pi.name,
+            pi.id AS part_id
+            FROM AppBundle:PartChange pc
+            JOIN pc.addeduser u
+            JOIN pc.partInfo pi
+            ORDER BY pc.added DESC');
+        $partHistory = $queryPartHistory->getResult();
+
         $html = $this->container->get('templating')->render(
-                'parts/view.html.twig',
-                array(
-                    'part' => $part,
-                    'FPartChange'=>$FPartChange->createView(),
-                    'form' => $form->createView(),
-                    'displayMessage' => $this->displayMessage
+                'parts/view.html.twig', array(
+            'part' => $part,
+            'FPartChange' => $FPartChange->createView(),
+            'form' => $form->createView(),
+            'displayMessage' => $this->displayMessage,
+            'partHistory' => $partHistory
                 )
         );
         return new Response($html);
