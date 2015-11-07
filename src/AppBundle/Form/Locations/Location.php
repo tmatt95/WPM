@@ -57,13 +57,12 @@ class Location extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('name', 'text')
-            ->add('description', 'textarea')
+            ->add('description', 'textarea', array('required'=>false))
             ->add('save', 'submit', array('label' => 'Save'));
     }
 
     /**
      * Get the form name
-     *
      * @inheritdoc
      * @return     nothing
      */

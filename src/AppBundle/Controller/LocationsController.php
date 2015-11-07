@@ -48,7 +48,7 @@ class LocationsController extends Controller
      * Used to store notice messages to be displayed at the top of the
      * manage/edit windows after an action has been carried out.
      */
-    private $_displayMessage = array(
+    private $displayMessage = array(
         'class' => 'alert-success',
         'showButton' => false,
         'buttonText' => 'Edit Location',
@@ -60,7 +60,7 @@ class LocationsController extends Controller
      * Whether to redirect to the locations screen or not
      * @var boolean defaults to false
      */
-    private $_redirectToLocations = false;
+    private $redirectToLocations = false;
 
     /**
      * Location Update
@@ -70,7 +70,7 @@ class LocationsController extends Controller
      * @param Location $location record to be updated
      * @return AppBundle\Form\Locations\Location
      */
-    private function _formUpdate(Request $request, Location $location)
+    private function formUpdate(Request $request, Location $location)
     {
         // Populates form if one sent to application
         $form = $this->createForm(new FLocation(), $location);
@@ -81,8 +81,8 @@ class LocationsController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($location);
             $em->flush();
-            $this->_displayMessage['value'] = 'Successfuly updated location';
-            $this->_displayMessage['class'] = 'alert-info';
+            $this->displayMessage['value'] = 'Successfuly updated location';
+            $this->displayMessage['class'] = 'alert-info';
         }
         return $form;
     }
@@ -95,7 +95,7 @@ class LocationsController extends Controller
      * @param Location $location to remove
      * @return AppBundle\Form\Locations\LocationDelete
      */
-    private function _formDelete(Request $request, Location $location)
+    private function formDelete(Request $request, Location $location)
     {
         // Populates form if one sent to application
         $form = $this->createForm(new FLocationDelete(), $location);
@@ -120,7 +120,7 @@ class LocationsController extends Controller
      * @param Location $location record to be updated
      * @return AppBundle\Form\Locations\Location
      */
-    private function _formAdd(Request $request, Location $location)
+    private function formAdd(Request $request, Location $location)
     {
         // Populates form if one sent to application
         $form = $this->createForm(new FLocation(), $location);
@@ -132,9 +132,9 @@ class LocationsController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($location);
             $em->flush();
-            $this->_displayMessage['value'] = 'Successfuly added location';
-            $this->_displayMessage['showButton'] = true;
-            $this->_displayMessage['locationId'] = $location->getId();
+            $this->displayMessage['value'] = 'Successfuly added location';
+            $this->displayMessage['showButton'] = true;
+            $this->displayMessage['locationId'] = $location->getId();
             return $this->createForm(new FLocation(), new Location());
         } else {
             return $form;
@@ -147,7 +147,7 @@ class LocationsController extends Controller
      * @param Request $request    may contain a location note to add
      * @return AppBundle\Form\Locations\LocationNote
      */
-    private function _formLNAdd($locationId, Request $request)
+    private function formLNAdd($locationId, Request $request)
     {
         // Populates form if one sent to application
         $record = new LocationNote();
@@ -166,8 +166,8 @@ class LocationsController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($record);
             $em->flush();
-            $this->_displayMessage['value'] = 'Successfuly added location note.';
-            $this->_displayMessage['class'] = 'alert-info';
+            $this->displayMessage['value'] = 'Successfuly added location note.';
+            $this->displayMessage['class'] = 'alert-info';
             return $this->createForm(new FLocationNote(), new LocationNote());
         } else {
             return $form;
@@ -182,12 +182,27 @@ class LocationsController extends Controller
      */
     public function manageAction(Request $request)
     {
-        $form = $this->_formAdd($request, new Location());
+        // Validates the add form / does an insert if there is anything to add
+        $form = $this->formAdd($request, new Location());
+        
+        // If there are errors in the form then we want it open when the page 
+        // loads
+        $noErrors = count($form->getErrors(true, true));
+        $addFormClass='hidden';
+        $addButtonClass = '';
+        if($noErrors > 0 ){
+            $addFormClass = '';
+            $addButtonClass = 'hidden';
+        }
+        
+        // Render the manage locations page
         $html = $this->container->get('templating')->render(
             'locations/manage.html.twig',
             array(
                 'form' => $form->createView(),
-                'displayMessage' => $this->_displayMessage,
+                'displayMessage' => $this->displayMessage,
+                'addFormClass' =>$addFormClass,
+                'addButtonClass' =>$addButtonClass
             )
         );
         return new Response($html);
@@ -265,12 +280,12 @@ class LocationsController extends Controller
         }
         
         // Carry out page functions if needed
-        $form = $this->_formUpdate($request, $location);
-        $lNForm = $this->_formLNAdd($id, $request);
-        $formDelete = $this->_formDelete($request, $location);
-
+        $form = $this->formUpdate($request, $location);
+        $lNForm = $this->formLNAdd($id, $request);
+        $formDelete = $this->formDelete($request, $location);
+        
         // Load the page or redirect to the locations
-        if ($this->_redirectToLocations === true) {
+        if ($this->redirectToLocations === true) {
             return $this->redirectToRoute('locations_manage');
         } else {
             $html = $this->container->get('templating')->render(
@@ -278,8 +293,9 @@ class LocationsController extends Controller
                 array(
                     'formLocation' => $form->createView(),
                     'formLocationNote' => $lNForm->createView(),
-                    'displayMessage' => $this->_displayMessage,
+                    'displayMessage' => $this->displayMessage,
                     'formDelete' => $formDelete->createView(),
+                    'location' =>$location
                 )
             );
             return new Response($html);

@@ -21,7 +21,7 @@
                         title: 'Notes'
                     }
                 ],
-                url: '/locations/getnotes/{{ formLocation.vars.value.id }}',
+                url: '/locations/getnotes/{{ location.id }}',
                 pagination: true,
                 search: true
             });
@@ -65,13 +65,13 @@
     </script>
 {% endblock %}
 
-{% block title %}Locations: {{ formLocation.vars.value.name }}{% endblock %}
+{% block title %}Locations: Edit Location{% endblock %}
 
 {% block body %}
     <div class="row">
         <div class="col-sm-8">
-            <h1>{{ formLocation.vars.value.name }}</h1>
-            <input type="hidden" value="{{ formLocation.vars.value.id }}" id="locationid"/>
+            <h1>Edit Location</h1>
+            <input type="hidden" value="{{ location.id }}" id="locationid"/>
         </div>
         <div style="padding-top:20px;" class="col-sm-4 hidden-xs text-right">            
             <button type="button" class="btn btn-danger" id="deletelocation" title="Confirm Delete" data-container="body" data-toggle="popover" data-placement="bottom">
@@ -80,7 +80,7 @@
             <div class="deletelocationform hidden">
                 {{ form_start(formDelete) }}
                 {{ form_widget(formDelete) }}
-                <p>Please confirm you would like to delete <strong>{{ formLocation.vars.value.name }}</strong></p>
+                <p>Please confirm you would like to delete <strong>{{ location.name }}</strong></p>
                 <button type="submit" class="btn btn-xl btn-danger">
                     Delete
                 </button>
@@ -95,7 +95,7 @@
         <div class="col-xs-12">
             <ol class="breadcrumb">
                 <li><a href="{{ path('locations_manage') }}">Locations</a></li>
-                <li class="active">{{ formLocation.vars.value.name }}</li>
+                <li class="active">Edit Location</li>
             </ol>
         </div>
     </div>

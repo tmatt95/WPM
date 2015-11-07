@@ -4,10 +4,15 @@ namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="location")
+ * @UniqueEntity(
+ *     fields={"name"},
+ *     errorPath="name",
+ *     message="There is already a location with this name")
  */
 class Location
 {
@@ -30,7 +35,7 @@ class Location
     protected $idDelete;
 
     /**
-     * @ORM\Column(type="string", length=300)
+     * @ORM\Column(type="string", length=300, unique=true)
      * @Assert\NotBlank()
      */
     protected $name;

@@ -1,6 +1,6 @@
 {% extends 'parts.html.twig' %}
 
-{% block title %}Part Types: {{ form.vars.value.name }}{% endblock %}
+{% block title %}Part Types: Edit Part Type{% endblock %}
 
 {% block javascripts %}
     <script type="text/javascript">
@@ -21,7 +21,7 @@
 {% block body %}
     <div class="row">
         <div class="col-sm-8">
-            <h1>{{ form.vars.value.name }}</h1>
+            <h1>Edit Part Type</h1>
         </div>
         <div style="padding-top:20px;" class="col-sm-4 hidden-xs text-right">
             <button type="button" class="btn btn-danger" id="deleteparttype" title="Confirm Delete" data-container="body" data-toggle="popover" data-placement="bottom">
@@ -43,7 +43,7 @@
     </div>
     <ol class="breadcrumb">
         <li><a href="{{ path('part_types_manage') }}">Part Types</a></li>
-        <li class="active">{{ form.vars.value.name }}</li>
+        <li class="active">Edit Part Type</li>
     </ol>
     {% if displayMessage.value != '' %}
         <div class="row">

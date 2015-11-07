@@ -57,7 +57,7 @@ class PartType extends AbstractType
     {
         $builder
             ->add('name', 'text')
-            ->add('description', 'textarea')
+            ->add('description', 'textarea', array('required'=>false))
             ->add('save', 'submit', array('label' => 'Add Part Type'));
     }
 

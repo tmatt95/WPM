@@ -6,11 +6,16 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="part_type")
  * @ORM\Entity(repositoryClass="AppBundle\Entity\PartTypeRepository")
+ * @UniqueEntity(
+ *     fields={"name"},
+ *     errorPath="name",
+ *     message="There is already a part type with this name")
  */
 class PartType
 {
@@ -27,7 +32,7 @@ class PartType
     protected $id;
 
     /**
-     * @ORM\Column(type="string", length=200)
+     * @ORM\Column(type="string", length=200, unique=true)
      */
     protected $name;
 

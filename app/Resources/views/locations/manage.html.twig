@@ -53,8 +53,8 @@
             <h1>Locations</h1>
         </div>
         <div class="col-xs-6 text-right" style="padding-top:20px;">
-            <a id="lAddNew" href="#" class="btn btn-xl btn-primary"> <span class="glyphicon glyphicon-plus"></span> Add Location</a>
-            <a id="lAddNewCancel" href="#" class="btn btn-xl hidden btn-danger"> Cancel</a>
+            <a id="lAddNew" href="#" class="btn btn-xl {{addButtonClass}} btn-primary"> <span class="glyphicon glyphicon-plus"></span> Add Location</a>
+            <a id="lAddNewCancel" href="#" class="btn btn-xl {{addFormClass}} btn-danger"> Cancel</a>
         </div>
     </div>
     <div class="row">
@@ -81,7 +81,7 @@
     {% endif %}
     <div class="row">
         <div class="col-xs-12">
-            <div id="lAddEditForm" class="hidden">
+            <div id="lAddEditForm" class="{{addFormClass}}">
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">New</h3>

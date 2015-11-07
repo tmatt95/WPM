@@ -32,16 +32,19 @@ class LocationNote
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
      */
     protected $location_id;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
      */
     protected $added_by;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank()
      */
     protected $added;
 

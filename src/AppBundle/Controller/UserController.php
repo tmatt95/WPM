@@ -51,7 +51,7 @@ class UserController extends Controller
      * manage/edit windows after an action has been carried out.
      * @var array
      */
-    private $_displayMessage = array(
+    private $displayMessage = array(
         'class' => 'alert-success',
         'showButton' => false,
         'buttonText' => 'Edit User',
@@ -63,7 +63,7 @@ class UserController extends Controller
      * Whether to redirect to the users page or render the view.
      * @var bool defaults to false
      */
-    private $_redirectToUsers = false;
+    private $redirectToUsers = false;
 
     /**
      * Form Add
@@ -71,7 +71,7 @@ class UserController extends Controller
      * @param Request $request may containing the user form if one present
      * @return FLocation either a blank form or one with errors
      */
-    private function _formAdd(Request $request)
+    private function formAdd(Request $request)
     {
         // Adds created date
         $createdDate = new DateTime('Europe/London');
@@ -95,9 +95,9 @@ class UserController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            $this->_displayMessage['value'] = 'Successfuly added user';
-            $this->_displayMessage['showButton'] = true;
-            $this->_displayMessage['userId'] = $user->getId();
+            $this->displayMessage['value'] = 'Successfuly added user';
+            $this->displayMessage['showButton'] = true;
+            $this->displayMessage['userId'] = $user->getId();
             $form = $this->createForm(new FUser(), new User());
         }
         return $form;
@@ -110,7 +110,7 @@ class UserController extends Controller
      * @param Location $user    record to be added
      * @return FLocation
      */
-    private function _formEdit(Request $request, User $user)
+    private function formEdit(Request $request, User $user)
     {
         // Populates form if one sent to application
         $form = $this->createForm(new FUserUpdate(), $user);
@@ -121,7 +121,7 @@ class UserController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            $this->_displayMessage['value'] = 'Successfuly updated user';
+            $this->displayMessage['value'] = 'Successfuly updated user';
         }
         return $form;
     }
@@ -134,7 +134,7 @@ class UserController extends Controller
      * @param User    $user    record to be deleted if it needs to be
      * @return FUserDelete
      */
-    private function _formDelete(Request $request, User $user)
+    private function formDelete(Request $request, User $user)
     {
         // Populates form if one sent to the application
         $form = $this->createForm(new FUserDelete(), $user);
@@ -148,7 +148,7 @@ class UserController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($user);
             $em->flush();
-            $this->_redirectToUsers = true;
+            $this->redirectToUsers = true;
         }
         return $form;
     }
@@ -161,7 +161,7 @@ class UserController extends Controller
      * @param User    $user    to update the password on
      * @return FUserPassword
      */
-    private function _formEditPassword(Request $request, User $user)
+    private function formEditPassword(Request $request, User $user)
     {
         // Populates form if one sent to the application
         $form = $this->createForm(new FUserPassword(), $user);
@@ -177,7 +177,7 @@ class UserController extends Controller
             $em->persist($user);
             $em->flush();
             $message = 'Successfuly updated user password';
-            $this->_displayMessage['value'] = $message;
+            $this->displayMessage['value'] = $message;
         }
         return $form;
     }
@@ -191,12 +191,12 @@ class UserController extends Controller
      */
     public function addAction(Request $request)
     {
-        $form = $this->_formAdd($request);
+        $form = $this->formAdd($request);
         $html = $this->container->get('templating')->render(
             'users/add.html.twig',
             array(
                 'form' => $form->createView(),
-                'displayMessage' => $this->_displayMessage,
+                'displayMessage' => $this->displayMessage,
             )
         );
         return new Response($html);
@@ -221,12 +221,12 @@ class UserController extends Controller
         }
         
         // Process any of the forms if there are any to process
-        $formPassword = $this->_formEditPassword($request, $user);
-        $formUser = $this->_formEdit($request, $user);
-        $formDelete = $this->_formDelete($request, $user);
+        $formPassword = $this->formEditPassword($request, $user);
+        $formUser = $this->formEdit($request, $user);
+        $formDelete = $this->formDelete($request, $user);
 
         // Redirect to users page or load up the user
-        if ($this->_redirectToUsers === true) {
+        if ($this->redirectToUsers === true) {
             return $this->redirectToRoute('users_manage');
         }
         $html = $this->container->get('templating')->render(
@@ -234,7 +234,7 @@ class UserController extends Controller
             array(
                 'form' => $formUser->createView(),
                 'formPassword' => $formPassword->createView(),
-                'displayMessage' => $this->_displayMessage,
+                'displayMessage' => $this->displayMessage,
                 'formDelete' => $formDelete->createView(),
             )
         );

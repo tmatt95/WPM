@@ -49,7 +49,7 @@ class PartsController extends Controller
      * Used to store notice messages to be displayed at the top of the
      * manage/edit windows after an action has been carried out.
      */
-    private $_displayMessage = array(
+    private $displayMessage = array(
         'class' => 'alert-success',
         'showButton' => false,
         'buttonText' => 'Edit Part',
@@ -213,9 +213,9 @@ class PartsController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($part);
             $em->flush();
-            $this->_displayMessage['value'] = 'Successfuly added part';
-            $this->_displayMessage['showButton'] = true;
-            $this->_displayMessage['partId'] = $part->getId();
+            $this->displayMessage['value'] = 'Successfuly added part';
+            $this->displayMessage['showButton'] = true;
+            $this->displayMessage['partId'] = $part->getId();
             $partChange = new PartChange();
             $partChange->setPartInfo($part);
             $partChange->setNoAdded($part->getQty());
@@ -237,7 +237,7 @@ class PartsController extends Controller
             'parts/add.html.twig',
             array(
                 'form' => $form->createView(),
-                'displayMessage' => $this->_displayMessage,
+                'displayMessage' => $this->displayMessage,
             )
         );
         return new Response($html);
@@ -341,7 +341,7 @@ class PartsController extends Controller
             } else {
                 $message = 'Successfuly taken '.$partChange->getNoTaken();
             }
-            $this->_displayMessage['value'] = $message
+            $this->displayMessage['value'] = $message
                 .'. There are now '
                 .$partChange->getNoTotal()
                 .' in the system.';
@@ -377,7 +377,7 @@ class PartsController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($part);
             $em->flush();
-            $this->_displayMessage['value'] = 'Successfuly updated part';
+            $this->displayMessage['value'] = 'Successfuly updated part';
         }
 
         $queryPartHistory = $em->createQuery(
@@ -408,7 +408,7 @@ class PartsController extends Controller
             'part' => $part,
             'FPartChange' => $FPartChange->createView(),
             'form' => $form->createView(),
-            'displayMessage' => $this->_displayMessage,
+            'displayMessage' => $this->displayMessage,
             'partHistory' => $partHistory,
                 )
         );

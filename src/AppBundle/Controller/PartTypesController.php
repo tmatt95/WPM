@@ -45,13 +45,13 @@ use AppBundle\Form\Parts\PartTypeDelete as FPartTypeDelete;
  */
 class PartTypesController extends Controller
 {
-    private $_redirectToPartTypes = false;
+    private $redirectToPartTypes = false;
 
     /**
      * Used to store notice messages to be displayed at the top of the
      * manage/edit windows after an ection has been carried out.
      */
-    private $_displayMessage = array(
+    private $displayMessage = array(
         'class' => 'alert-success',
         'value' => '',
     );
@@ -113,15 +113,27 @@ class PartTypesController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($partType);
             $em->flush();
-            $this->_displayMessage['value'] = 'Successfuly added part type';
+            $this->displayMessage['value'] = 'Successfuly added part type';
             $form = $this->createForm(new FPartType(), $partType);
+        }
+        
+        // If there are errors in the form then we want it open when the page 
+        // loads
+        $noErrors = count($form->getErrors(true, true));
+        $addFormClass='hidden';
+        $addButtonClass = '';
+        if($noErrors > 0 ){
+            $addFormClass = '';
+            $addButtonClass = 'hidden';
         }
 
         $html = $this->container->get('templating')->render(
             'parttypes/manage.html.twig',
             array(
                 'form' => $form->createView(),
-                'displayMessage' => $this->_displayMessage,
+                'displayMessage' => $this->displayMessage,
+                'addFormClass' => $addFormClass,
+                'addButtonClass' => $addButtonClass
             )
         );
         return new Response($html);
@@ -156,7 +168,7 @@ class PartTypesController extends Controller
             $em = $this->getDoctrine()->getManager();
             $em->persist($partType);
             $em->flush();
-            $this->_displayMessage['value'] = 'Successfuly updated part type';
+            $this->displayMessage['value'] = 'Successfuly updated part type';
         }
 
         $formDelete->handleRequest($request);
@@ -165,10 +177,10 @@ class PartTypesController extends Controller
             Part::moveAllOutPartType($em, $partType->getId());
             $em->remove($partType);
             $em->flush();
-            $this->_redirectToPartTypes = true;
+            $this->redirectToPartTypes = true;
         }
 
-        if ($this->_redirectToPartTypes === true) {
+        if ($this->redirectToPartTypes === true) {
             return $this->redirectToRoute('part_types_manage');
         } else {
             $html = $this->container->get('templating')->render(
@@ -176,7 +188,7 @@ class PartTypesController extends Controller
                 array(
                     'form' => $form->createView(),
                     'formDelete' => $formDelete->createView(),
-                    'displayMessage' => $this->_displayMessage,
+                    'displayMessage' => $this->displayMessage,
                 )
             );
             return new Response($html);

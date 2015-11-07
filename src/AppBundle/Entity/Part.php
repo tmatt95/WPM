@@ -17,6 +17,7 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Part
@@ -33,10 +34,10 @@ use Doctrine\ORM\Mapping as ORM;
  * @link                   https://github.com/tmatt95/WPM/
  * @ORM\Entity
  * @ORM\Table(name="part")
- * @ORM\Entity             (repositoryClass="AppBundle\Entity\PartTypeRepository")
  */
 class Part
 {
+    
     /**
      * @ORM\ManyToOne(targetEntity="PartType", inversedBy="parts")
      * @ORM\JoinColumn(name="type", referencedColumnName="id")
@@ -69,36 +70,43 @@ class Part
 
     /**
      * @ORM\Column(type="string", length=200)
+     * @Assert\NotBlank()
      */
     protected $name;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
      */
     protected $type;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
      */
     protected $location;
 
     /**
      * @ORM\Column(type="text")
+     * @Assert\NotBlank()
      */
     protected $description;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
      */
     protected $qty;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank()
      */
     protected $added_by;
 
     /**
      * @ORM\Column(type="datetime")
+     * @Assert\NotBlank()
      */
     protected $added;
 
