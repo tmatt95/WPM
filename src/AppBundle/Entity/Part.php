@@ -4,9 +4,9 @@
  * Part
  * The main entity in the application. These are the items which the system
  * is designed to track. Everything else is in some way linked to these.
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Part
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -22,9 +22,9 @@ use Doctrine\ORM\Mapping as ORM;
  * Part
  * The main entity in the application. These are the items which the system
  * is designed to track. Everything else is in some way linked to these.
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category               WPM
  * @package                Part
  * @author                 Matthew Turner <tmatt95@gmail.com>
@@ -310,12 +310,14 @@ class Part
         $query = $em->createQuery($qs);
         if ($searchTerm) {
             $query->setParameter(
-                ':search', '%'.$searchTerm.'%'
+                ':search',
+                '%'.$searchTerm.'%'
             );
         }
         if ($locationid) {
             $query->setParameter(
-                ':locationid', $locationid
+                ':locationid',
+                $locationid
             );
         }
 
@@ -327,10 +329,12 @@ class Part
         $qs = 'UPDATE AppBundle:Part p SET p.location = :locationidnew WHERE p.location = :locationid';
         $query = $em->createQuery($qs);
         $query->setParameter(
-            ':locationid', $locationid
+            ':locationid',
+            $locationid
         );
         $query->setParameter(
-            ':locationidnew', $locationidnew
+            ':locationidnew',
+            $locationidnew
         );
 
         return $query->getResult();
@@ -341,10 +345,12 @@ class Part
         $qs = 'UPDATE AppBundle:Part p SET p.type = :parttypenew WHERE p.type = :parttype';
         $query = $em->createQuery($qs);
         $query->setParameter(
-            ':parttype', $parttype
+            ':parttype',
+            $parttype
         );
         $query->setParameter(
-            ':parttypenew', $parttypenew
+            ':parttypenew',
+            $parttypenew
         );
 
         return $query->getResult();
@@ -384,12 +390,14 @@ class Part
         $query->setFirstResult($offset);
         if ($searchTerm) {
             $query->setParameter(
-                ':search', '%'.$searchTerm.'%'
+                ':search',
+                '%'.$searchTerm.'%'
             );
         }
         if ($locationid) {
             $query->setParameter(
-                ':locationid', $locationid
+                ':locationid',
+                $locationid
             );
         }
 

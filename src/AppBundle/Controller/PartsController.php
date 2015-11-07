@@ -2,11 +2,11 @@
 
 /**
  * Parts
- * The main entity in the application. All actions to do with managing parts 
+ * The main entity in the application. All actions to do with managing parts
  * are done through this controller.
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Part
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -31,11 +31,11 @@ use Exception;
 
 /**
  * Parts
- * The main entity in the application. All actions to do with managing parts 
+ * The main entity in the application. All actions to do with managing parts
  * are done through this controller.
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Part
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -46,7 +46,7 @@ use Exception;
 class PartsController extends Controller
 {
     /**
-     * Used to store notice messages to be displayed at the top of the 
+     * Used to store notice messages to be displayed at the top of the
      * manage/edit windows after an action has been carried out.
      */
     private $_displayMessage = array(
@@ -167,14 +167,16 @@ class PartsController extends Controller
             ->add('name', 'text')
             ->add('description', 'textarea')
             ->add(
-                'type', 'choice',
+                'type',
+                'choice',
                 array(
                     'choices' => PartType::getList($em),
                     'required' => false,
                 )
             )
             ->add(
-                'location', 'choice',
+                'location',
+                'choice',
                 array(
                     'choices' => Location::getList($em),
                     'required' => false,
@@ -190,7 +192,6 @@ class PartsController extends Controller
 
         // If form is posted and valid, then saves
         if ($form->isValid()) {
-
             // Adds created date to form
             $createdDate = new DateTime('Europe/London');
             $part->setAdded($createdDate);
@@ -244,7 +245,7 @@ class PartsController extends Controller
 
     /**
      * Search Parts
-     * Search parts in the system. 
+     * Search parts in the system.
      * @param Request $request optional filters
      * @return JsonResponse containing parts found in the system
      */
@@ -291,7 +292,7 @@ class PartsController extends Controller
      * @param Request $request may contain forms for updating the part
      * @return Response HTML
      * @throws Exception if the part could not be found
-     * @throws Exception if updating the part would result in it having a 
+     * @throws Exception if updating the part would result in it having a
      * negative qty
      */
     public function viewAction($partId, Request $request)
@@ -312,9 +313,8 @@ class PartsController extends Controller
         $FPartChange = $this->createForm(new FPartChange(), $partChange);
         $FPartChange->handleRequest($request);
         if ($FPartChange->isValid()) {
-
             // Calculates values which need to be added from the server side
-            $noTotal = $part->getQty() 
+            $noTotal = $part->getQty()
                 - $partChange->getNoTaken()
                 + $partChange->getNoAdded();
             if ($noTotal < 0) {
@@ -355,13 +355,17 @@ class PartsController extends Controller
             ->add('name', 'text')
             ->add('description', 'textarea')
             ->add(
-                'type', 'choice', array(
+                'type',
+                'choice',
+                array(
                     'choices' => PartType::getList($em),
                     'required' => false,
                     )
             )
             ->add(
-                'location', 'choice', array(
+                'location',
+                'choice',
+                array(
                     'choices' => Location::getList($em),
                     'required' => false,
                     )
@@ -393,12 +397,14 @@ class PartsController extends Controller
             ORDER BY pc.added DESC'
         );
         $queryPartHistory->setParameter(
-            ':partid', $partId
+            ':partid',
+            $partId
         );
         $partHistory = $queryPartHistory->getResult();
 
         $html = $this->container->get('templating')->render(
-            'parts/view.html.twig', array(
+            'parts/view.html.twig',
+            array(
             'part' => $part,
             'FPartChange' => $FPartChange->createView(),
             'form' => $form->createView(),

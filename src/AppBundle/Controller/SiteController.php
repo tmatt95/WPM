@@ -2,9 +2,9 @@
 /**
  * Site controller
  * It is through this object that users log into the application.
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  User
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -31,8 +31,8 @@ class SiteController extends Controller
 {
     /**
      * Login page
-     * The page that users will see when they log into the application. and 
-     * controls what is displayed if they get their user name or password 
+     * The page that users will see when they log into the application. and
+     * controls what is displayed if they get their user name or password
      * wrong.
      * @return HTML the login page
      */
@@ -59,7 +59,7 @@ class SiteController extends Controller
 
     /**
      * Login Check Action
-     * This controller will not be executed, as the route is handled by the 
+     * This controller will not be executed, as the route is handled by the
      * Security system.
      * @return Nothing This function is not executed
      */

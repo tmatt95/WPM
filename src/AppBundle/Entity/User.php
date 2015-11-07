@@ -154,7 +154,7 @@ class User implements AdvancedUserInterface, \Serializable
     }
 
     /**
-     * @see \Serializable::serialize() 
+     * @see \Serializable::serialize()
      */
     public function serialize()
     {
@@ -170,7 +170,7 @@ class User implements AdvancedUserInterface, \Serializable
     }
 
     /**
-     * @see \Serializable::unserialize() 
+     * @see \Serializable::unserialize()
      */
     public function unserialize($serialized)
     {
@@ -423,7 +423,8 @@ class User implements AdvancedUserInterface, \Serializable
         $query = $em->createQuery($qs);
         if ($searchTerm) {
             $query->setParameter(
-                ':search', '%'.$searchTerm.'%'
+                ':search',
+                '%'.$searchTerm.'%'
             );
         }
 
@@ -448,7 +449,8 @@ class User implements AdvancedUserInterface, \Serializable
         $query->setFirstResult($offset);
         if ($searchTerm) {
             $query->setParameter(
-                ':search', '%'.$searchTerm.'%'
+                ':search',
+                '%'.$searchTerm.'%'
             );
         }
 

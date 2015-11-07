@@ -2,9 +2,9 @@
 
 /**
  * Change Part Qty Form
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Part
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -21,9 +21,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Change Part Qty Form
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Part
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -85,7 +85,8 @@ class PartChange extends AbstractType
             )
             ->add(
                 'comment',
-                'textarea', array('label' => 'Comment')
+                'textarea',
+                array('label' => 'Comment')
             )
             ->add(
                 'save',

@@ -3,9 +3,9 @@
  * Locations
  * Parts get added to a location. This controls the management of locations
  * in the system.
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Location
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -32,9 +32,9 @@ use DateTime;
  * Locations
  * Parts get added to a location. This controls the management of locations
  * in the system.
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Location
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -45,7 +45,7 @@ use DateTime;
 class LocationsController extends Controller
 {
     /**
-     * Used to store notice messages to be displayed at the top of the 
+     * Used to store notice messages to be displayed at the top of the
      * manage/edit windows after an action has been carried out.
      */
     private $_displayMessage = array(
@@ -58,7 +58,7 @@ class LocationsController extends Controller
     
     /**
      * Whether to redirect to the locations screen or not
-     * @var boolean defaults to false 
+     * @var boolean defaults to false
      */
     private $_redirectToLocations = false;
 
@@ -195,7 +195,7 @@ class LocationsController extends Controller
 
     /**
      * Get Location List
-     * Finds a list of locations in the database which are not marked as 
+     * Finds a list of locations in the database which are not marked as
      * deleted. The items found are returned based on the supplied limit and
      * offset. This funcation may not return all the items from the table if
      * there are more than the total number. The total number of items is also
@@ -250,7 +250,7 @@ class LocationsController extends Controller
      * The screen through which locations can be edited.
      * @param int     $id      id of the location to edit
      * @param Request $request containing the updated location information
-     * @return HTML edit location page 
+     * @return HTML edit location page
      */
     public function editAction($id, Request $request)
     {

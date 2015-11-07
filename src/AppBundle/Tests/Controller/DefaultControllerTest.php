@@ -4,9 +4,9 @@
  * Defsult Test Controller
  * When we have programmed in other controllers this can be deleted. Left in for
  * now to act as a template
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Test
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -23,9 +23,9 @@ use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
  * Default Test Controller
  * When we have programmed in other controllers this can be deleted. Left in for
  * now to act as a template
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Test
  * @author   Matthew Turner <tmatt95@gmail.com>

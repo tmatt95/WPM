@@ -5,9 +5,9 @@
  * Users are the people who use the system. Most actions that involve parts will
  * have a user attached to it when recorded in the system. This file is for the
  * management of users.
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  User
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -33,10 +33,10 @@ use DateTime;
  * User Controller
  * Users are the people who use the system. Most actions that involve parts will
  * have a user attached to it when recorded in the system. This file is for the
- * management of users.  
- * 
+ * management of users.
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  User
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -47,7 +47,7 @@ use DateTime;
 class UserController extends Controller
 {
     /**
-     * Used to store notice messages to be displayed at the top of the 
+     * Used to store notice messages to be displayed at the top of the
      * manage/edit windows after an action has been carried out.
      * @var array
      */
@@ -193,7 +193,7 @@ class UserController extends Controller
     {
         $form = $this->_formAdd($request);
         $html = $this->container->get('templating')->render(
-            'users/add.html.twig', 
+            'users/add.html.twig',
             array(
                 'form' => $form->createView(),
                 'displayMessage' => $this->_displayMessage,
@@ -255,7 +255,7 @@ class UserController extends Controller
 
     /**
      * Get User List
-     * Finds a list of users in the database which are not marked as 
+     * Finds a list of users in the database which are not marked as
      * deleted. The users found are returned based on the supplied limit and
      * offset. The total number of users is also returned from the system.
      * @param Request $request with POST information

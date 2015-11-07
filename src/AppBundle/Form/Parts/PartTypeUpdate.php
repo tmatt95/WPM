@@ -2,9 +2,9 @@
 
 /**
  * Update Part Type Form
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Part
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -21,9 +21,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Update Part Type Form
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Part
  * @author   Matthew Turner <tmatt95@gmail.com>

@@ -5,9 +5,9 @@
  * Part types are generally describe what the part is. This controller allows
  * them to be managed and also is where all information which primarily
  * relates to them is stored.
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Part
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -33,9 +33,9 @@ use AppBundle\Form\Parts\PartTypeDelete as FPartTypeDelete;
  * Part types are generally describe what the part is. This controller allows
  * them to be managed and also is where all information which primarily
  * relates to them is stored.
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Part
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -48,7 +48,7 @@ class PartTypesController extends Controller
     private $_redirectToPartTypes = false;
 
     /**
-     * Used to store notice messages to be displayed at the top of the 
+     * Used to store notice messages to be displayed at the top of the
      * manage/edit windows after an ection has been carried out.
      */
     private $_displayMessage = array(
@@ -100,7 +100,7 @@ class PartTypesController extends Controller
     /**
      * Manage Part Types
      * From this page a user can add and select part types to edit.
-     * @param Request $request may contain a new user form 
+     * @param Request $request may contain a new user form
      * @return HTML [art type management page
      */
     public function manageAction(Request $request)
@@ -131,7 +131,7 @@ class PartTypesController extends Controller
      * Edit Part Type
      * This screen allows users to edit part type information.
      * @param Integer $id      of part type
-     * @param Request $request may contain edit or delete form 
+     * @param Request $request may contain edit or delete form
      * @return HTML
      * @throws Exception if part type cannot be found
      */

@@ -163,11 +163,13 @@ class LocationNote
         $query = $em->createQuery($qs);
         if ($searchTerm) {
             $query->setParameter(
-                ':search', '%'.$searchTerm.'%'
+                ':search',
+                '%'.$searchTerm.'%'
             );
         }
         $query->setParameter(
-            ':locationId', $locationId
+            ':locationId',
+            $locationId
         );
 
         return $query->getResult()[0]['number'];
@@ -193,11 +195,13 @@ class LocationNote
         $query->setFirstResult($offset);
         if ($searchTerm) {
             $query->setParameter(
-                ':search', '%'.$searchTerm.'%'
+                ':search',
+                '%'.$searchTerm.'%'
             );
         }
         $query->setParameter(
-            ':locationid', $locationId
+            ':locationid',
+            $locationId
         );
 
         return array(
@@ -211,7 +215,8 @@ class LocationNote
         $qs = 'DELETE FROM AppBundle:LocationNote ln WHERE ln.location_id = :locationid';
         $query = $em->createQuery($qs);
         $query->setParameter(
-            ':locationid', $locationid
+            ':locationid',
+            $locationid
         );
 
         return $query->getResult();

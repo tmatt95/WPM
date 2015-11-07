@@ -2,9 +2,9 @@
 
 /**
  * Add/Edit Location Form
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Location
  * @author   Matthew Turner <tmatt95@gmail.com>
@@ -21,9 +21,9 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
  * Add/Edit Location Form
- * 
+ *
  * PHP version 5.6
- * 
+ *
  * @category WPM
  * @package  Location
  * @author   Matthew Turner <tmatt95@gmail.com>
