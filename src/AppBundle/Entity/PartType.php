@@ -1,7 +1,6 @@
 <?php
 
-  // src/AppBundle/Entity/PartType.php
-
+// src/AppBundle/Entity/PartType.php
 
 namespace AppBundle\Entity;
 
@@ -17,8 +16,8 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  *     errorPath="name",
  *     message="There is already a part type with this name")
  */
-class PartType
-{
+class PartType {
+
     /**
      * @ORM\OneToMany(targetEntity="Part", mappedBy="parttype")
      */
@@ -46,13 +45,11 @@ class PartType
      *
      * @return int
      */
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
 
-    public function setId($id)
-    {
+    public function setId($id) {
         $this->id = $id;
 
         return $this;
@@ -65,8 +62,7 @@ class PartType
      *
      * @return PartType
      */
-    public function setName($name)
-    {
+    public function setName($name) {
         $this->name = $name;
 
         return $this;
@@ -77,8 +73,7 @@ class PartType
      *
      * @return string
      */
-    public function getName()
-    {
+    public function getName() {
         return $this->name;
     }
 
@@ -89,8 +84,7 @@ class PartType
      *
      * @return PartType
      */
-    public function setDescription($description)
-    {
+    public function setDescription($description) {
         $this->description = $description;
 
         return $this;
@@ -101,13 +95,11 @@ class PartType
      *
      * @return string
      */
-    public function getDescription()
-    {
+    public function getDescription() {
         return $this->description;
     }
 
-    public static function getTotalNumber($em, $searchTerm)
-    {
+    public static function getTotalNumber($em, $searchTerm) {
         $qs = 'SELECT COUNT(p.id) as number FROM AppBundle:PartType p';
         if ($searchTerm) {
             $qs .= ' WHERE p.name LIKE :search';
@@ -115,16 +107,14 @@ class PartType
         $query = $em->createQuery($qs);
         if ($searchTerm) {
             $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
+                    ':search', '%' . $searchTerm . '%'
             );
         }
 
         return $query->getResult()[0]['number'];
     }
 
-    public static function search($em, $searchTerm, $limit, $offset)
-    {
+    public static function search($em, $searchTerm, $limit, $offset) {
         $qs = 'SELECT p.id,
                 p.name,
                 CONCAT(SUBSTRING(p.description,1,50),\'...\') as description
@@ -138,8 +128,7 @@ class PartType
         $query->setFirstResult($offset);
         if ($searchTerm) {
             $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
+                    ':search', '%' . $searchTerm . '%'
             );
         }
 
@@ -149,8 +138,7 @@ class PartType
         );
     }
 
-    public static function getStats($em)
-    {
+    public static function getStats($em) {
         $qs = 'SELECT pt.name,
         SUM(p.qty) as qty
         FROM AppBundle:PartType pt
@@ -159,18 +147,35 @@ class PartType
         $query = $em->createQuery($qs);
 
         $output = array();
+        $color = 0;
+        $chartColors = array(
+            '#4D4D4D',
+            '#5DA5DA',
+            '#FAA43A',
+            '#60BD68',
+            '#F17CB0',
+            '#B2912F',
+            '#B276B2',
+            '#DECF3F',
+            '#F15854',
+        );
         foreach ($query->getResult() as $index => $stat) {
-            $output[$index] = ['color' => '#46BFBD',
-            'highlight' => '#5AD3D1',
+            $output[$index] = ['color' => $chartColors[$color],
+            'highlight' => '#CCCCCC',
             'label' => $stat['name'],
-            'value' => $stat['qty'], ];
+            'value' => $stat['qty'],];
+
+            // Loops the color back round if needed
+            $color ++;
+            if ($color === count($chartColors)) {
+                $color = 0;
+            }
         }
 
         return $output;
     }
 
-    public static function getList($em)
-    {
+    public static function getList($em) {
         $qs = 'SELECT p.id, p.name FROM AppBundle:PartType p ORDER BY p.name ASC';
         $query = $em->createQuery($qs);
         $pt = $query->getResult();
@@ -181,11 +186,11 @@ class PartType
 
         return $list;
     }
+
     /**
      * Constructor.
      */
-    public function __construct()
-    {
+    public function __construct() {
         $this->parts = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
@@ -196,8 +201,7 @@ class PartType
      *
      * @return PartType
      */
-    public function addPart(\AppBundle\Entity\Part $parts)
-    {
+    public function addPart(\AppBundle\Entity\Part $parts) {
         $this->parts[] = $parts;
 
         return $this;
@@ -208,8 +212,7 @@ class PartType
      *
      * @param \AppBundle\Entity\Part $parts
      */
-    public function removePart(\AppBundle\Entity\Part $parts)
-    {
+    public function removePart(\AppBundle\Entity\Part $parts) {
         $this->parts->removeElement($parts);
     }
 
@@ -218,8 +221,8 @@ class PartType
      *
      * @return \Doctrine\Common\Collections\Collection
      */
-    public function getParts()
-    {
+    public function getParts() {
         return $this->parts;
     }
+
 }

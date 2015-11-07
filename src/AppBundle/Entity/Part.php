@@ -100,7 +100,6 @@ class Part
 
     /**
      * @ORM\Column(type="integer")
-     * @Assert\NotBlank()
      */
     protected $added_by;
 
@@ -195,12 +194,12 @@ class Part
     // Added By
     public function getAddedBy()
     {
-        return $this->addeduser;
+        return $this->addedBy;
     }
 
     public function setAddedBy($addedBy)
     {
-        $this->addeduser = $addedBy;
+        $this->addedBy = $addedBy;
     }
 
     // Deleted

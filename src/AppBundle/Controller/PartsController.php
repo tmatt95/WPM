@@ -28,6 +28,7 @@ use AppBundle\Entity\PartType;
 use AppBundle\Form\Parts\PartChange as FPartChange;
 use AppBundle\Entity\PartChange as PartChange;
 use Exception;
+use DateTimeZone;
 
 /**
  * Parts
@@ -43,8 +44,8 @@ use Exception;
  * @version  Release: <1.0.0>
  * @link     https://github.com/tmatt95/WPM/
  */
-class PartsController extends Controller
-{
+class PartsController extends Controller {
+
     /**
      * Used to store notice messages to be displayed at the top of the
      * manage/edit windows after an action has been carried out.
@@ -62,8 +63,7 @@ class PartsController extends Controller
      * in the web browser.
      * @return Page redirect
      */
-    public function partsAction()
-    {
+    public function partsAction() {
         return $this->redirectToRoute('parts_find');
     }
 
@@ -73,12 +73,11 @@ class PartsController extends Controller
      * day changes were made.
      * @return JsonResponse
      */
-    public function getDatePartNumbersAction()
-    {
+    public function getDatePartNumbersAction() {
         // Generate the info
         $em = $this->getDoctrine()->getManager();
         $queryDatePartNumbers = $em->createQuery(
-            'SELECT pc.added_date,
+                'SELECT pc.added_date,
                 SUM(pc.no_added) - sum(pc.no_taken) AS number_added_removed
             FROM AppBundle:PartChange pc
             GROUP BY pc.added_date'
@@ -86,19 +85,46 @@ class PartsController extends Controller
         $datePartNumbers = $queryDatePartNumbers->getResult();
 
         $output = array();
-        $total = 0;
-        foreach ($datePartNumbers as $dpn) {
-            $total = $total + $dpn['number_added_removed'];
-            $output[] = array(
-                'date' => $dpn['added_date'],
-                'total' => $total,
-            );
+        if (count($datePartNumbers) > 0) {
+            $total = 0;
+            $dateChanges = array();
+
+            // Creates an array of dates and changes which is easy to access
+            // by date
+            foreach ($datePartNumbers as $dpn) {
+                $total = $total + $dpn['number_added_removed'];
+                $dateChanges[date_format($dpn['added_date'], 'Y-m-d')] = $total;
+            }
+
+            // First date in the syste, and current date to go to
+            $iDate = $datePartNumbers[0]['added_date'];
+            $curDate = new DateTime('now', new DateTimeZone('UTC'));
+
+            $runningTotal = 0;
+            while ($iDate < $curDate) {
+
+                // Updates the total with the new amount if there is an entry in
+                // the results
+                if (isset($dateChanges[date_format($iDate, 'Y-m-d')]) === true) {
+                    $runningTotal = $dateChanges[date_format($iDate, 'Y-m-d')];
+                }
+                
+                // Output to go to browser
+                // Without cloning, the last date is returned to the browser
+                $output[] = array(
+                    'date' => clone($iDate),
+                    'total' => $runningTotal,
+                );
+
+                // Adds one onto the incremental date
+                date_add($iDate, date_interval_create_from_date_string('1 days'));
+            }
         }
 
         // Output to browser
         $response = new JsonResponse();
         $response->setData(
-            $output
+                $output
         );
         return $response;
     }
@@ -108,12 +134,11 @@ class PartsController extends Controller
      * The main dashboard of the application
      * @return HTML dashboard
      */
-    public function indexAction()
-    {
+    public function indexAction() {
         // Information for the latest added parts widget
         $em = $this->getDoctrine()->getManager();
         $query = $em->createQuery(
-            'SELECT p.name,
+                'SELECT p.name,
             p.qty,
             p.added,
             u.id,
@@ -126,7 +151,7 @@ class PartsController extends Controller
         $partsAdded = $query->getResult();
 
         $queryPartsUpdated = $em->createQuery(
-            'SELECT pc.no_added,
+                'SELECT pc.no_added,
             pc.no_taken,
             pc.added,
             pc.no_total,
@@ -142,11 +167,10 @@ class PartsController extends Controller
         $queryPartsUpdated->setMaxResults(10);
         $partsUpdated = $queryPartsUpdated->getResult();
         $html = $this->container->get('templating')->render(
-            'parts/index.html.twig',
-            array(
-                'partsAdded' => $partsAdded,
-                'partsUpdated' => $partsUpdated
-            )
+                'parts/index.html.twig', array(
+            'partsAdded' => $partsAdded,
+            'partsUpdated' => $partsUpdated
+                )
         );
         return new Response($html);
     }
@@ -157,57 +181,56 @@ class PartsController extends Controller
      * @param Request $request may contain new part information
      * @return HTML add part page
      */
-    public function addAction(Request $request)
-    {
+    public function addAction(Request $request) {
         $em = $this->getDoctrine()->getManager();
 
         // Generates the form
         $part = new Part();
+        
+        // Adds created date to form
+        $createdDate = new DateTime('Europe/London');
+        $part->setAdded($createdDate);
+        $part->setAddedBy($this->getUser()->getId());
+        $part->setAddeduser($this->getUser());
+        
         $form = $this->createFormBuilder($part)
-            ->add('name', 'text')
-            ->add('description', 'textarea')
-            ->add(
-                'type',
-                'choice',
-                array(
+                ->add('name', 'text')
+                ->add('description', 'textarea')
+                ->add(
+                        'type', 'choice', array(
                     'choices' => PartType::getList($em),
                     'required' => false,
+                        )
                 )
-            )
-            ->add(
-                'location',
-                'choice',
-                array(
+                ->add(
+                        'location', 'choice', array(
                     'choices' => Location::getList($em),
                     'required' => false,
+                        )
                 )
-            )
-            ->add('qty', 'integer')
-            ->add('save', 'submit', array('label' => 'Add Part'))
-            ->getForm();
+                ->add('qty', 'integer')
+                ->add('save', 'submit', array('label' => 'Add Part'))
+                ->getForm();
         $blankForm = clone($form);
 
         // Populates the form with submitted data if any present
         $form->handleRequest($request);
 
+        
         // If form is posted and valid, then saves
         if ($form->isValid()) {
-            // Adds created date to form
-            $createdDate = new DateTime('Europe/London');
-            $part->setAdded($createdDate);
-            $part->setAddedBy($this->getUser());
-
-            $part->setParttype(
+            
+                    $part->setParttype(
                 $this->getDoctrine()
                     ->getRepository('AppBundle:PartType')
                     ->find($part->getType())
-            );
+        );
 
-            $part->setLocationinfo(
+        $part->setLocationinfo(
                 $this->getDoctrine()
                     ->getRepository('AppBundle:Location')
                     ->find($part->getLocation())
-            );
+        );
 
             // Saves the new part to the system
             $em = $this->getDoctrine()->getManager();
@@ -234,11 +257,10 @@ class PartsController extends Controller
 
         // Renders the add part screen
         $html = $this->container->get('templating')->render(
-            'parts/add.html.twig',
-            array(
-                'form' => $form->createView(),
-                'displayMessage' => $this->displayMessage,
-            )
+                'parts/add.html.twig', array(
+            'form' => $form->createView(),
+            'displayMessage' => $this->displayMessage,
+                )
         );
         return new Response($html);
     }
@@ -249,8 +271,7 @@ class PartsController extends Controller
      * @param Request $request optional filters
      * @return JsonResponse containing parts found in the system
      */
-    public function searchAction(Request $request)
-    {
+    public function searchAction(Request $request) {
         $limit = 10;
         $offset = 0;
         if ($request->query->get('limit') && $request->query->get('offset')) {
@@ -267,7 +288,7 @@ class PartsController extends Controller
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-            Part::search($em, $searchTerm, $limit, $offset, $locationid)
+                Part::search($em, $searchTerm, $limit, $offset, $locationid)
         );
         return $response;
     }
@@ -277,10 +298,9 @@ class PartsController extends Controller
      * It is through this page that you can find parts in the system.
      * @return HTML Find parts screen
      */
-    public function findAction()
-    {
+    public function findAction() {
         $html = $this->container->get('templating')->render(
-            'parts/find.html.twig'
+                'parts/find.html.twig'
         );
         return new Response($html);
     }
@@ -295,17 +315,16 @@ class PartsController extends Controller
      * @throws Exception if updating the part would result in it having a
      * negative qty
      */
-    public function viewAction($partId, Request $request)
-    {
+    public function viewAction($partId, Request $request) {
         $em = $this->getDoctrine()->getManager();
         // Loads part information
         $part = $this->getDoctrine()
-            ->getRepository('AppBundle:Part')
-            ->find($partId);
+                ->getRepository('AppBundle:Part')
+                ->find($partId);
 
         if (!$part) {
             throw $this->createNotFoundException(
-                'Part not found. It may not exist or have been deleted.'
+                    'Part not found. It may not exist or have been deleted.'
             );
         }
 
@@ -314,9 +333,7 @@ class PartsController extends Controller
         $FPartChange->handleRequest($request);
         if ($FPartChange->isValid()) {
             // Calculates values which need to be added from the server side
-            $noTotal = $part->getQty()
-                - $partChange->getNoTaken()
-                + $partChange->getNoAdded();
+            $noTotal = $part->getQty() - $partChange->getNoTaken() + $partChange->getNoAdded();
             if ($noTotal < 0) {
                 throw new Exception('You do not have enough parts!', 400);
             }
@@ -337,41 +354,36 @@ class PartsController extends Controller
 
             $message = '';
             if ($partChange->getType() === 0) {
-                $message = 'Successfuly added '.$partChange->getNoAdded();
+                $message = 'Successfuly added ' . $partChange->getNoAdded();
             } else {
-                $message = 'Successfuly taken '.$partChange->getNoTaken();
+                $message = 'Successfuly taken ' . $partChange->getNoTaken();
             }
             $this->displayMessage['value'] = $message
-                .'. There are now '
-                .$partChange->getNoTotal()
-                .' in the system.';
+                    . '. There are now '
+                    . $partChange->getNoTotal()
+                    . ' in the system.';
             $FPartChange = $this->createForm(
-                new FPartChange(),
-                new PartChange()
+                    new FPartChange(), new PartChange()
             );
         }
 
         $form = $this->createFormBuilder($part)
-            ->add('name', 'text')
-            ->add('description', 'textarea')
-            ->add(
-                'type',
-                'choice',
-                array(
+                ->add('name', 'text')
+                ->add('description', 'textarea')
+                ->add(
+                        'type', 'choice', array(
                     'choices' => PartType::getList($em),
                     'required' => false,
-                    )
-            )
-            ->add(
-                'location',
-                'choice',
-                array(
+                        )
+                )
+                ->add(
+                        'location', 'choice', array(
                     'choices' => Location::getList($em),
                     'required' => false,
-                    )
-            )
-            ->add('save', 'submit', array('label' => 'Update Part'))
-            ->getForm();
+                        )
+                )
+                ->add('save', 'submit', array('label' => 'Update Part'))
+                ->getForm();
         $form->handleRequest($request);
         if ($form->isValid()) {
             $em = $this->getDoctrine()->getManager();
@@ -381,7 +393,7 @@ class PartsController extends Controller
         }
 
         $queryPartHistory = $em->createQuery(
-            'SELECT pc.no_added,
+                'SELECT pc.no_added,
             pc.no_taken,
             pc.added,
             pc.no_total,
@@ -397,14 +409,12 @@ class PartsController extends Controller
             ORDER BY pc.added DESC'
         );
         $queryPartHistory->setParameter(
-            ':partid',
-            $partId
+                ':partid', $partId
         );
         $partHistory = $queryPartHistory->getResult();
 
         $html = $this->container->get('templating')->render(
-            'parts/view.html.twig',
-            array(
+                'parts/view.html.twig', array(
             'part' => $part,
             'FPartChange' => $FPartChange->createView(),
             'form' => $form->createView(),
@@ -414,4 +424,5 @@ class PartsController extends Controller
         );
         return new Response($html);
     }
+
 }
