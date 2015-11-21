@@ -5,17 +5,7 @@
 
 {% block body %}
     <div class="row">
-        <div class="col-md-6" id="chartPartTypeBox"><h3>Parts By Type</h3>
-            {% if partsAdded|length == 0 %}
-                <p class="text-muted">You are not storing any parts yet :O</p>
-            {% endif %}
-            {% if partsAdded|length > 0 %}
-                <div>
-                    <canvas id="chartPartType"></canvas>
-                </div>
-            {% endif %}
-        </div>
-        <div class="col-md-6" id="chartPartsAddedBox">
+        <div class="col-md-12" id="chartPartsAddedBox">
             <h3>Parts In Store</h3>
             {% if partsAdded|length == 0 %}
                 <p class="text-muted">You are not storing any parts yet :O</p>

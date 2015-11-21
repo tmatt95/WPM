@@ -3,28 +3,44 @@
 {% block title %}Login{% endblock %}
 
 {% block body %}
-    {% if error %}
-        <div class="alert alert-danger" style="margin-top:10px;margin-bottom:0px;">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
-    {% endif %}
-    <nav class="navbar navbar-default" style="margin-top:10px;">
-        <div class="col-xs-12">
-            <div class="navbar-header">
-                <form action="{{ path('users_login_check') }}" class="navbar-form navbar-left" method="post">
-                    <input type="text" id="username" class="form-control" placeholder="Username" name="_username" value="{{ last_username }}" />
-                    <input type="password" id="password" class="form-control" placeholder="Password" name="_password" />
-                    <input type="hidden" name="_target_path" value="/" />
-                    <button class="btn btn-primary" type="submit">login</button>
-                    <input type="hidden" name="_csrf_security_token_login"
-                           value="{{ csrf_token('authenticate') }}"
-                           >
-                </form>
-            </div>
-        </div>
-    </nav>
     <div class="row">
-        <div class="col-xs-12">
+        <div class="col-sm-7 hidden-xs">
             <h1>Welcome</h1>
-            <p>Welcome to the CTPG parts system. To gain entry to this, please speak to a member of the team.</p>
+            <p>Welcome to the CTPG parts system. You can use this to:</p>
+            <ul class="list-unstyled">
+                <li><span class="glyphicon glyphicon-ok"></span> Easily find parts in the museum.</li>
+                <li><span class="glyphicon glyphicon-ok"></span> Keep an up to date track of the number of parts available.</li>
+                <li><span class="glyphicon glyphicon-ok"></span> Organise parts into logical locations based on part types.</li>
+            </ul>
+        </div>
+        <div class="col-sm-5">
+            <h2>Login</h2>
+            {% if error %}
+                <div class="alert alert-danger" >{{ error.messageKey|trans(error.messageData, 'security') }}</div>
+            {% endif %}
+            <form class="form-horizontal" action="{{ path('users_login_check') }}" method="post">
+                <div class="form-group">
+                    <label for="username" class="col-sm-2 control-label">User</label>
+                    <div class="col-sm-10">
+                        <input type="text" id="username" class="form-control" placeholder="Username" name="_username" value="{{ last_username }}" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password" class="col-sm-2 control-label">Pass</label>
+                    <div class="col-sm-10">
+                        <input type="hidden" name="_target_path" value="/" />
+                        <input type="hidden" name="_csrf_security_token_login"
+                               value="{{ csrf_token('authenticate') }}"
+                               >
+                        <input type="password" id="password" class="form-control" placeholder="Password" name="_password" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-default">Sign in</button>
+                    </div>
+                </div>
+            </form>
         </div>
     </div>
 {% endblock %}
