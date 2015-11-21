@@ -12,6 +12,18 @@
     <script type="text/javascript">
 
         $(document).ready(function () {
+
+            $("#searchparts").click(function () {
+                $('#parts').bootstrapTable('refresh');
+                return false;
+            });
+            
+            $("#searchpartsclear").click(function () {
+                document.getElementById("partsearch").reset();
+                $('#parts').bootstrapTable('refresh');
+                return false;
+            });
+            
             $('#parts').bootstrapTable({
                 columns: [{
                         field: 'name',
@@ -35,7 +47,14 @@
                 url: '/parts/search',
                 pagination: true,
                 sidePagination: 'server',
-                search: true
+                search: false,
+                queryParams: function (params) {
+                    var formInfo = $('#partsearch').serializeArray();
+                    $.each(formInfo, function (index, value) {
+                        params[value.name] = value.value;
+                    });
+                    return params;
+                }
             });
         });
     </script>
@@ -44,7 +63,7 @@
 {% block body %}
     <div class="row">
         <div class="col-xs-6">
-            <h1>Parts</h1>
+            <h1>Find Part</h1>
         </div>
         <div class="col-xs-6 text-right" style="padding-top:20px;">
             <a href="{{ path('parts_add') }}" class="btn btn-xl btn-primary"> <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add Part</a>
@@ -57,6 +76,56 @@
             </ol>
         </div>
     </div>
+    <form id="partsearch">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Name</label>
+                    <input type="text" name="name" class="form-control" id="exampleInputEmail1" placeholder="Name">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="location">Location</label>
+                    <select name="locationid" class="form-control" id="location">
+                        <option value="">-- All --</option>
+                        {% for id,name in locations %}
+                            <option value="{{id}}">{{name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="hasqty">Has Qty</label>
+                    <select name="hasqty" class="form-control" id="hasqty">
+                        <option value="">-- All --</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="parttype">Part Type</label>
+                    <select name="parttype" class="form-control" id="type">
+                        <option value="">-- All --</option>
+                        {% for id,name in parttypes %}
+                            <option value="{{id}}">{{name}}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="row" style="padding-top: 24px;">
+                    <div class="col-xs-6"><button class="btn btn-block btn-default" id="searchparts">Search</button></div>
+                    <div class="col-xs-6"><button class="btn btn-block btn-danger" id="searchpartsclear">Clear</button></div>
+                </div>
+            </div>
+        </div>
+    </form>
     <div class="row">
         <div class="col-xs-12">
             <table id="parts"></table>

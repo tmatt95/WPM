@@ -112,20 +112,7 @@
                     var ctx = document.getElementById("chartPartsAdded").getContext("2d");
                     var chartPartsAdded = new Chart(ctx).Line(data, {responsive: true});
                 });
-            }
-
-
-            if ($('#chartPartType').length > 0) {
-                $.ajax({
-                    url: "/parttypes/getstats",
-                    dataType: "json",
-                    type: "GET"
-                }).done(function (data) {
-                    var chartPartsAdded = document.getElementById("chartPartType").getContext("2d");
-                    var chartPartType = new Chart(chartPartsAdded).Pie(data, {responsive: true});
-                });
-            }
-
-        });
+        }
+    });
     </script>
 {% endblock %}

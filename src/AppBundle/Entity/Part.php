@@ -296,38 +296,52 @@ class Part
         return $this->locationinfo;
     }
 
-    public static function getTotalNumber($em, $searchTerm, $locationid = null)
+    public static function getTotalNumber($em, $searchTerm, $limit, $offset, $locationid = null, $partType = null, $hasqty = null)
     {
+        // generates where array and param array
+        $where = array();
+        $params = array();
+        if($searchTerm){
+            $where[] = '(p.name LIKE :search '
+                . 'OR l.name LIKE :search '
+                . 'OR pt.name LIKE :search '
+                . 'OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search)';
+            $params[':search'] = '%'.$searchTerm.'%';
+        }
+        if($locationid){
+            $where[] = '(p.location = :locationid)';
+            $params[':locationid'] = $locationid;
+        }
+        if($partType){
+            $where[] = '(p.type = :type)';
+            $params[':type'] = $partType;
+        }
+        if($hasqty){
+            if($hasqty === 'yes'){
+                $where[] = '(p.qty > 0)';
+            }
+            if($hasqty === 'no'){
+                $where[] = '(p.qty = 0)';
+            }
+        }
         $qs = 'SELECT COUNT(p.id) as number
             FROM AppBundle:Part p
             JOIN p.locationinfo l
             JOIN p.parttype pt
             JOIN p.addeduser u';
-        if ($searchTerm) {
-            $qs .= ' WHERE (p.name LIKE :search OR l.name LIKE :search';
-            $qs .= ' OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search)';
-            if ($locationid) {
-                $qs .= ' AND p.location = :locationid';
-            }
-        } else {
-            if ($locationid) {
-                $qs .= ' WHERE p.location = :locationid';
-            }
+        if(count($where) > 0){
+            $qs .= ' WHERE '. implode(' AND ', $where);
         }
+        $qs .= ' ORDER BY p.name ASC';
         $query = $em->createQuery($qs);
-        if ($searchTerm) {
-            $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
+        $query->setMaxResults($limit);
+        $query->setFirstResult($offset);
+        foreach ($params as $id=>$value){
+             $query->setParameter(
+                $id,
+                $value
             );
         }
-        if ($locationid) {
-            $query->setParameter(
-                ':locationid',
-                $locationid
-            );
-        }
-
         return $query->getResult()[0]['number'];
     }
 
@@ -363,8 +377,35 @@ class Part
         return $query->getResult();
     }
 
-    public static function search($em, $searchTerm, $limit, $offset, $locationid = null)
+    public static function search($em, $searchTerm, $limit, $offset, $locationid = null, $partType = null, $hasqty = null)
     {
+        // generates where array and param array
+        $where = array();
+        $params = array();
+        if($searchTerm){
+            $where[] = '(p.name LIKE :search '
+                . 'OR l.name LIKE :search '
+                . 'OR pt.name LIKE :search '
+                . 'OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search)';
+            $params[':search'] = '%'.$searchTerm.'%';
+        }
+        if($locationid){
+            $where[] = '(p.location = :locationid)';
+            $params[':locationid'] = $locationid;
+        }
+        if($partType){
+            $where[] = '(p.type = :type)';
+            $params[':type'] = $partType;
+        }
+        if($hasqty){
+            if($hasqty === 'yes'){
+                $where[] = '(p.qty > 0)';
+            }
+            if($hasqty === 'no'){
+                $where[] = '(p.qty = 0)';
+            }
+        }
+        
         $qs = 'SELECT p.id,
             p.name,
             p.qty,
@@ -380,36 +421,24 @@ class Part
             JOIN p.locationinfo l
             JOIN p.parttype pt
             JOIN p.addeduser u';
-        if ($searchTerm) {
-            $qs .= ' WHERE (p.name LIKE :search OR l.name LIKE :search';
-            $qs .= ' OR pt.name LIKE :search OR CONCAT(u.name_first , \' \',u.name_last) LIKE :search)';
-            if ($locationid) {
-                $qs .= ' AND p.location = :locationid';
-            }
-        } else {
-            if ($locationid) {
-                $qs .= ' WHERE p.location = :locationid';
-            }
+        
+        if(count($where) > 0){
+            $qs .= ' WHERE '. implode(' AND ', $where);
         }
+
         $qs .= ' ORDER BY p.name ASC';
         $query = $em->createQuery($qs);
         $query->setMaxResults($limit);
         $query->setFirstResult($offset);
-        if ($searchTerm) {
-            $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
-            );
-        }
-        if ($locationid) {
-            $query->setParameter(
-                ':locationid',
-                $locationid
+        foreach ($params as $id=>$value){
+             $query->setParameter(
+                $id,
+                $value
             );
         }
 
         return array(
-            'total' => self::getTotalNumber($em, $searchTerm, $locationid),
+            'total' => self::getTotalNumber($em, $searchTerm, $limit, $offset, $locationid, $partType, $hasqty),
             'rows' => $query->getResult(),
         );
     }

@@ -282,13 +282,32 @@ class PartsController extends Controller {
         // Sets location id if sent to limit the search to a specific location
         $locationid = null;
         if ($request->query->get('locationid')) {
-            $locationid = $request->query->get('locationid');
+            if($request->query->get('locationid') !== ''){
+                $locationid = $request->query->get('locationid');
+            }
         }
-        $searchTerm = $request->query->get('search');
+        
+        // Sets if we should look for parts which have a qty greater than 0 only
+        $hasqty = null;
+        if ($request->query->get('hasqty')) {
+            if($request->query->get('hasqty') !== ''){
+                $hasqty = $request->query->get('hasqty');
+            }
+        }
+        
+        // Sets if we should look for parts which have a qty greater than 0 only
+        $partType = null;
+        if ($request->query->get('parttype')) {
+            if($request->query->get('parttype') !== ''){
+                $partType = $request->query->get('parttype');
+            }
+        }
+        
+        $searchTerm = $request->query->get('name');
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-                Part::search($em, $searchTerm, $limit, $offset, $locationid)
+                Part::search($em, $searchTerm, $limit, $offset, $locationid, $partType, $hasqty)
         );
         return $response;
     }
@@ -299,8 +318,11 @@ class PartsController extends Controller {
      * @return HTML Find parts screen
      */
     public function findAction() {
+        $em = $this->getDoctrine()->getManager();
+        $locations = Location::getList($em);
+        $partTypes = PartType::getList($em);
         $html = $this->container->get('templating')->render(
-                'parts/find.html.twig'
+                'parts/find.html.twig', array('locations'=>$locations , 'parttypes'=>$partTypes)
         );
         return new Response($html);
     }
