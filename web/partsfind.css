@@ -1,0 +1,7 @@
+@media (max-width: 768px) {
+    #partsearch {margin-bottom: 15px;}
+}
+
+@media (min-width: 768px) {
+    #searchpartsbuttons {padding-top: 25px;}
+}

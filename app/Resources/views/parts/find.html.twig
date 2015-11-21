@@ -5,6 +5,7 @@
 
 {% block stylesheets %}
     <link href="{{ asset('bootstrap-table.css') }}" rel="stylesheet" />
+    <link href="{{ asset('partsfind.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
@@ -119,7 +120,7 @@
                 </div>
             </div>
             <div class="col-sm-4">
-                <div class="row" style="padding-top: 24px;">
+                <div class="row" id="searchpartsbuttons">
                     <div class="col-xs-6"><button class="btn btn-block btn-default" id="searchparts">Search</button></div>
                     <div class="col-xs-6"><button class="btn btn-block btn-danger" id="searchpartsclear">Clear</button></div>
                 </div>
