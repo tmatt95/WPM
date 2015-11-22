@@ -63,8 +63,8 @@ class PartChange extends AbstractType
                 array(
                     'choices' => ['Add', 'Use'],
                     'required' => false,
-                    'label' => 'Add or Use',
-                    'placeholder' => 'Add or Use'
+                    'label' => 'Action',
+                    'placeholder' => '-- Select --'
                 )
             )
             ->add(

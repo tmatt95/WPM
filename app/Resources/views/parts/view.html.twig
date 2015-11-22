@@ -2,6 +2,10 @@
 
 {% block title %}Parts: {{part.name}}{% endblock %}
 
+{% block stylesheets %}
+    <link href="{{ asset('part.css') }}" rel="stylesheet" />
+{% endblock %}
+
 {% block javascripts %}
     <script type="text/javascript">
         $(document).ready(function () {
@@ -31,7 +35,10 @@
 {% endblock %}
 
 {% block body %}
-    <h1>View Part - {{part.name}}</h1>
+    <div class="row">
+        <div class="col-xs-12 col-sm-10"><h1>View Part - {{part.name}}</h1></div>
+        <div style="font-size: 20px;" id="partqty" class="col-xs-12 col-sm-2"><span class="label label-info">Qty {{part.qty}}</span></div>
+    </div>
     <ol class="breadcrumb">
         <li><a href="{{ path('parts_find') }}">Parts</a></li>
         <li class="active">{{part.name}}</li>
@@ -39,7 +46,7 @@
     {% if displayMessage.value != '' %}
         <div class="row">
             <div class="col-xs-12">
-                <div class="alert {{displayMessage.class}}" role="alert">
+                <div id="partalert" class="alert {{displayMessage.class}}" role="alert">
                     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -48,7 +55,6 @@
             </div>
         </div>
     {% endif %}
-    <h3>Add/Use</h3>
     {{ form_start(FPartChange) }}
     {{ form_errors(FPartChange) }}
     <div class="row">
