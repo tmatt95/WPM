@@ -99,41 +99,86 @@ class PartType {
         return $this->description;
     }
 
-    public static function getTotalNumber($em, $searchTerm) {
-        $qs = 'SELECT COUNT(p.id) as number FROM AppBundle:PartType p';
-        if ($searchTerm) {
-            $qs .= ' WHERE p.name LIKE :search';
+    public static function getTotalNumber($em, $searchTerm, $hasqty=null) {
+        // generates where array and param array
+        $where = array();
+        $having = array();
+        $params = array();
+        if($searchTerm){
+            $where[] = 'pt.name LIKE :search';
+            $params[':search'] = '%'.$searchTerm.'%';
+        }
+        if($hasqty){
+            if($hasqty === 'yes'){
+                $having[] = '(COUNT(p.id) > 0)';
+            }
+            if($hasqty === 'no'){
+                $having[] = '(COUNT(p.id) = 0)';
+            }
+        }
+        
+        $qs = 'SELECT pt.id FROM AppBundle:PartType pt
+            LEFT JOIN pt.parts p';
+        if(count($where) > 0){
+            $qs .= ' WHERE '. implode(' AND ', $where);
+        }
+        $qs .= ' GROUP BY pt.id';
+        if(count($having) > 0){
+            $qs .= ' HAVING '. implode(' AND ', $having);
         }
         $query = $em->createQuery($qs);
-        if ($searchTerm) {
-            $query->setParameter(
-                    ':search', '%' . $searchTerm . '%'
+        foreach ($params as $id=>$value){
+             $query->setParameter(
+                $id,
+                $value
             );
         }
-
-        return $query->getResult()[0]['number'];
+        return count($query->getResult());
     }
 
-    public static function search($em, $searchTerm, $limit, $offset) {
-        $qs = 'SELECT p.id,
-                p.name,
-                CONCAT(SUBSTRING(p.description,1,50),\'...\') as description
-            FROM AppBundle:PartType p';
-        if ($searchTerm) {
-            $qs .= ' WHERE p.name LIKE :search';
+    public static function search($em, $searchTerm, $limit, $offset, $hasqty= null) {
+        // generates where array and param array
+        $where = array();
+        $having = array();
+        $params = array();
+        if($searchTerm){
+            $where[] = 'pt.name LIKE :search';
+            $params[':search'] = '%'.$searchTerm.'%';
         }
-        $qs .= ' ORDER BY p.name ASC';
+        if($hasqty){
+            if($hasqty === 'yes'){
+                $having[] = '(COUNT(p.id) > 0)';
+            }
+            if($hasqty === 'no'){
+                $having[] = '(COUNT(p.id) = 0)';
+            }
+        }
+        
+        $qs = 'SELECT pt.id,
+                pt.name,
+                CONCAT(SUBSTRING(pt.description,1,50),\'...\') as description,
+                COUNT(p.id) as no_parts
+            FROM AppBundle:PartType pt
+            LEFT JOIN pt.parts p';
+        if(count($where) > 0){
+            $qs .= ' WHERE '. implode(' AND ', $where);
+        }
+        $qs .= ' GROUP BY pt.id';
+        if(count($having) > 0){
+            $qs .= ' HAVING '. implode(' AND ', $having);
+        }
+        $qs .= ' ORDER BY pt.name ASC';
         $query = $em->createQuery($qs);
         $query->setMaxResults($limit);
         $query->setFirstResult($offset);
-        if ($searchTerm) {
-            $query->setParameter(
-                    ':search', '%' . $searchTerm . '%'
+        foreach ($params as $id=>$value){
+             $query->setParameter(
+                $id,
+                $value
             );
         }
-
         return array(
-            'total' => self::getTotalNumber($em, $searchTerm),
+            'total' => self::getTotalNumber($em, $searchTerm, $hasqty),
             'rows' => $query->getResult(),
         );
     }

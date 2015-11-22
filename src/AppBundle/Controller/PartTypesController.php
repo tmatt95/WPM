@@ -88,11 +88,27 @@ class PartTypesController extends Controller
             $limit = $request->query->get('limit');
             $offset = $request->query->get('offset');
         }
-        $searchTerm = $request->query->get('search');
+        
+        // Sets if we should look for parts which have a qty greater than 0 only
+        $searchTerm = null;
+        if ($request->query->get('name')) {
+            if($request->query->get('name') !== ''){
+                $searchTerm = $request->query->get('name');
+            }
+        }
+        
+        // Sets if we should look for parts which have a qty greater than 0 only
+        $hasqty = null;
+        if ($request->query->get('hasqty')) {
+            if($request->query->get('hasqty') !== ''){
+                $hasqty = $request->query->get('hasqty');
+            }
+        }
+        
         $em = $this->getDoctrine()->getManager();
         $response = new JsonResponse();
         $response->setData(
-            PartType::search($em, $searchTerm, $limit, $offset)
+            PartType::search($em, $searchTerm, $limit, $offset, $hasqty)
         );
         return $response;
     }

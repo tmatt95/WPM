@@ -2,12 +2,25 @@
 
 {% block stylesheets %}
     <link href="{{ asset('bootstrap-table.css') }}" rel="stylesheet" />
+    <link href="{{ asset('locationsfind.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
     <script src="{{ asset('bootstrap-table.min.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+            
+            $("#searchgo").click(function () {
+                $('#locations').bootstrapTable('refresh');
+                return false;
+            });
+            
+            $("#searchclear").click(function () {
+                document.getElementById("locationsearch").reset();
+                $('#locations').bootstrapTable('refresh');
+                return false;
+            });
+            
             // Toggles the appearance of the add form
             $("#lAddNew").click(function () {
                 $(this).addClass('hidden');
@@ -35,11 +48,22 @@
                     }, {
                         field: 'description',
                         title: 'Description'
+                    },
+                    {
+                        field: 'no_parts',
+                        title: 'Part Qty'
                     }
                 ],
                 url: '{{ path('locations_get')}}',
                 pagination: true,
-                search: true
+                search: false,
+                queryParams: function (params) {
+                    var formInfo = $('#locationsearch').serializeArray();
+                    $.each(formInfo, function (index, value) {
+                        params[value.name] = value.value;
+                    });
+                    return params;
+                }
             });
         });
     </script>
@@ -73,7 +97,7 @@
                     </button>
                     {{displayMessage.value}} 
                     {% if displayMessage.showButton == true %}
-                    - <a href="/locations/edit/{{ displayMessage.locationId }}" class="btn btn-default btn-sm">{{displayMessage.buttonText}}</a>
+                        - <a href="/locations/edit/{{ displayMessage.locationId }}" class="btn btn-default btn-sm">{{displayMessage.buttonText}}</a>
                     {% endif %}
                 </div>
             </div>
@@ -93,7 +117,35 @@
                     </div>
                 </div>
             </div>
-            <table id="locations"></table>
         </div>
+    </div>
+    <form id="locationsearch">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" placeholder="Name" id="name" class="form-control" name="name">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="hasqty">Has Qty</label>
+                    <select id="hasqty" class="form-control" name="hasqty">
+                        <option value="">-- All --</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div id="searchbuttons" class="row">
+                    <div class="col-xs-6"><button id="searchgo" class="btn btn-block btn-default">Search</button></div>
+                    <div class="col-xs-6"><button id="searchclear" class="btn btn-block btn-danger">Clear</button></div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-xs-12"><table id="locations"></table></div>
     </div>
 {% endblock %}

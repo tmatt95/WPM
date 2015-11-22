@@ -1,0 +1,7 @@
+@media (max-width: 768px) {
+    #parttypessearch {margin-bottom: 15px;}
+}
+
+@media (min-width: 768px) {
+    #searchbuttons {padding-top: 25px;}
+}

@@ -5,12 +5,25 @@
 
 {% block stylesheets %}
     <link href="{{ asset('bootstrap-table.css') }}" rel="stylesheet" />
+    <link href="{{ asset('parttypesfind.css') }}" rel="stylesheet" />
 {% endblock %}
 
 {% block javascripts %}
     <script src="{{ asset('bootstrap-table.min.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
+
+            $("#searchgo").click(function () {
+                $('#parttypes').bootstrapTable('refresh');
+                return false;
+            });
+
+            $("#searchclear").click(function () {
+                document.getElementById("parttypessearch").reset();
+                $('#parttypes').bootstrapTable('refresh');
+                return false;
+            });
+
             // Display the add new part type form
             $("#lAddNew").click(function () {
                 $(this).addClass('hidden');
@@ -27,22 +40,32 @@
             });
 
             // Populates the part type table
-            $('#table').bootstrapTable({
+            $('#parttypes').bootstrapTable({
                 columns: [{
                         field: 'name',
                         title: 'Name',
                         sortable: true,
                         formatter: function (value, row, index) {
-                            return '<a href="/parttypes/edit/'+row.id+'">' + value + '</a>';
+                            return '<a href="/parttypes/edit/' + row.id + '">' + value + '</a>';
                         }
                     }, {
                         field: 'description',
                         title: 'Description'
+                    }, {
+                        field: 'no_parts',
+                        title: 'Part Qty'
                     }],
                 url: '{{ path('parts_types_get')}}',
                 pagination: true,
                 sidePagination: 'server',
-                search: true,
+                search: false,
+                queryParams: function (params) {
+                    var formInfo = $('#parttypessearch').serializeArray();
+                    $.each(formInfo, function (index, value) {
+                        params[value.name] = value.value;
+                    });
+                    return params;
+                }
             });
         });
     </script>
@@ -91,7 +114,35 @@
                     </div>
                 </div>
             </div>
-            <table id="table"></table>
         </div>
+    </div>
+    <form id="parttypessearch">
+        <div class="row">
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="name">Name</label>
+                    <input type="text" placeholder="Name" id="name" class="form-control" name="name">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div class="form-group">
+                    <label for="hasqty">Has Qty</label>
+                    <select id="hasqty" class="form-control" name="hasqty">
+                        <option value="">-- All --</option>
+                        <option value="yes">Yes</option>
+                        <option value="no">No</option>
+                    </select>
+                </div>
+            </div>
+            <div class="col-sm-4">
+                <div id="searchbuttons" class="row">
+                    <div class="col-xs-6"><button id="searchgo" class="btn btn-block btn-default">Search</button></div>
+                    <div class="col-xs-6"><button id="searchclear" class="btn btn-block btn-danger">Clear</button></div>
+                </div>
+            </div>
+        </div>
+    </form>
+    <div class="row">
+        <div class="col-xs-12"><table id="parttypes"></table></div>
     </div>
 {% endblock %}

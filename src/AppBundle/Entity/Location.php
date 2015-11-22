@@ -101,45 +101,89 @@ class Location
         return $list;
     }
 
-    public static function getTotalNumber($em, $searchTerm)
+    public static function getTotalNumber($em, $searchTerm, $hasqty=null)
     {
-        $qs = 'SELECT COUNT(l.id) as number FROM AppBundle:Location l';
-        if ($searchTerm) {
-            $qs .= ' WHERE l.name LIKE :search';
+        // generates where array and param array
+        $where = array();
+        $having = array();
+        $params = array();
+        if($searchTerm){
+            $where[] = 'l.name LIKE :search';
+            $params[':search'] = '%'.$searchTerm.'%';
+        }
+        if($hasqty){
+            if($hasqty === 'yes'){
+                $having[] = '(COUNT(p.id) > 0)';
+            }
+            if($hasqty === 'no'){
+                $having[] = '(COUNT(p.id) = 0)';
+            }
+        }
+        
+        $qs = 'SELECT l.id
+            FROM AppBundle:Location l
+            LEFT JOIN l.parts p';
+        if(count($where) > 0){
+            $qs .= ' WHERE '. implode(' AND ', $where);
+        }
+        $qs .= ' GROUP BY l.id';
+        if(count($having) > 0){
+            $qs .= ' HAVING '. implode(' AND ', $having);
         }
         $query = $em->createQuery($qs);
-        if ($searchTerm) {
-            $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
+        foreach ($params as $id=>$value){
+             $query->setParameter(
+                $id,
+                $value
             );
         }
-
-        return $query->getResult()[0]['number'];
+        return count($query->getResult());
     }
 
-    public static function search($em, $searchTerm, $limit, $offset)
+    public static function search($em, $searchTerm, $limit, $offset, $hasqty = null)
     {
+        // generates where array and param array
+        $where = array();
+        $having = array();
+        $params = array();
+        if($searchTerm){
+            $where[] = 'l.name LIKE :search';
+            $params[':search'] = '%'.$searchTerm.'%';
+        }
+        if($hasqty){
+            if($hasqty === 'yes'){
+                $having[] = '(COUNT(p.id) > 0)';
+            }
+            if($hasqty === 'no'){
+                $having[] = '(COUNT(p.id) = 0)';
+            }
+        }
+        
         $qs = 'SELECT l.id,
                 l.name,
-                CONCAT(SUBSTRING(l.description,1,50),\'...\') as description
-            FROM AppBundle:Location l';
-        if ($searchTerm) {
-            $qs .= ' WHERE l.name LIKE :search';
+                CONCAT(SUBSTRING(l.description,1,50),\'...\') as description,
+                COUNT(p.id) as no_parts
+            FROM AppBundle:Location l
+            LEFT JOIN l.parts p';
+        if(count($where) > 0){
+            $qs .= ' WHERE '. implode(' AND ', $where);
+        }
+        $qs .= ' GROUP BY l.id';
+        if(count($having) > 0){
+            $qs .= ' HAVING '. implode(' AND ', $having);
         }
         $qs .= ' ORDER BY l.name ASC';
         $query = $em->createQuery($qs);
         $query->setMaxResults($limit);
         $query->setFirstResult($offset);
-        if ($searchTerm) {
-            $query->setParameter(
-                ':search',
-                '%'.$searchTerm.'%'
+        foreach ($params as $id=>$value){
+             $query->setParameter(
+                $id,
+                $value
             );
         }
-
         return array(
-            'total' => self::getTotalNumber($em, $searchTerm),
+            'total' => self::getTotalNumber($em, $searchTerm, $hasqty),
             'rows' => $query->getResult(),
         );
     }
